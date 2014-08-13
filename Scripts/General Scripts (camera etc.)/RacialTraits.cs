@@ -1,25 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class RacialTraits : MasterScript 
 {
 	public float ambitionCounter, ambitiongrowthModifier, amber;
-	public int nereidesStacks;
+	public int stacksGeneratedSinceLastUpdate, stacksDissolvedSinceLastUpdate, stackWealthBonus;
 	public UILabel racialLabel;
+	public List<StackOfElation> elationStacks = new List<StackOfElation>();
 	
 	void Start()
 	{
 		ambitionCounter = 40f;
 	}
-	
+
 	public void Purge() //Nereides function to produce elation
 	{
 		while(playerTurnScript.knowledge >= 100 && playerTurnScript.power >= 100)
 		{
 			playerTurnScript.knowledge -= 100;
 			playerTurnScript.power -= 100;
-			++nereidesStacks;
+			StackOfElation newStack = new StackOfElation();
+			newStack.creationTime = Time.time;
+			newStack.maxAge = 60f;
+			elationStacks.Add (newStack);
+			++stacksGeneratedSinceLastUpdate;
+			++stackWealthBonus;
 		}
 	}
 	
@@ -27,7 +34,7 @@ public class RacialTraits : MasterScript
 	{
 		if(thisPlayer.playerRace == "Nereides")
 		{
-			return (nereidesStacks / 10) + 1;
+			return (elationStacks.Count / 10) + 1;
 		}
 		
 		return 1;
@@ -73,9 +80,20 @@ public class RacialTraits : MasterScript
 				ambitionCounter = 100f;
 			}
 		}
+
 		if(player.playerRace == "Nereides")
 		{
-			player.researchCostModifier += nereidesStacks;
+			player.researchCostModifier += elationStacks.Count;
+
+			for(int i = 0; i < elationStacks.Count; ++i)
+			{
+				if(elationStacks[i].creationTime + elationStacks[i].maxAge < Time.time)
+				{
+					elationStacks.RemoveAt(i);
+					i = -1;
+					++stacksDissolvedSinceLastUpdate;
+				}
+			}
 		}
 	}
 	
@@ -124,7 +142,7 @@ public class RacialTraits : MasterScript
 		
 		if(playerTurnScript.playerRace == "Nereides")
 		{
-			racialLabel.text = nereidesStacks + " stacks";
+			racialLabel.text = elationStacks.Count + " stacks";
 		}
 		
 		if(playerTurnScript.playerRace == "Selkies")
@@ -132,4 +150,9 @@ public class RacialTraits : MasterScript
 			racialLabel.text = Math.Round(amber, 2) + " Amber";
 		}
 	}
+}
+
+public class StackOfElation
+{
+	public float creationTime, maxAge;
 }

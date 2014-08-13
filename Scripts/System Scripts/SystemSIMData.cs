@@ -16,6 +16,7 @@ public class SystemSIMData : MasterScript
 	[HideInInspector]
 	public bool canImprove, foundPlanetData;
 	public GameObject protectedBy = null;
+	public int secondaryResourceGeneratedSinceLastUpdate, totalSecondaryResourcesGeneratedInSystem;
 
 	public float totalSystemKnowledge, totalSystemPower, totalSystemSIM, totalSystemAmber, totalSystemWealth;
 	public float flResourceModifier, flgrowthModifier, flOffDefModifier;
@@ -74,6 +75,38 @@ public class SystemSIMData : MasterScript
 		}
 	}
 
+	public void CheckForSecondaryResourceIncrease(int planet, TurnInfo player)
+	{
+		if(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType != null)
+		{
+			int rnd = UnityEngine.Random.Range (0, 100);
+			
+			if(rnd < 4 * improvementsBasic.resourceYieldBonus)
+			{
+				switch(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType)
+				{
+				case "Antimatter":
+					++player.antimatter;
+					break;
+				case "Liquid Hydrogen":
+					++player.liquidH2;
+					break;
+				case "Blue Carbon":
+					++player.blueCarbon;
+					break;
+				case "Radioisotopes":
+					++player.radioisotopes;
+					break;
+				default:
+					break;
+				}
+
+				++secondaryResourceGeneratedSinceLastUpdate;
+				++totalSecondaryResourcesGeneratedInSystem;
+			}
+		}
+	}
+
 	public void SystemSIMCounter(TurnInfo player) //This functions is used to add up all resources outputted by planets within a system, with improvement and tech modifiers applied
 	{
 		float tempTotalSci = 0.0f, tempTotalInd = 0.0f;
@@ -88,32 +121,8 @@ public class SystemSIMData : MasterScript
 			if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetColonised == true)
 			{
 				++planetsColonised;
-		
-				if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].rareResourceType != null)
-				{
-					int rnd = UnityEngine.Random.Range (0, 100);
-					
-					if(rnd < 4 * improvementsBasic.resourceYieldBonus)
-					{
-						switch(systemListConstructor.systemList[thisSystem].planetsInSystem[j].rareResourceType)
-						{
-						case "Antimatter":
-							++player.antimatter;
-							break;
-						case "Liquid Hydrogen":
-							++player.liquidH2;
-							break;
-						case "Blue Carbon":
-							++player.blueCarbon;
-							break;
-						case "Radioisotopes":
-							++player.radioisotopes;
-							break;
-						default:
-							break;
-						}
-					}
-				}
+
+				CheckForSecondaryResourceIncrease(j, player);
 
 				tempTotalSci += CheckPlanetValues(j, "Knowledge");
 				tempTotalInd += CheckPlanetValues(j, "Power");

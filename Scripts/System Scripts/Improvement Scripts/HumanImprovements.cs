@@ -129,13 +129,13 @@ public class HumanImprovements : MasterScript
 
 	private void TH1I4()
 	{
-		improvements.tempCount = 0.02 * racialTraitScript.ambitionCounter;
+		improvements.tempCount = 0.02f * racialTraitScript.ambitionCounter;
 
 		improvements.expansionPenaltyModifier -= improvements.tempCount;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[15].improvementMessage = ("-" + improvements.tempCount * 100 + " Expansion Penalty Reduction from Ambition");
+			improvements.listOfImprovements[15].improvementMessage = ("-" + improvements.tempCount * 100f + " Expansion Penalty Reduction from Ambition");
 		}
 	}
 
@@ -148,7 +148,7 @@ public class HumanImprovements : MasterScript
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == player.homePlanetCategory)
 		{
-			improvements.maxPopulationBonus += 0.4;
+			improvements.maxPopulationBonus += 0.4f;
 		}
 		else
 		{
@@ -218,7 +218,7 @@ public class HumanImprovements : MasterScript
 	{
 		if(checkValue == false)
 		{
-			player.wealth -= systemSIMData.totalSystemWealth * 0.3f;
+			improvements.wealthBonus -= systemSIMData.totalSystemWealth * 0.3f;
 			racialTraitScript.ambitionCounter += systemSIMData.totalSystemWealth * 0.3f;
 			improvements.listOfImprovements[20].improvementMessage = (systemSIMData.totalSystemWealth * 0.3f + " Wealth converted to " + systemSIMData.totalSystemWealth * 0.3f + " Ambition");
 		}
@@ -297,7 +297,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH4I1()
 	{
-		improvements.tempCount = 0.0001 * racialTraitScript.ambitionCounter;
+		improvements.tempCount = 0.0001f * racialTraitScript.ambitionCounter;
 		improvements.researchCostReduction -= improvements.tempCount;
 
 		if(checkValue == false)
@@ -311,7 +311,7 @@ public class HumanImprovements : MasterScript
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
 			improvements.upkeepModifier -= 0.5f;
-			improvements.upkeepWealth -= 1;
+			improvements.wealthBonus += 1;
 		}
 
 		if(checkValue == false)

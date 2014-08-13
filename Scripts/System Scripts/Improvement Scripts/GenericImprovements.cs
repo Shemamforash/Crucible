@@ -74,11 +74,11 @@ public class GenericImprovements : MasterScript
 		
 		if(thisPlayer.playerRace == "Humans")
 		{
-			humanImprovements.TechSwitch(tech, tempImprov, thisPlayer, checkValue);
+			humanImprovements.TechSwitch(tech, planet, tempImprov, thisPlayer, checkValue);
 		}
 		if(thisPlayer.playerRace == "Nereides")
 		{
-			nereidesImprovements.TechSwitch(tech, tempImprov, thisPlayer, checkValue);
+			nereidesImprovements.TechSwitch(tech, planet, tempImprov, thisPlayer, checkValue);
 		}
 		if(thisPlayer.playerRace == "Selkies")
 		{
@@ -205,7 +205,7 @@ public class GenericImprovements : MasterScript
 
 	private void T3I1()
 	{
-		improvements.tempCount = 0.0025 * (systemSIMData.totalSystemKnowledge + systemSIMData.totalSystemPower);
+		improvements.tempCount = 0.0025f * (systemSIMData.totalSystemKnowledge + systemSIMData.totalSystemPower);
 		
 		improvements.knowledgePercentBonus += improvements.tempCount;
 		improvements.upkeepModifier += improvements.tempCount;

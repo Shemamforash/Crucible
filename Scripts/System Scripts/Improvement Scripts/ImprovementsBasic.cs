@@ -6,7 +6,7 @@ using System.Xml;
 
 public class ImprovementsBasic : MasterScript 
 {
-	public float knowledgePercentBonus, powerPercentBonus, amberPenalty, amberProductionBonus, amberPointBonus, knowledgeTechModifier, growthModifier, maxPopulationBonus, resourceYieldBonus;
+	public float knowledgePercentBonus, powerPercentBonus, amberPenalty, amberProductionBonus, amberPointBonus, knowledgeTechModifier, growthModifier, maxPopulationBonus, resourceYieldBonus, wealthBonus;
 	public float researchCostReduction, improvementCostReduction, upkeepModifier, tempCount, tempBonusAmbition, expansionPenaltyModifier, improvementSlotsBonus;
 	public List<string> planetToBuildOn;
 	public GameObject tooltip;
@@ -65,13 +65,13 @@ public class ImprovementsBasic : MasterScript
 	{
 		knowledgePercentBonus = 1f; //Bonus knowledge % for system
 		powerPercentBonus = 1f; //Bonus power % for system
-		improvementCostModifier = 1f; //Modifier of cost of improvements on system
+		improvementCostModifier = 1; //Modifier of cost of improvements on system
 		knowledgeTechModifier = 1f; //Modifier of bonus knowledge
 		growthModifier = 1f; //Modifier of max population
 		amberPenalty = 1f; //Modifer of all resources due to amber production
 		amberPointBonus = 1f; //Bonus to amber production in units
 		amberProductionBonus = 1f; //Bonus to amber production in %
-		researchCost = 1f; //Modifier of research costs
+		researchCost = 1; //Modifier of research costs
 		maxPopulationBonus = 0f; 
 		resourceYieldBonus = 1f;
 		tempCount = 0.0f;
@@ -108,6 +108,7 @@ public class ImprovementsBasic : MasterScript
 		upkeepWealth = 0f;
 		upkeepModifier = 1f;
 		expansionPenaltyModifier = 1f;
+		wealthBonus = 0;
 
 		ResetModifiers();
 
@@ -148,6 +149,10 @@ public class ImprovementsBasic : MasterScript
 		thisPlayer.power -= upkeepPower;
 
 		knowledgePercentBonus = knowledgePercentBonus * knowledgeTechModifier;
+
+		racialTraitScript.stacksGeneratedSinceLastUpdate = 0;
+		racialTraitScript.stacksDissolvedSinceLastUpdate = 0;
+		systemSIMData.secondaryResourceGeneratedSinceLastUpdate = 0;
 	}
 	
 	public int CheckDiplomaticStateOfAllPlayers(TurnInfo thisPlayer, string state)
