@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><Records>
+  <Record>
+    <Row
+      A="Fission Bomb"
+      C="20"
+      D="10"
+      I="Infiltrator"
+	  J="Secondary Weapon"
+	  K="300"
+	  L="Superlight Materials"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Fusion Bomb"
+      C="60"
+      D="50"
+      I="Infiltrator"
+	  J="Secondary Weapon"
+	  K="600"
+	  L="Fission Bomb"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Antimatter Bomb"
+      C="100"
+      D="100"
+      I="Infiltrator"
+	  J="Secondary Weapon"
+	  K="1200"
+	  L="Fusion Bomb"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Gravity Artillery"
+      C="10"
+      D="5"
+      I="Soldier"
+	  J="Secondary Weapon"
+	  K="300"
+	  L="Supercooled Materials"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Accelerated Rounds"
+      C="20"
+      D="10"
+      I="Soldier"
+	  J="Secondary Weapon"
+	  K="600"
+	  L="Gravity Artillery"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Hypervelocity Rounds"
+      C="30"
+      D="20"
+      I="Soldier"
+	  J="Secondary Weapon"
+	  K="1200"
+	  L="Accelerated Rounds"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Standard Dropships"
+      C="5"
+      D="0"
+      I="Diplomat"
+	  J="Secondary Weapon"
+	  K="300"
+	  L="Ablative Panels"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Support Ships"
+      C="10"
+      D="5"
+      I="Diplomat"
+	  J="Secondary Weapon"
+	  K="600"
+	  L="Standard Dropships"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Bombers"
+      C="20"
+      D="10"
+      I="Diplomat"
+	  J="Secondary Weapon"
+	  K="1200"
+	  L="Support Ships"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Superlight Materials"
+      E="1"
+      I="All"
+	  J="Engine"
+	  K="300"
+	  L="Basic Components"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Reinforced Hull"
+      E="2"
+	  F="10"
+      I="All"
+	  J="Engine"
+	  K="600"
+	  L="Superlight Materials"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Subsurface Capacitors"
+      B="10"
+	  E="3"
+      I="All"
+	  J="Engine"
+	  K="1200"
+	  L="Reinforced Hull"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Miniature Warp Sphere"
+      E="10"
+      I="Infiltrator"
+	  J="Engine"
+	  K="3000"
+	  L="Subsurface Capacitors"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Ablative Panels"
+      F="200"
+      I="All"
+	  J="Armour"
+	  K="300"
+	  L="Basic Components"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Partitioned Hull"
+      F="350"
+      I="All"
+	  J="Armour"
+	  K="600"
+	  L="Ablative Panels"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Plasma Windowing"
+      F="500"
+      I="All"
+	  J="Armour"
+	  K="1200"
+	  L="Partitioned Hull"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Supercooled Materials"
+      B="15"
+      I="All"
+	  J="Primary Weapon"
+	  K="300"
+	  L="Basic Components"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Intelligent Power"
+      B="20"
+      I="All"
+	  J="Primary Weapon"
+	  K="600"
+	  L="Supercooled Materials"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Rotor Rails"
+      B="30"
+      I="All"
+	  J="Primary Weapon"
+	  K="1200"
+	  L="Intelligent Power"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Full Broadside"
+      B="40"
+      I="Soldier"
+	  J="Primary Weapon"
+	  K="3000"
+	  L="Rotor Rails"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EMR Shielding"
+      G="1"
+      I="Infiltrator"
+	  J="Cloak"
+	  K="600"
+	  L="Fission Bomb"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Transformation Optics"
+      G="2"
+      I="Infiltrator"
+	  J="Cloak"
+	  K="2000"
+	  L="Fusion Bomb"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Logistics Expert"
+      H="1"
+      I="Diplomat"
+	  J="Trade Route"
+	  K="600"
+	  L="Standard Dropships"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="Supercomputer Banks"
+      H="2"
+      I="Diplomat"
+	  J="Trade Route"
+	  K="2000"
+	  L="Support Ships"
+    />
+  </Record>
+</Records>

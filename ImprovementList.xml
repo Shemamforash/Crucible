@@ -1,0 +1,1302 @@
+<Records>
+  <Record>
+    <Row
+      A="AMPLIFICATION"
+      B="0"
+      C="Generic"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="+5% PK"
+      I="+2.5% Power and Knowledge for every improvement built in this system."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="FERTILE LINK"
+      B="0"
+      C="Generic"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="+7.5% Power"
+      I="Allied system adjacent to this system provide +7.5% Power to this system."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="FORTUNE"
+      B="0"
+      C="Generic"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Resource yield"
+      I="Increases secondary resource yield by 20%."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="INJECTION"
+      B="1"
+      C="Generic"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="Resource packet"
+      I="Successfully mining a rare resource yields a small bonus of the planets main resource."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="CUSTODIANS"
+      B="1"
+      C="Generic"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+0.5% Power"
+      I="Gain +0.5% Power for every colonised planet in your empire."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ISOLATION"
+      B="1"
+      C="Generic"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="+X Population Cap"
+      I="Population increased by 10*(1/Respective planet quality)."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="INERTIA"
+      B="2"
+      C="Generic"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+5% Knowledge"
+      I="For every empty improvement slot"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="NOSTALGIA"
+      B="2"
+      C="Generic"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+100% KPW"
+      I="Home type planet resource production is doubled."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="REDUNDANCY"
+      B="2"
+      C="Generic"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="50% Resistance to Negative effects"
+      I="Reduces resource loss and slows growth of effects (including expansion penalty)."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="CONVERGENCE"
+      B="3"
+      C="Generic"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="+0.25% * X Science"
+      I="Where X is total SIM of system. Upkeep cost proportional to bonus."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="FOUNDATION"
+      B="3"
+      C="Generic"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="-50% Upkeep"
+      I="Upkeep costs are halved. Growth &amp; Defence recovery reduced by 50%."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PERCEPTION"
+      B="3"
+      C="Generic"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Status effect elimination"
+      I="Unchecked status effects are automatically destroyed after 2 minutes. Receive bonus wealth on removal."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EARTH&apos;S BOUNTY"
+      B="0"
+      C="Humans"
+      D="50"
+      E="1"
+      F="2"
+      G="Planet"
+      H="+0.1/0.3% Growth"
+      I="All planets/When built on terran planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EXPERTISE"
+      B="0"
+      C="Humans"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Secondary resource. -0.2% Growth."
+      I="Decreased growth but +10% yield on secondary resources."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SUMMER&apos;S SONG"
+      B="0"
+      C="Humans"
+      D="50"
+      E="1"
+      F="2"
+      G="Planet"
+      H="Cold/Hot"
+      I="+50% Kno  on cold, - 50% Kno on hot"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="NURTURE"
+      B="0"
+      C="Humans"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="-2% Expansion Penalty"
+      I="Per point of ambition"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="HORIZON"
+      B="0"
+      C="Humans"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="+1 Offence"
+      I="For every 10 defence lost"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SKYWARD"
+      B="1"
+      C="Humans"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="+20/40% Max Population"
+      I="Population cap increased by 20% for all planets in this system/40% on home category planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="DEEP SOURCE"
+      B="1"
+      C="Humans"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="Secondary resource."
+      I="All planets have a one-off, 25% chance to produce secondary resources (only on planets with no output)."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="WINTER&apos;S DIRGE"
+      B="1"
+      C="Humans"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="Hot/Cold"
+      I="+50% Pow on hot, -50% Pow on cold"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="OVERFLOW"
+      B="1"
+      C="Humans"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="30% Wealth -&gt; Ambition"
+      I="30% wealth converted to ambition."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="RAINFALL"
+      B="1"
+      C="Humans"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+5%(+2% Defence) Offence per Planet"
+      I="System offence increased for number of planets (When built on home type planets)"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="CREATION"
+      B="2"
+      C="Humans"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="-1 Ambition"
+      I="Planets consume 1 ambition per turn. +1 Improvement slot on planets."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="AUTUMN&apos;S AIR"
+      B="2"
+      C="Humans"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="Giant/Terran"
+      I="-50% Growth on Giant, +50% on Terran"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ORBITAL"
+      B="2"
+      C="Humans"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="Min 33/50% Population Cap"
+      I="On planets in system/On terran planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="WATERS OF LIFE"
+      B="2"
+      C="Humans"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+2 Ambition on Terran"
+      I="2 ambition points generated per turn if a Terran planet is present in system."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ENCLAVE"
+      B="2"
+      C="Humans"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+20 Offence/Adjacent Systems"
+      I="Adjacent systems must have all planets colonised"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="INSIGHT"
+      B="3"
+      C="Humans"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="-0.01% Research Cost"
+      I="Per ambition point. Stacks with systems."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SPRING&apos;S SERENADE"
+      B="3"
+      C="Humans"
+      D="400"
+      E="8"
+      F="16"
+      G="Planet"
+      H="Terran"
+      I="+1 Wealth from Terran, -1 Upkeep on Terran"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ASCENSION"
+      B="3"
+      C="Humans"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="0 Ambition Effect"
+      I="Ambition does not affect growth of planets in this system."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="OPULENCE"
+      B="3"
+      C="Humans"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Renaissance/Depression"
+      I="When ambition is greater than 75, this system gains 25% resource output. When lower than 75, this system loses 25% resource output."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EXPULSION"
+      B="3"
+      C="Humans"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Missile Changes"
+      I="Autolaunch missiles. Missile production cost decreased proportional to excess wealth output."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ASPIS"
+      B="0"
+      C="Defence"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="+25% Defence"
+      I="System defences are increased by 25%"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="TROPOS"
+      B="0"
+      C="Defence"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Adds silos"
+      I="Missile silos can hold 3 missiles. Missiles regenerate over time. High upkeep."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ADAMANT"
+      B="1"
+      C="Defence"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+5 Defence"
+      I="All planets gain defence proportional to the number of heroes you control and the quality of the planet."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="STRATOS"
+      B="1"
+      C="Defence"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="Missile defence"
+      I="+50% Chance to destroy enemy missiles. Decreases upkeep of silos."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="AMBROSIA"
+      B="2"
+      C="Defence"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+/-10% Defence/Collateral"
+      I="All planets gain +10% defence. Collateral damage has -5% effect on planet (-10% on home category planets)."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="THERMOS"
+      B="2"
+      C="Defence"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="Improved silos"
+      I="+50% Silo capacity, missiles travel 50% faster (50% increased chance to evade planet defence)."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PANCHREST"
+      B="3"
+      C="Defence"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="100% Recovery Rate"
+      I="Recovery rate of planet and system defence is doubled."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EXOS"
+      B="3"
+      C="Defence"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Attack adjacent Systems"
+      I="Allows system to fire upon adjacent enemy systems. Can only destroy system defences."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="RECYCLE"
+      B="0"
+      C="Nereides"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="-1 Improvement Cost"
+      I="Per stack"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="VOLATILITY"
+      B="0"
+      C="Nereides"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Random Resource"
+      I="Sometimes a stack will not form correctly and will provide twice it&apos;s value in a random resource."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="REBIRTH"
+      B="0"
+      C="Nereides"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Knowledge recovery"
+      I="10% Chance to recover knowledge investment on stack dissolve"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="COGNISANCE"
+      B="0"
+      C="Nereides"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="+0.1% Science"
+      I="Per stack"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="INTEGRATION"
+      B="0"
+      C="Nereides"
+      D="50"
+      E="1"
+      F="2"
+      G="Planet"
+      H="+5/7 Offence/Improvement"
+      I="Per planet/When built on home type planet"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="VALUE OF VISION"
+      B="1"
+      C="Nereides"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="+1/2 Wealth"
+      I="On cold planets/If built on Icy planet"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="COOPERATION"
+      B="1"
+      C="Nereides"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+100% Effects"
+      I="System effects are twice as effective."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="MASTERY"
+      B="1"
+      C="Nereides"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="Secondary. -1% Expansion Penalty."
+      I="Stack is generated on secondary resource production."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SUBTERRA"
+      B="1"
+      C="Nereides"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="+1 Improvement slot"
+      I="On cold planets."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SUBVERSION"
+      B="1"
+      C="Nereides"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+100% Sabotage effect"
+      I="Any sabotage effects triggered deal 2x damage. Reduces missile build time by 10%."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="FRACTAL GROWTH"
+      B="2"
+      C="Nereides"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+0.1% Max Population"
+      I="Per stack generated in system"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SAVANTS"
+      B="2"
+      C="Nereides"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+50% Industry on hot planets"
+      I="0% Science on hot planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="THEORY COMPLETE"
+      B="2"
+      C="Nereides"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+10(30)% Power"
+      I="+10% Power on system. If all planets are colonised and improvement slots filled, gain +30% Power."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ENRICHMENT"
+      B="2"
+      C="Nereides"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+100/150% Knowledge"
+      I="From improvements on cold planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="HIDDEN LEGION"
+      B="2"
+      C="Nereides"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+1 Offence per population"
+      I="Offence calculated by population not improvement level."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ENRAPTURE"
+      B="3"
+      C="Nereides"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Increased wealth"
+      I="Wealth output increased for period after creating stacks. Intensity is dictated by number of stacks formed."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PROLIFERATE"
+      B="3"
+      C="Nereides"
+      D="400"
+      E="8"
+      F="16"
+      G="Planet"
+      H="+0.1/0.15% Growth"
+      I="Per stack/If built on cold planets."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="BATHUS"
+      B="3"
+      C="Nereides"
+      D="400"
+      E="8"
+      F="16"
+      G="Planet"
+      H="Secondary Resources"
+      I="+50% yield on cold planets."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="OBFUSCATE"
+      B="3"
+      C="Nereides"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="+100% Output"
+      I="If under invasion"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PACIFISM"
+      B="3"
+      C="Nereides"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="-75% Off, - 50% Def, + 50% Recovery"
+      I="Missiles built 50% faster. Missile power doubled."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="LODE"
+      B="0"
+      C="Selkies"
+      D="50"
+      E="1"
+      F="2"
+      G="Planet"
+      H="+1/2 Amber"
+      I="Per planet/On hot planets. -5% Growth, resources produced per Amber produced."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="FORSAKE"
+      B="0"
+      C="Selkies"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="-1 Improvement Slot"
+      I="(To 1 minimum) +75% Effectiveness of remaining slots."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="AFFLUENCE"
+      B="0"
+      C="Selkies"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="-1 Improvement Cost"
+      I="For each amber produced"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="BURDEN OF PROSPERITY"
+      B="0"
+      C="Selkies"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="-5% Amber Penalty"
+      I="For each connected allied system"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SURVIVAL"
+      B="0"
+      C="Selkies"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="-2.5% Growth"
+      I="+100% Offence"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EQUIVALENCE"
+      B="1"
+      C="Selkies"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="-10% Expansion Penalty"
+      I="For each amber produced"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ABANDONMENT"
+      B="1"
+      C="Selkies"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="-(3-6) Amber produced"
+      I="Amber penalty halved"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PRIMA MATERIA"
+      B="1"
+      C="Selkies"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="Secondary Resources"
+      I="5% Random resource produced per amber."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="CONVERSION"
+      B="1"
+      C="Selkies"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+50-150% Amber produced"
+      I="For every industry produced"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="DISCORD"
+      B="1"
+      C="Selkies"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="-10 KP On system"
+      I="During invasion. Recovery rate +50%. Defence +50%."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="REEVALUATION"
+      B="2"
+      C="Selkies"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="-(1-4) Amber per turn"
+      I="Amber penalty halved"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="VERTICALITY"
+      B="2"
+      C="Selkies"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+1% Growth, +10% Population"
+      I="For every level of planet improvement."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="INSTABILITY"
+      B="2"
+      C="Selkies"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="+100% Industry, -75% Knowledge"
+      I="25% Chance for industry production to double. 25% Chance for knowledge production to quarter."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="MOTHERLODE"
+      B="2"
+      C="Selkies"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="50% Extra Amber"
+      I="50% Chance amber production doubled per second"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="WEAPONISATION"
+      B="2"
+      C="Selkies"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="25% Offence"
+      I="Dealt to invading heroes for every amber produced."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="INFLUENCE"
+      B="3"
+      C="Selkies"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="-X * 1% Research cost"
+      I="Reduces research costs by 1%."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="AWAKENING"
+      B="3"
+      C="Selkies"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="+1% Population cap"
+      I="For each amber produced"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="REALISATION"
+      B="3"
+      C="Selkies"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="+100% Amber output"
+      I="No amber penalty, but 1% chance to start amber drought (no production for 30-60s)."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="FLORESCENCE"
+      B="3"
+      C="Selkies"
+      D="400"
+      E="8"
+      F="16"
+      G="Planet"
+      H="+1/2 Improvement Slots"
+      I="On Plains/Molten planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="MAGNETIC AURA"
+      B="3"
+      C="Selkies"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Recovery during invasion"
+      I="Provides 25% defence recovery rate even during invasions."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="BASIDIUM"
+      B="0"
+      C="Dusk"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Unlocks Spore"
+      I="Spore can be activated at biomass cost. Spore will colonise a nearby empty system at random."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="VASTNESS"
+      B="0"
+      C="Dusk"
+      D="50"
+      E="1"
+      F="2"
+      G="Planet"
+      H="+20% Biomass"
+      I="From Giant type planets."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PERICARP"
+      B="0"
+      C="Dusk"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="+10% Biomass"
+      I="When a planet is successfully invaded"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="METABOLITES"
+      B="0"
+      C="Dusk"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Secondary Resources"
+      I="Chance for a bonus secondary resource to be generated with every biomass"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="TOXALBUMIN"
+      B="0"
+      C="Dusk"
+      D="50"
+      E="1"
+      F="2"
+      G="System"
+      H="Defence/Offence Bonus"
+      I="Defence bonus is  100-biomass reserves %. Offence bonus is biomass reserves-100%"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="SPINE"
+      B="1"
+      C="Dusk"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="Unlocks Needle"
+      I="Needle can be bought. Needle similar to heroes."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PARASITISM"
+      B="1"
+      C="Dusk"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="Siphon enemy resources"
+      I="Siphons resources from adjacent enemy systems and converts to biomass."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="EXTREMOPHILE"
+      B="1"
+      C="Dusk"
+      D="100"
+      E="2"
+      F="4"
+      G="Planet"
+      H="Dusk gains extromophile ability"
+      I="Dusk can survive on Giant planets when biomass is depleted. Biomass generated at a reduced rate."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="AFFERENCE"
+      B="1"
+      C="Dusk"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="+2% Biomass Reserves"
+      I="Biomass reserves increased by 2% for every planet producing Biomass"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="REACHLESS"
+      B="1"
+      C="Dusk"
+      D="100"
+      E="2"
+      F="4"
+      G="System"
+      H="-33% Biomass Cost"
+      I="Improvements cost 66% biomass."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="HYPHAE"
+      B="2"
+      C="Dusk"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="Unlocks Vine"
+      I="Vine can be built on a planet. A vine reduces biomass consumption."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PUTREFACTION"
+      B="2"
+      C="Dusk"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="Allows construction of spore missile"
+      I="Missile causes breakdown effect on planet population. Converts population to biomass."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="METAMORPHOSIS"
+      B="2"
+      C="Dusk"
+      D="200"
+      E="4"
+      F="8"
+      G="System"
+      H="Primordium"
+      I="Secondary resources now turned to Primordium. Primordium provides all secondary resources bonuses."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ENDLESS"
+      B="2"
+      C="Dusk"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+100% Biomass Reserves"
+      I="On Giant planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ELDER THINGS"
+      B="2"
+      C="Dusk"
+      D="200"
+      E="4"
+      F="8"
+      G="Planet"
+      H="+2 Improvement slots"
+      I="On Giant planets"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="CENTRUM"
+      B="3"
+      C="Dusk"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Unlocks Core"
+      I="Core can only be built once on a system. Core drains biomass from all other systems. Increases strength of all Dusk units and Systems."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="DISSOLVE"
+      B="3"
+      C="Dusk"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Allows drain action"
+      I="Drain creates an enormous amount of biomass, but destroys the planet in the process."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="AMMUTSEBA"
+      B="3"
+      C="Dusk"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="Destroy enemy system"
+      I="Can destroy target enemy system at the cost of this system and biomass."
+    />
+  </Record>
+  <Record>
+    <Row
+      A="ABSCISSION"
+      B="3"
+      C="Dusk"
+      D="400"
+      E="8"
+      F="16"
+      G="System"
+      H="+50% Biomass"
+      I="-25% Biomass Reserves"
+    />
+  </Record>
+  <Record>
+    <Row
+      A="PEERLESS"
+      B="3"
+      C="Dusk"
+      D="400"
+      E="8"
+      F="16"
+      G="Planet"
+      H="+100% Secondary Resources"
+      I="On Chthonic planet. Generates 150% Primordium if unlocked."
+    />
+  </Record>
+</Records>
