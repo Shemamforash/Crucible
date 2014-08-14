@@ -32,41 +32,41 @@ public class GenericImprovements : MasterScript
 		
 		switch (tech)
 		{
-		case 0:
-			T0I1();
-			break;
-		case 1:
-			T0I2();
-			break;
-		case 2:
-			T0I3();
-			break;
-		case 3:
+		case 0: //Amplification
 			T1I1();
 			break;
-		case 4:
+		case 1: //Fertile Link
 			T1I2();
 			break;
-		case 5:
-			T1I3(planet);
+		case 2: //Fortune
+			T1I3();
 			break;
-		case 6:
-			T2I1(planet);
+		case 3: //Injection
+			T2I1();
 			break;
-		case 7:
-			T2I2(planet);
+		case 4: //Custodians
+			T2I2();
 			break;
-		case 8:
-			T2I3();
+		case 5: //Isolation
+			T2I3(planet);
 			break;
-		case 9:
-			T3I1();
+		case 6: //Inertia
+			T3I1(planet);
 			break;
-		case 10:
-			T3I2();
+		case 7: //Nostalgia
+			T3I2(planet);
 			break;
-		case 11:
+		case 8: //Redundancy
 			T3I3();
+			break;
+		case 9: //Convergence
+			T4I1();
+			break;
+		case 10: //Foundation
+			T4I2();
+			break;
+		case 11: //Perception
+			T4I3();
 			break;
 		default:
 			break;
@@ -82,11 +82,11 @@ public class GenericImprovements : MasterScript
 		}
 		if(thisPlayer.playerRace == "Selkies")
 		{
-			selkiesImprovements.TechSwitch(tech, tempImprov, thisPlayer, checkValue);
+			selkiesImprovements.TechSwitch(tech, planet, tempImprov, thisPlayer, checkValue);
 		}
 	}
 
-	private void T0I1() //Amplification
+	private void T1I1() //Amplification
 	{
 		for(int i = 0; i < improvements.listOfImprovements.Count; ++i) //For all improvements
 		{
@@ -104,7 +104,7 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T0I2() //Fertile Link
+	private void T1I2() //Fertile Link
 	{
 		for(int i = 0; i < systemListConstructor.systemList[improvements.system].permanentConnections.Count; ++i) //For all connections
 		{
@@ -123,24 +123,45 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T0I3() //Fortune
+	private void T1I3() //Fortune
 	{
+		improvements.resourceYieldBonus += 0.5f;
+
 		if(checkValue == false)
 		{
-			improvements.resourceYieldBonus += 0.5f;
 			improvements.listOfImprovements[2].improvementMessage = ("+50% Yield on Secondary Resources");
 		}
 	}
 
-	private void T1I1() //Injection
+	private void T2I1() //Injection
 	{
+		for(int i = 0; i < systemSIMData.secondaryResourceGeneratedSinceLastUpdate; ++i)
+		{
+			for(int j = 0; j < systemListConstructor.systemList[improvements.system].systemSize; ++j)
+			{
+				if(systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower > systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
+				{
+					thisPlayer.power += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower;
+				}
+				if(systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower < systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
+				{
+					thisPlayer.knowledge += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge;
+				}
+				if(systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower == systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
+				{
+					thisPlayer.power += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower / 2f;
+					thisPlayer.knowledge += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge / 2f;
+				}
+			}
+		}
+
 		if(checkValue == false)
 		{
 			improvements.listOfImprovements[3].improvementMessage = ("Resource Bonus on Secondary Resource Generation");
 		}
 	}
 
-	private void T1I2() //Custodians
+	private void T2I2() //Custodians
 	{
 		int tempCount = CheckNumberOfPlanetsWithImprovement(4, thisPlayer, improvements);
 		
@@ -152,7 +173,7 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T1I3(int planet) //Isolation
+	private void T2I3(int planet) //Isolation
 	{
 		float temp = (systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetImprovementLevel + 1) * 10f;
 
@@ -164,7 +185,7 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T2I1(int planet) //Inertia
+	private void T3I1(int planet) //Inertia
 	{
 		improvements.tempCount = 0f;
 
@@ -182,7 +203,7 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T2I2(int planet) //Nostalgia
+	private void T3I2(int planet) //Nostalgia
 	{
 		bool allPlanetsColonised  = true;
 
@@ -198,12 +219,12 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T2I3()
+	private void T3I3() //Redundancy
 	{
 		//TODO
 	}
 
-	private void T3I1()
+	private void T4I1() //Convergence
 	{
 		improvements.tempCount = 0.0025f * (systemSIMData.totalSystemKnowledge + systemSIMData.totalSystemPower);
 		
@@ -216,7 +237,7 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T3I2()
+	private void T4I2() //Foundation
 	{
 		improvements.upkeepModifier -= 0.5f;
 
@@ -226,7 +247,7 @@ public class GenericImprovements : MasterScript
 		}
 	}
 
-	private void T3I3()
+	private void T4I3() //Perception
 	{
 		//TODO
 	}

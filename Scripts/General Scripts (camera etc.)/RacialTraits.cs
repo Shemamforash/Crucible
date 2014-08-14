@@ -40,21 +40,6 @@ public class RacialTraits : MasterScript
 		return 1;
 	}
 	
-	public float HumanTrait(TurnInfo thisPlayer, ImprovementsBasic improvements) //Returns ambition modifier
-	{
-		if(thisPlayer.playerRace == "Humans")
-		{
-			if(improvements.listOfImprovements[18].hasBeenBuilt == false)
-			{
-				ambitiongrowthModifier = ambitionCounter / 40.0f;
-				
-				return ambitiongrowthModifier;
-			}
-		}
-		
-		return 1f;
-	}
-	
 	public void RacialBonus(TurnInfo player)
 	{
 		if(player.playerRace == "Humans")

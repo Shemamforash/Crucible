@@ -17,64 +17,64 @@ public class HumanImprovements : MasterScript
 		
 		switch (tech)
 		{
-		case 12:
+		case 12: //Earth's Bounty
 			TH1I1(planet);
 			break;
-		case 13:
+		case 13: //Expertise
 			TH1I2();
 			break;
-		case 14:
+		case 14: //Summer's Song
 			TH1I3(planet);
 			break;
-		case 15:
+		case 15: //Nurture
 			TH1I4();
 			break;
-		case 16:
+		case 16: //Horizon
 			TH1I5();
 			break;
-		case 17:
+		case 17: //Skyward
 			TH2I1(planet);
 			break;
-		case 18:
+		case 18: //Deep Source
 			TH2I2(planet);
 			break;
-		case 19:
+		case 19: //Winter's Dirge
 			TH2I3(planet);
 			break;
-		case 20:
+		case 20: //Overflow
 			TH2I4();
 			break;
-		case 21:
+		case 21: //Rainfall
 			TH2I5();
 			break;
-		case 22:
+		case 22: //Creation
 			TH3I1();
 			break;
-		case 23:
+		case 23: //Autumn's Air
 			TH3I2(planet);
 			break;
-		case 24:
+		case 24: //Orbital
 			TH3I3(planet);
 			break;
-		case 25:
+		case 25: //Waters of Life
 			TH3I4();
 			break;
-		case 26:
+		case 26: //Enclave
 			TH3I5();
 			break;
-		case 27:
+		case 27: //Insight
 			TH4I1();
 			break;
-		case 28:
+		case 28: //Spring's Serenade
 			TH4I2(planet);
 			break;
-		case 29:
+		case 29: //Ascension
 			TH4I3();
 			break;
-		case 30:
+		case 30: //Opulence
 			TH4I4();
 			break;
-		case 31:
+		case 31: //Expulsion
 			TH4I5();
 			break;
 		default:
@@ -82,7 +82,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH1I1(int planet)
+	private void TH1I1(int planet) //Earth's Bounty
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
@@ -99,7 +99,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH1I2()
+	private void TH1I2() //Expertise
 	{
 		improvements.growthModifier -= 0.2f;
 		improvements.resourceYieldBonus += 0.5f;
@@ -110,7 +110,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH1I3(int planet)
+	private void TH1I3(int planet) //Summer's Song
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
 		{
@@ -127,7 +127,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH1I4()
+	private void TH1I4() //Nurute
 	{
 		improvements.tempCount = 0.02f * racialTraitScript.ambitionCounter;
 
@@ -139,12 +139,12 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH1I5()
+	private void TH1I5() //Horizon
 	{
 		//TODO
 	}
 
-	private void TH2I1(int planet)
+	private void TH2I1(int planet) //Skyward
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == player.homePlanetCategory)
 		{
@@ -161,7 +161,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH2I2(int planet)
+	private void TH2I2(int planet) //Deep Source
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType == "")
 		{
@@ -197,7 +197,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH2I3(int planet)
+	private void TH2I3(int planet) //Winter's Dirge
 	{		
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
 		{
@@ -214,7 +214,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH2I4()
+	private void TH2I4() //Overflow
 	{
 		if(checkValue == false)
 		{
@@ -224,12 +224,12 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH2I5()
+	private void TH2I5() //Rainfall
 	{
 		//TODO
 	}
 
-	private void TH3I1()
+	private void TH3I1()//Creation
 	{
 		improvements.improvementSlotsBonus += 1;
 
@@ -240,7 +240,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH3I2(int planet)
+	private void TH3I2(int planet) //Autumn's Air
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Giant")
 		{
@@ -257,7 +257,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH3I3(int planet)
+	private void TH3I3(int planet) //Orbital
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
@@ -274,7 +274,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH3I4()
+	private void TH3I4() //Waters of Life
 	{
 		for(int i = 0; i < systemListConstructor.systemList[improvements.system].systemSize; ++i)
 		{
@@ -290,12 +290,12 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH3I5()
+	private void TH3I5() //Enclave
 	{
 		//TODO
 	}
 
-	private void TH4I1()
+	private void TH4I1() //Insight
 	{
 		improvements.tempCount = 0.0001f * racialTraitScript.ambitionCounter;
 		improvements.researchCostReduction -= improvements.tempCount;
@@ -306,7 +306,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH4I2(int planet)
+	private void TH4I2(int planet) //Spring's Serenade
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
@@ -320,12 +320,16 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH4I3()
+	private void TH4I3() //Ascension
 	{
-		//TODO
+		if(checkValue == false)
+		{
+			improvements.ambitionPenalty = 0f;
+			improvementsBasic.listOfImprovements[29].improvementMessage = "No effect from Ambition Penalties";
+		}
 	}
 
-	private void TH4I4()
+	private void TH4I4() //Opulence
 	{
 		if(racialTraitScript.ambitionCounter >= 75)
 		{
@@ -348,7 +352,7 @@ public class HumanImprovements : MasterScript
 		}
 	}
 
-	private void TH4I5()
+	private void TH4I5() //Expulsion
 	{
 		//TODO
 	}

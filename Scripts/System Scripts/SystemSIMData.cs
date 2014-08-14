@@ -114,6 +114,7 @@ public class SystemSIMData : MasterScript
 		thisPlayer = player;
 		CheckFrontLineBonus ();
 		CheckSecRecBonus(thisSystem);
+		CalculateSystemModifierValues();
 		int planetsColonised = 0;
 
 		for(int j = 0; j < systemListConstructor.systemList[thisSystem].systemSize; ++j)
@@ -130,13 +131,8 @@ public class SystemSIMData : MasterScript
 		}
 
 		totalSystemWealth = player.raceWealth * planetsColonised * turnInfoScript.expansionPenaltyModifier;
-		
-		player.wealth += totalSystemWealth;
-
-		CalculateSystemModifierValues ();
-
-		totalSystemKnowledge = (tempTotalSci + knowledgeUnitBonus) * systemKnowledgeModifier * turnInfoScript.expansionPenaltyModifier;
-		totalSystemPower = (tempTotalInd + powerUnitBonus) * systemPowerModifier * turnInfoScript.expansionPenaltyModifier;
+		totalSystemKnowledge = (tempTotalSci + knowledgeUnitBonus)  * turnInfoScript.expansionPenaltyModifier;
+		totalSystemPower = (tempTotalInd + powerUnitBonus) * turnInfoScript.expansionPenaltyModifier;
 
 		if(thisPlayer.playerRace == "Selkies")
 		{
@@ -144,13 +140,18 @@ public class SystemSIMData : MasterScript
 		}
 
 		IncreasePopulation ();
+
+		totalSystemWealth -= improvementsBasic.upkeepWealth * improvementsBasic.upkeepModifier;
+		totalSystemPower -= improvementsBasic.upkeepPower * improvementsBasic.upkeepModifier;
+		totalSystemWealth += improvementsBasic.wealthBonus;
+		player.wealth += totalSystemWealth;
 	}
 
 	private void CalculateSystemModifierValues()
 	{
-		systemKnowledgeModifier =  improvementsBasic.knowledgePercentBonus * EmbargoPenalty() * PromoteBonus() * improvementsBasic.amberPenalty * flResourceModifier;
-		systemPowerModifier =  improvementsBasic.powerPercentBonus * racialTraitScript.NereidesPowerModifer (thisPlayer) * EmbargoPenalty () * PromoteBonus () * improvementsBasic.amberPenalty * flResourceModifier;
-		systemgrowthModifier = racialTraitScript.HumanTrait (thisPlayer, improvementsBasic) * improvementsBasic.amberPenalty * flgrowthModifier * improvementsBasic.growthModifier;
+		systemKnowledgeModifier =  systemListConstructor.systemList[thisSystem].sysKnowledgeModifier * systemListConstructor.systemList[thisSystem].sysAmberPenalty * EmbargoPenalty() * PromoteBonus() * flResourceModifier;
+		systemPowerModifier =  systemListConstructor.systemList[thisSystem].sysPowerModifier * systemListConstructor.systemList[thisSystem].sysAmberPenalty * racialTraitScript.NereidesPowerModifer (thisPlayer) * EmbargoPenalty () * PromoteBonus () * flResourceModifier;
+		systemgrowthModifier = systemListConstructor.systemList[thisSystem].sysGrowthModifier * systemListConstructor.systemList[thisSystem].sysAmberPenalty * flgrowthModifier;
 	}
 
 	public float CheckPlanetValues(int planet, string resource)
@@ -163,14 +164,10 @@ public class SystemSIMData : MasterScript
 		
 		systemFunctions.CheckImprovement(thisSystem, planet);
 		
-		tempSci = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetKnowledge * planetKnowledgeModifier;
-		tempInd = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetPower * planetPowerModifier;
-		
-		if(improvementsBasic.listOfImprovements[8].hasBeenBuilt == true && systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetType == thisPlayer.homePlanetType)
-		{
-			tempSci = tempSci * 2;
-			tempInd = tempInd * 2;
-		}
+		tempSci = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetKnowledge * (systemKnowledgeModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier)
+				* turnInfoScript.expansionPenaltyModifier;
+		tempInd = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetPower * (systemKnowledgeModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier)
+				* turnInfoScript.expansionPenaltyModifier;
 		
 		if(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetColonised == true)
 		{
@@ -202,17 +199,6 @@ public class SystemSIMData : MasterScript
 		baseResourceBonus = systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation / 66.6666f;
 		planetKnowledgeModifier = (thisPlayer.raceKnowledge + secRecKnowledgeMod) * baseResourceBonus * knowledgeBuffModifier;
 		planetPowerModifier = (thisPlayer.racePower + secRecPowerMod) * baseResourceBonus * powerBuffModifier;
-		
-		if(improvementsBasic.listOfImprovements[24].hasBeenBuilt == true)
-		{
-			string tempString = systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetType;
-			
-			if(tempString == "Molten" || tempString == "Chasm" || tempString == "Waste")
-			{
-				planetKnowledgeModifier = 0f;
-				planetPowerModifier += planetPowerModifier * 0.5f;
-			}
-		}
 	}	
 
 	public void IncreasePopulation() //Used to increase the population of planets by their growth rate
@@ -227,14 +213,12 @@ public class SystemSIMData : MasterScript
 					
 					systemFunctions.CheckImprovement(thisSystem, j); //Check the planets max ownership level
 
-					if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation >= systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulation 
-					   + improvementsBasic.maxPopulationBonus) //If the current population is greater than the maximum allowed population
-					{
-						systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation = systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulation; //Set the current population to equal max
-						continue;
-					}
+					float maxPopPlanet = systemListConstructor.systemList[thisSystem].sysMaxPopulationModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulationModifier
+						+ systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulation;
 
-					populationToAdd = systemgrowthModifier * secRecPopulationMod; //Growth is the standard growth rate for the planets in the system multiplied by secondary resource modifiers
+					maxPopPlanet = Mathf.RoundToInt(maxPopPlanet);
+
+					populationToAdd = 0.1f * (systemgrowthModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[j].growthModifier) * secRecPopulationMod; //Growth is the standard growth rate for the planets in the system multiplied by secondary resource modifiers
 
 					if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation < 0) //If population is less than 0, the planet must be reset
 					{
@@ -244,6 +228,12 @@ public class SystemSIMData : MasterScript
 					}
 
 					systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation += populationToAdd; //Add the growth to the population
+
+					if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation >= maxPopPlanet) //If the current population is greater than the maximum allowed population
+					{
+						systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation = maxPopPlanet; //Set the current population to equal max
+						continue;
+					}
 				}
 			}
 		}

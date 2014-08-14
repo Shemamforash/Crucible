@@ -18,64 +18,64 @@ public class NereidesImprovements : MasterScript
 		
 		switch (tech)
 		{
-		case 32:
+		case 40: //Recycle
 			TN1I1();
 			break;
-		case 33:
+		case 41: //Volatility
 			TN1I2();
 			break;
-		case 34:
+		case 42: //Rebirth
 			TN1I3();
 			break;
-		case 35:
+		case 43: //Cognisance
 			TN1I4();
 			break;
-		case 36:
+		case 44: //Integration
 			TN1I5(planet);
 			break;
-		case 37:
+		case 45: //Value of Vision
 			TN2I1(planet);
 			break;
-		case 38:
+		case 46: //Cooperation
 			TN2I2();
 			break;
-		case 39:
+		case 47: //Mastery
 			TN2I3();
 			break;
-		case 40:
+		case 48: //Subterra
 			TN2I4(planet);
 			break;
-		case 41:
+		case 49: //Subversion
 			TN2I5();
 			break;
-		case 42:
+		case 50: //Fractal Growth
 			TN3I1();
 			break;
-		case 43:
+		case 51: //Savants
 			TN3I2(planet);
 			break;
-		case 44:
+		case 52: //Theory Complete
 			TN3I3(planet);
 			break;
-		case 45:
+		case 53: //Enrichement
 			TN3I4(planet);
 			break;
-		case 46:
+		case 54: //Hidden Legion
 			TN3I5();
 			break;
-		case 47:
+		case 55: //Enraptue
 			TN4I1();
 			break;
-		case 48:
+		case 56: //Proliferate
 			TN4I2();
 			break;
-		case 49:
+		case 57: //Bathus
 			TN4I3(planet);
 			break;
-		case 50:
+		case 58: //Obfuscate
 			TN4I4();
 			break;
-		case 51:
+		case 59: //Pacifism
 			TN4I5();
 			break;
 		default:
@@ -85,11 +85,11 @@ public class NereidesImprovements : MasterScript
 
 	private void TN1I1()
 	{
-		improvements.improvementCostReduction += racialTraitScript.nereidesStacks;
+		improvements.improvementCostReduction += racialTraitScript.elationStacks.Count;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[32].improvementMessage = ("-" + racialTraitScript.nereidesStacks + " Power Cost for Improvements");
+			improvements.listOfImprovements[40].improvementMessage = ("-" + racialTraitScript.elationStacks.Count + " Power Cost for Improvements");
 		}
 	}
 
@@ -108,7 +108,7 @@ public class NereidesImprovements : MasterScript
 				}
 			}
 
-			improvements.listOfImprovements[33].improvementMessage = "If Stack of Elation was Created, all planets generate a secondary resource if they are able to do so"; 
+			improvements.listOfImprovements[41].improvementMessage = "If Stack of Elation was Created, all planets generate a secondary resource if they are able to do so"; 
 		}
 	}
 
@@ -129,18 +129,18 @@ public class NereidesImprovements : MasterScript
 				}
 			}
 
-			improvements.listOfImprovements[34].improvementMessage = "If Stack Of Elation Dissolved, System Provides Knowledge Reimbursement of Stack Formation Cost";
+			improvements.listOfImprovements[42].improvementMessage = "If Stack Of Elation Dissolved, System Provides Knowledge Reimbursement of Stack Formation Cost";
 		}
 	}
 
 	private void TN1I4()
 	{
-		improvements.tempCount = 0.001f * racialTraitScript.nereidesStacks;
+		improvements.tempCount = 0.001f * racialTraitScript.elationStacks.Count;
 		improvements.knowledgePercentBonus += improvements.tempCount;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[35].improvementMessage = ("+" + improvements.tempCount * 100f + "% Knowledge from Stacks of Elation");
+			improvements.listOfImprovements[43].improvementMessage = ("+" + improvements.tempCount * 100f + "% Knowledge from Stacks of Elation");
 		}
 	}
 
@@ -163,7 +163,7 @@ public class NereidesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[37].improvementMessage = ("+" + temp + " Wealth on Planets");
+			improvements.listOfImprovements[45].improvementMessage = ("+" + temp + " Wealth on Planets");
 		}
 	}
 
@@ -191,7 +191,7 @@ public class NereidesImprovements : MasterScript
 				}
 			}
 			
-			improvements.listOfImprovements[38].improvementMessage = "25% Chance to Generate Elation on Secondary Resource Generation";
+			improvements.listOfImprovements[47].improvementMessage = "25% Chance to Generate Elation on Secondary Resource Generation";
 		}
 	}
 
@@ -204,7 +204,7 @@ public class NereidesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[40].improvementMessage = "+1 Improvement Slot on Cold Type Planets";
+			improvements.listOfImprovements[48].improvementMessage = "+1 Improvement Slot on Cold Type Planets";
 		}
 	}
 
@@ -220,7 +220,7 @@ public class NereidesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[42].improvementMessage = ("+" + improvements.tempCount + " Max Population on System from Secondary Resources Generated in this System");
+			improvements.listOfImprovements[50].improvementMessage = ("+" + improvements.tempCount + " Max Population on System from Secondary Resources Generated in this System");
 		}
 	}
 
@@ -233,7 +233,7 @@ public class NereidesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[43].improvementMessage = "+50% Power on Hot Planets, 0% Science on Hot Planets";
+			improvements.listOfImprovements[51].improvementMessage = "+50% Power on Hot Planets, 0% Science on Hot Planets";
 		}
 	}
 
@@ -254,7 +254,7 @@ public class NereidesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[44].improvementMessage = "+30% Power on Planets with full Improvement Slots, +10% Power on other Planets";
+			improvements.listOfImprovements[52].improvementMessage = "+30% Power on Planets with full Improvement Slots, +10% Power on other Planets";
 		}
 	}
 
@@ -262,7 +262,12 @@ public class NereidesImprovements : MasterScript
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
 		{
-			//TODO
+			improvements.knowledgeTechModifier += 1f;
+		}
+
+		if(checkValue == false)
+		{
+			improvements.listOfImprovements[53].improvementMessage = "+100% Effectiveness of Knowledge Improvements On Cold Planets";
 		}
 	}
 
@@ -278,7 +283,7 @@ public class NereidesImprovements : MasterScript
 			improvements.wealthBonus += racialTraitScript.stackWealthBonus;
 			--racialTraitScript.stackWealthBonus;
 			
-			improvements.listOfImprovements[46].improvementMessage = ("+" + racialTraitScript.stackWealthBonus + " Bonus Wealth from Stack Generation");
+			improvements.listOfImprovements[55].improvementMessage = ("+" + racialTraitScript.stackWealthBonus + " Bonus Wealth from Stack Generation");
 		}
 	}
 
@@ -292,13 +297,13 @@ public class NereidesImprovements : MasterScript
 			temp = 0.015f;
 		}
 
-		improvements.tempCount = temp * racialTraitScript.nereidesStacks;
+		improvements.tempCount = temp * racialTraitScript.elationStacks.Count;
 
 		improvements.growthModifier += improvements.tempCount;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[48].improvementMessage = "+" + improvements.tempCount + "% Growth on Planets";
+			improvements.listOfImprovements[56].improvementMessage = "+" + improvements.tempCount + "% Growth on Planets";
 		}
 	}
 
@@ -311,7 +316,7 @@ public class NereidesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[49].improvementMessage = "+200% Secondary Resource Yield on Cold Planets";
+			improvements.listOfImprovements[57].improvementMessage = "+200% Secondary Resource Yield on Cold Planets";
 		}
 	}
 
@@ -329,7 +334,7 @@ public class NereidesImprovements : MasterScript
 		{
 			if(systemDefence.underInvasion == true)
 			{
-				improvements.listOfImprovements[50].improvementMessage = "+100% Resource Yield from Invasion";
+				improvements.listOfImprovements[58].improvementMessage = "+100% Resource Yield from Invasion";
 			}
 		}
 	}

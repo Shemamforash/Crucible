@@ -7,7 +7,7 @@ using System.Xml;
 public class ImprovementsBasic : MasterScript 
 {
 	public float knowledgePercentBonus, powerPercentBonus, amberPenalty, amberProductionBonus, amberPointBonus, knowledgeTechModifier, growthModifier, maxPopulationBonus, resourceYieldBonus, wealthBonus;
-	public float researchCostReduction, improvementCostReduction, upkeepModifier, tempCount, tempBonusAmbition, expansionPenaltyModifier, improvementSlotsBonus;
+	public float researchCostReduction, improvementCostReduction, upkeepModifier, tempCount, tempBonusAmbition, ambitionPenalty, expansionPenaltyModifier, improvementSlotsBonus;
 	public List<string> planetToBuildOn;
 	public GameObject tooltip;
 	public int techTier = 0, improvementCostModifier = 0, researchCost, system;
@@ -59,6 +59,14 @@ public class ImprovementsBasic : MasterScript
 
 			listOfImprovements.Add(newImprovement);
 		}
+
+		if(systemListConstructor.systemList[RefreshCurrentSystem(gameObject)].systemName == "Nephthys")
+		{
+			for(int i = 0; i < listOfImprovements.Count; ++i)
+			{
+				Debug.Log (listOfImprovements[i].improvementName + " | " + i);
+			}
+		}
 	}
 
 	private void ResetModifiers()
@@ -76,6 +84,7 @@ public class ImprovementsBasic : MasterScript
 		resourceYieldBonus = 1f;
 		tempCount = 0.0f;
 		improvementSlotsBonus = 0f;
+		ambitionPenalty = 1f;
 	}
 
 	private void AssignSystemModifierValues(int system, int planet)
@@ -84,7 +93,7 @@ public class ImprovementsBasic : MasterScript
 		{
 			systemListConstructor.systemList[system].sysKnowledgeModifier = knowledgePercentBonus;
 			systemListConstructor.systemList[system].sysPowerModifier = powerPercentBonus;
-			systemListConstructor.systemList[system].sysGrowthModifier = growthModifier;
+			systemListConstructor.systemList[system].sysGrowthModifier = growthModifier * ambitionPenalty * racialTraitScript.ambitionCounter / 40f;
 			systemListConstructor.systemList[system].sysAmberPenalty = amberPenalty;
 			systemListConstructor.systemList[system].sysAmberModifier = amberProductionBonus;
 			systemListConstructor.systemList[system].sysMaxPopulationModifier = maxPopulationBonus;
@@ -92,13 +101,13 @@ public class ImprovementsBasic : MasterScript
 		}
 		else
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].knowledgeModifier = knowledgePercentBonus;
-			systemListConstructor.systemList[system].planetsInSystem[planet].powerModifier = powerPercentBonus;
-			systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier = growthModifier;
-			systemListConstructor.systemList[system].planetsInSystem[planet].amberPenalty = amberPenalty;
-			systemListConstructor.systemList[system].planetsInSystem[planet].amberModifier = amberProductionBonus;
+			systemListConstructor.systemList[system].planetsInSystem[planet].knowledgeModifier = (knowledgePercentBonus - 1) * knowledgeTechModifier;
+			systemListConstructor.systemList[system].planetsInSystem[planet].powerModifier = powerPercentBonus - 1;
+			systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier = growthModifier - 1;
+			systemListConstructor.systemList[system].planetsInSystem[planet].amberPenalty = amberPenalty - 1;
+			systemListConstructor.systemList[system].planetsInSystem[planet].amberModifier = amberProductionBonus - 1;
 			systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulationModifier = maxPopulationBonus;
-			systemListConstructor.systemList[system].planetsInSystem[planet].resourceModifier = resourceYieldBonus;
+			systemListConstructor.systemList[system].planetsInSystem[planet].resourceModifier = resourceYieldBonus - 1;
 		}
 	}
 	
@@ -109,6 +118,8 @@ public class ImprovementsBasic : MasterScript
 		upkeepModifier = 1f;
 		expansionPenaltyModifier = 1f;
 		wealthBonus = 0;
+		knowledgeTechModifier = 1f;
+		system = curSystem;
 
 		ResetModifiers();
 
@@ -130,8 +141,6 @@ public class ImprovementsBasic : MasterScript
 
 		for(int j = 0; j < systemListConstructor.systemList[curSystem].systemSize; ++j)
 		{
-			system = curSystem;
-
 			ResetModifiers();
 
 			for(int i = 0; i < listOfImprovements.Count; ++i)
@@ -144,11 +153,6 @@ public class ImprovementsBasic : MasterScript
 
 			AssignSystemModifierValues(curSystem, j);
 		}
-
-		thisPlayer.wealth -= upkeepWealth;
-		thisPlayer.power -= upkeepPower;
-
-		knowledgePercentBonus = knowledgePercentBonus * knowledgeTechModifier;
 
 		racialTraitScript.stacksGeneratedSinceLastUpdate = 0;
 		racialTraitScript.stacksDissolvedSinceLastUpdate = 0;

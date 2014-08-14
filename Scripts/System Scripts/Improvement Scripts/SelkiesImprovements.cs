@@ -17,64 +17,64 @@ public class SelkiesImprovements : MasterScript
 		
 		switch (tech) //The order of these is important
 		{
-		case 52:
-			TS1I1(planet);
-			break;
-		case 53:
-			TS1I2();
-			break;
-		case 54:
-			TS1I3();
-			break;
-		case 55:
-			TS1I4();
-			break;
-		case 56:
-			TS1I5();
-			break;
-		case 57:
-			TS2I1();
-			break;
-		case 58:
-			TS2I2();
-			break;
-		case 59:
-			TS2I3();
-			break;
 		case 60:
-			TS2I4();
+			TS1I1();
 			break;
 		case 61:
-			TS2I5();
+			TS1I2();
 			break;
 		case 62:
-			TS3I1();
+			TS1I3();
 			break;
 		case 63:
-			TS3I2();
+			TS1I4();
 			break;
 		case 64:
-			TS3I3();
+			TS1I5();
 			break;
 		case 65:
-			TS3I4();
+			TS2I1();
 			break;
 		case 66:
-			TS3I5();
+			TS2I2();
 			break;
 		case 67:
-			TS4I1();
+			TS2I3();
 			break;
 		case 68:
-			TS4I2();
+			TS2I4();
 			break;
 		case 69:
-			TS4I3();
+			TS2I5();
 			break;
 		case 70:
-			TS4I4(planet);
+			TS3I1();
 			break;
 		case 71:
+			TS3I2(planet);
+			break;
+		case 72:
+			TS3I3();
+			break;
+		case 73:
+			TS3I4();
+			break;
+		case 74:
+			TS3I5();
+			break;
+		case 75:
+			TS4I1();
+			break;
+		case 76:
+			TS4I2();
+			break;
+		case 77:
+			TS4I3();
+			break;
+		case 78:
+			TS4I4(planet);
+			break;
+		case 79:
 			TS4I5();
 			break;
 		default:
@@ -103,7 +103,7 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[52].improvementMessage = ("System is suffering -" + systemSIMData.totalSystemAmber * 5 + "% Resource production from Amber Penalty, +" + temp + "Amber On System");
+			improvements.listOfImprovements[60].improvementMessage = ("System is suffering -" + systemSIMData.totalSystemAmber * 5 + "% Resource production from Amber Penalty, +" + temp + "Amber On System");
 		}
 	}
 
@@ -113,18 +113,18 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[53].improvementMessage = "-1 Improvement Slots on Planets (min 1). +75% Effectiveness on remaining slots.";
+			improvements.listOfImprovements[61].improvementMessage = "-1 Improvement Slots on Planets (min 1). +75% Effectiveness on remaining slots.";
 		}
 	}
 
 	private void TS1I3()
 	{
-		int temp = 1 * systemSIMData.totalSystemAmber;
+		float temp = 1 * systemSIMData.totalSystemAmber;
 		improvements.improvementCostReduction += temp;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[54].improvementMessage = ("-" + temp + " Power Cost of Improvements from Amber Production");
+			improvements.listOfImprovements[62].improvementMessage = ("-" + temp + " Power Cost of Improvements from Amber Production");
 		}
 	}
 
@@ -136,21 +136,21 @@ public class SelkiesImprovements : MasterScript
 		{
 			int j = RefreshCurrentSystem(systemListConstructor.systemList[improvements.system].permanentConnections[i]);
 			
-			if(systemListConstructor.systemList[j].systemOwnedBy == thisPlayer.playerRace)
+			if(systemListConstructor.systemList[j].systemOwnedBy == player.playerRace)
 			{
 				++adjacentSystems;
 			}
 		}
 
-		improvements.amberPenalty -= adjacentSystems * 0.05f;
+		improvements.amberPenalty += adjacentSystems * 0.05f;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[55].improvementMessage = ("-" + adjacentSystems * 0.05f + " Amber Penalty from adjacent Selkies Systems");
+			improvements.listOfImprovements[63].improvementMessage = ("-" + adjacentSystems * 0.05f + " Amber Penalty from adjacent Selkies Systems");
 		}
 	}
 
-	private void T12I5()
+	private void TS1I5()
 	{
 		//TODO
 	}
@@ -162,7 +162,7 @@ public class SelkiesImprovements : MasterScript
 		
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[56].improvementMessage = ("-" + improvements.tempCount * 100 + "% Expansion Disapproval from Amber Production");
+			improvements.listOfImprovements[65].improvementMessage = ("-" + improvements.tempCount * 100 + "% Expansion Disapproval from Amber Production");
 		}
 	}
 
@@ -171,11 +171,11 @@ public class SelkiesImprovements : MasterScript
 		float rnd = Random.Range (0.25f, 0.4f);
 
 		improvements.amberProductionBonus -= rnd;
-		improvements.amberPenalty -= 0.5f;
+		improvements.amberPenalty += 0.5f;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[57].improvementMessage = "-25-40% Amber production, Amber penalty reduced by 50%";
+			improvements.listOfImprovements[66].improvementMessage = "-25-40% Amber production, Amber penalty reduced by 50%";
 		}
 	}
 
@@ -186,7 +186,7 @@ public class SelkiesImprovements : MasterScript
 		
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[58].improvementMessage = ("+" + improvements.tempCount * 100 + "% Secondary Resource Yield from Amber Production");
+			improvements.listOfImprovements[67].improvementMessage = ("+" + improvements.tempCount * 100 + "% Secondary Resource Yield from Amber Production");
 		}
 	}
 
@@ -197,7 +197,7 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[59].improvementMessage = ("+" + improvements.tempCount + "% Amber Production from Power Output");
+			improvements.listOfImprovements[68].improvementMessage = ("+" + improvements.tempCount + "% Amber Production from Power Output");
 		}
 	}
 
@@ -211,11 +211,11 @@ public class SelkiesImprovements : MasterScript
 		float rnd = Random.Range (0.2f, 0.3f);
 		
 		improvements.amberProductionBonus -= rnd;
-		improvements.amberPenalty -= 0.5f;
+		improvements.amberPenalty += 0.5f;
 		
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[61].improvementMessage = "-20-30% Amber production, Amber penalty is reduced by 50%";
+			improvements.listOfImprovements[70].improvementMessage = "-20-30% Amber production, Amber penalty is reduced by 50%";
 		}
 	}
 
@@ -228,7 +228,7 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[62].improvementMessage = "+1 * Improvement Level% Growth on Planets, +10 * Improvement Level% Max Population on Planets";
+			improvements.listOfImprovements[71].improvementMessage = "+1 * Improvement Level% Growth on Planets, +10 * Improvement Level% Max Population on Planets";
 		}
 	}
 
@@ -253,7 +253,7 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[63].improvementMessage = "+100% Power Production, -75% Knowledge Production, 25% Chance for Knowledge and/or Power Production to double";
+			improvements.listOfImprovements[72].improvementMessage = "+100% Power Production, -75% Knowledge Production, 25% Chance for Knowledge and/or Power Production to double";
 		}
 	}
 
@@ -270,7 +270,7 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[64].improvementMessage = "+50% Amber Production, 50% Chance for Amber Production to Double";
+			improvements.listOfImprovements[73].improvementMessage = "+50% Amber Production, 50% Chance for Amber Production to Double";
 		}
 	}
 
@@ -282,23 +282,33 @@ public class SelkiesImprovements : MasterScript
 	private void TS4I1()
 	{
 		improvements.tempCount = 0.01f * systemSIMData.totalSystemAmber;
-		improvements.researchCost -= improvements.tempCount;
+		improvements.researchCost -= (int)improvements.tempCount;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[66].improvementMessage = "-" + improvements.tempCount + "% Research Cost from Amber Production";
+			improvements.listOfImprovements[75].improvementMessage = "-" + improvements.tempCount + "% Research Cost from Amber Production";
 		}
 	}
 
 	private void TS4I2()
 	{
-		//TODO
+		improvements.knowledgePercentBonus += 0.75f;
+		improvements.powerPercentBonus -= 0.75f;
+
+		if(checkValue == false)
+		{
+			improvements.listOfImprovements[76].improvementMessage = "75% Power Production Converted to Knowledge Production";
+		}
 	}
 
 	private void TS4I3()
 	{
 		improvements.amberProductionBonus += 1f;
-		improvements.amberPenalty = 0f;
+
+		if(improvements.amberPenalty < 1f)
+		{
+			improvements.amberPenalty = 1f;
+		}
 
 		int rnd = Random.Range (0, 4);
 
@@ -309,7 +319,7 @@ public class SelkiesImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[68].improvementMessage = "+100% Amber Production, 20% Chance for Amber Drought";
+			improvements.listOfImprovements[77].improvementMessage = "+100% Amber Production, 20% Chance for Amber Drought";
 		}
 	}
 
@@ -325,7 +335,7 @@ public class SelkiesImprovements : MasterScript
 		}
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[69].improvementMessage = "+1 Improvement Slots on Prairie Type Planets, +2 Improvement Slots on Molten Type Planets";
+			improvements.listOfImprovements[78].improvementMessage = "+1 Improvement Slots on Prairie Type Planets, +2 Improvement Slots on Molten Type Planets";
 		}
 	}
 

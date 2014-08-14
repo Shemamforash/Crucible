@@ -46,6 +46,7 @@ public class AIBasicParent : TurnInfo
 		heroBehaviour.HeroDecisionStart (player);
 	}
 
+	/*
 	private void OptimumTechToBuild(int system)
 	{
 		systemSIMData = systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
@@ -134,7 +135,7 @@ public class AIBasicParent : TurnInfo
 		}
 	}
 
-	private void RacialTechCheck(int i)
+	private void RacialTechCheck(int i, int system)
 	{
 		if(thisPlayer.playerRace == "Humans")
 		{
@@ -150,11 +151,11 @@ public class AIBasicParent : TurnInfo
 		
 		if(thisPlayer.playerRace == "Selkies")
 		{
-			if((improvementsBasic.tempAmberPenalty + improvementsBasic.amberPenalty) * 10 * improvementsBasic.listOfImprovements[i].improvementLevel > tempFloat || tempTech == i)
+			if((improvementsBasic.amberPenalty > systemListConstructor.systemList[system].sysAmberPenalty) * 10 * improvementsBasic.listOfImprovements[i].improvementLevel > tempFloat || tempTech == i)
 			{
-				if(improvementsBasic.tempAmberPenalty > improvementsBasic.amberPenalty)
+				if(improvementsBasic.amberPenalty > systemListConstructor.systemList[system].sysAmberPenalty)
 				{
-					tempFloat = (improvementsBasic.tempAmberPenalty + improvementsBasic.amberPenalty) * 10 * improvementsBasic.listOfImprovements[i].improvementLevel;
+					tempFloat = (systemListConstructor.systemList[system].sysAmberPenalty + improvementsBasic.amberPenalty) * 10 * improvementsBasic.listOfImprovements[i].improvementLevel;
 					tempTech = i;
 				}
 			}
@@ -193,25 +194,25 @@ public class AIBasicParent : TurnInfo
 		}
 	}
 
-	private void GenericTechCheck(int i)
+	private void GenericTechCheck(int i, int system)
 	{
-		if(improvementsBasic.tempPowUnitBonus * 4 * improvementsBasic.listOfImprovements[i].improvementLevel > improvementsBasic.listOfImprovements[i].improvementCost)
+		if(systemListConstructor.systemList[system].sysPowerModifier * 4 * improvementsBasic.listOfImprovements[i].improvementLevel > improvementsBasic.listOfImprovements[i].improvementCost)
 		{
-			if(improvementsBasic.tempPowUnitBonus * powRatio > tempFloat)
+			if(systemListConstructor.systemList[system].sysPowerModifier * powRatio > tempFloat)
 			{
 				if(tempTech == i)
 				{
-					tempFloat += improvementsBasic.tempPowUnitBonus * powRatio * improvementsBasic.listOfImprovements[i].improvementLevel;
+					tempFloat += systemListConstructor.systemList[system].sysPowerModifier * powRatio * improvementsBasic.listOfImprovements[i].improvementLevel;
 				}
 				else
 				{
-					tempFloat = improvementsBasic.tempPowUnitBonus * powRatio * improvementsBasic.listOfImprovements[i].improvementLevel;
+					tempFloat = systemListConstructor.systemList[system].sysPowerModifier * powRatio * improvementsBasic.listOfImprovements[i].improvementLevel;
 					tempTech = i;
 				}
 			}
 		}
 		
-		if(improvementsBasic.tempKnwlUnitBonus * 4 * improvementsBasic.listOfImprovements[i].improvementLevel > improvementsBasic.listOfImprovements[i].improvementCost)
+		if(improvementsBasic.systemListConstructor.systemList[system].sysPowerModifier * 4 * improvementsBasic.listOfImprovements[i].improvementLevel > improvementsBasic.listOfImprovements[i].improvementCost)
 		{
 			if(improvementsBasic.tempKnwlUnitBonus * knwlRatio > tempFloat || tempTech == i)
 			{
@@ -290,7 +291,7 @@ public class AIBasicParent : TurnInfo
 				}
 			}
 		}
-	}
+	}*/
 
 	private void CheckToSaveForHero()
 	{
