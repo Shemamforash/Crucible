@@ -215,7 +215,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN3I1()
 	{
-		improvements.tempCount = 0.001f * systemSIMData.totalSecondaryResourcesGeneratedInSystem;
+		improvements.tempCount = 0.05f * systemSIMData.totalSecondaryResourcesGeneratedInSystem;
 		improvements.maxPopulationBonus += improvements.tempCount;
 
 		if(checkValue == false)
@@ -241,7 +241,7 @@ public class NereidesImprovements : MasterScript
 	{
 		float temp = 0.3f;
 
-		for(int i = 0; i < systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementSlots; ++i)
+		for(int i = 0; i < systemListConstructor.systemList[improvements.system].planetsInSystem[planet].currentImprovementSlots; ++i)
 		{
 			if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt[i] == "")
 			{
@@ -250,7 +250,7 @@ public class NereidesImprovements : MasterScript
 			}
 		}
 
-		improvementsBasic.powerPercentBonus += temp;
+		improvements.powerPercentBonus += temp;
 
 		if(checkValue == false)
 		{
@@ -289,12 +289,12 @@ public class NereidesImprovements : MasterScript
 
 	private void TN4I2()
 	{
-		float temp = 0.01f;
+		float temp = 0.001f;
 
 		if(improvements.IsBuiltOnPlanetType(improvements.system, 48, "Boreal") || improvements.IsBuiltOnPlanetType(improvements.system, 48, "Tundra") ||
 		   improvements.IsBuiltOnPlanetType(improvements.system, 48, "Desolate"))
 		{
-			temp = 0.015f;
+			temp = 0.0015f;
 		}
 
 		improvements.tempCount = temp * racialTraitScript.elationStacks.Count;

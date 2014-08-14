@@ -109,7 +109,7 @@ public class MasterScript : MonoBehaviour
 		systemListConstructor.systemList [system].planetsInSystem [planet].expansionPenaltyTimer = 0f;
 		systemListConstructor.systemList [system].planetsInSystem [planet].planetImprovementLevel = 0;
 
-		for(int i = 0; i < systemListConstructor.systemList [system].planetsInSystem [planet].improvementSlots; ++i)
+		for(int i = 0; i < systemListConstructor.systemList [system].planetsInSystem [planet].currentImprovementSlots; ++i)
 		{
 			improvementsBasic = systemListConstructor.systemList[system].systemObject.GetComponent<ImprovementsBasic>();
 

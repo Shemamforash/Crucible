@@ -148,11 +148,11 @@ public class HumanImprovements : MasterScript
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == player.homePlanetCategory)
 		{
-			improvements.maxPopulationBonus += 0.4f;
+			improvements.maxPopulationBonus += 40f;
 		}
 		else
 		{
-			improvements.maxPopulationBonus += 0.2f;
+			improvements.maxPopulationBonus += 20f;
 		}
 
 		if(checkValue == false)
@@ -261,16 +261,16 @@ public class HumanImprovements : MasterScript
 	{
 		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
-			improvements.maxPopulationBonus += 0.5f;
+			improvements.maxPopulationBonus += 50f;
 		}
 		else
 		{
-			improvements.maxPopulationBonus += 0.33f;
+			improvements.maxPopulationBonus += 33f;
 		}
 
 		if(checkValue == false)
 		{
-			improvementsBasic.listOfImprovements[24].improvementMessage = "+50% Population on Terran Planets, +33% Population on all other Planets";
+			improvements.listOfImprovements[24].improvementMessage = "+50% Population on Terran Planets, +33% Population on all other Planets";
 		}
 	}
 
@@ -286,7 +286,7 @@ public class HumanImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvementsBasic.listOfImprovements[25].improvementMessage = "+2 Ambition on Terran Planets";
+			improvements.listOfImprovements[25].improvementMessage = "+2 Ambition on Terran Planets";
 		}
 	}
 
@@ -302,7 +302,7 @@ public class HumanImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvementsBasic.listOfImprovements[27].improvementMessage = ("-" + improvements.tempCount * 100 + "% Research Cost from Ambition");
+			improvements.listOfImprovements[27].improvementMessage = ("-" + improvements.tempCount * 100 + "% Research Cost from Ambition");
 		}
 	}
 
@@ -316,7 +316,7 @@ public class HumanImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			improvementsBasic.listOfImprovements[28].improvementMessage = "+1 Wealth on Terran Planets, -50% Upkeep on Terran Planets";
+			improvements.listOfImprovements[28].improvementMessage = "+1 Wealth on Terran Planets, -50% Upkeep on Terran Planets";
 		}
 	}
 
@@ -325,7 +325,7 @@ public class HumanImprovements : MasterScript
 		if(checkValue == false)
 		{
 			improvements.ambitionPenalty = 0f;
-			improvementsBasic.listOfImprovements[29].improvementMessage = "No effect from Ambition Penalties";
+			improvements.listOfImprovements[29].improvementMessage = "No effect from Ambition Penalties";
 		}
 	}
 
@@ -333,22 +333,22 @@ public class HumanImprovements : MasterScript
 	{
 		if(racialTraitScript.ambitionCounter >= 75)
 		{
-			improvementsBasic.knowledgePercentBonus += 0.25f;
-			improvementsBasic.powerPercentBonus += 0.25f;
-			improvementsBasic.upkeepModifier -= 0.5f;
+			improvements.knowledgePercentBonus += 0.25f;
+			improvements.powerPercentBonus += 0.25f;
+			improvements.upkeepModifier -= 0.5f;
 			improvements.tempCount = 0.25f;
 		}
 		if(racialTraitScript.ambitionCounter <= 25)
 		{
-			improvementsBasic.knowledgePercentBonus -= 0.25f;
-			improvementsBasic.powerPercentBonus -= 0.25f;
-			improvementsBasic.upkeepModifier += 0.5f;
+			improvements.knowledgePercentBonus -= 0.25f;
+			improvements.powerPercentBonus -= 0.25f;
+			improvements.upkeepModifier += 0.5f;
 			improvements.tempCount = -0.25f;
 		}
 
 		if(checkValue == false)
 		{
-			improvementsBasic.listOfImprovements[30].improvementMessage = (improvements.tempCount + "% Bonus to Knowledge and Power production, " + improvements.tempCount * 2 + "% Bonus to Upkeep");
+			improvements.listOfImprovements[30].improvementMessage = (improvements.tempCount + "% Bonus to Knowledge and Power production, " + improvements.tempCount * 2 + "% Bonus to Upkeep");
 		}
 	}
 

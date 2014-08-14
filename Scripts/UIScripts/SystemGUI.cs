@@ -282,8 +282,11 @@ public class SystemGUI : MasterScript
 		planetElementList [i].knowledgeOP.text = systemSIMData.allPlanetsInfo [i].knowledgeOutput;
 		planetElementList [i].population.text = systemSIMData.allPlanetsInfo [i].population;
 
+		float maxPopPlanet = systemListConstructor.systemList[system].sysMaxPopulationModifier + systemListConstructor.systemList[system].planetsInSystem[i].maxPopulationModifier
+			+ systemListConstructor.systemList[system].planetsInSystem[i].maxPopulation;
+
 		population.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetPopulation, 1).ToString () + "%/" + 
-			Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].maxPopulation, 1).ToString () + "% COLONISED";
+			Math.Round (maxPopPlanet, 1).ToString () + "% COLONISED";
 		growth.text = Math.Round (systemSIMData.populationToAdd, 1).ToString() + "% GROWTH";
 
 		defence.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetCurrentDefence, 0).ToString () + "/" +

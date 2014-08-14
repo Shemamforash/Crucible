@@ -155,7 +155,7 @@ public class SystemScrollviews : MasterScript
 	{
 		for(int i = 0; i < improvementsList.Length; ++i) //For all improvement slots
 		{
-			if(i < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementSlots) //If is equal to or less than planets slots
+			if(i < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots) //If is equal to or less than planets slots
 			{
 				NGUITools.SetActive(improvementsList[i], true); //Activate
 
@@ -291,7 +291,7 @@ public class SystemScrollviews : MasterScript
 				}
 
 				UpdateBuiltImprovements();
-				UpdateSystemEffects ();
+				UpdateSystemEffects (selectedSystem, selectedPlanet);
 				UpdateUpkeep();
 			}
 		}
@@ -302,77 +302,84 @@ public class SystemScrollviews : MasterScript
 		}
 	}
 
-	public void UpdateSystemEffects()
+	public void UpdateSystemEffects(int system, int planet) //TODO this needs to be planet specific
 	{
 		improvementsBasic = systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<ImprovementsBasic>();
 
 		string temp = "";
 
-		if(improvementsBasic.knowledgePercentBonus != 1f)
+		float knoTemp = (systemListConstructor.systemList[system].sysKnowledgeModifier + systemListConstructor.systemList[system].planetsInSystem[planet].knowledgeModifier) - 1;
+		float powTemp = (systemListConstructor.systemList[system].sysPowerModifier + systemListConstructor.systemList[system].planetsInSystem[planet].powerModifier) - 1;
+		float growTemp = systemListConstructor.systemList[system].sysGrowthModifier + systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier;
+		float popTemp = systemListConstructor.systemList[system].sysMaxPopulationModifier + systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulationModifier;
+		float amberPenalty = systemListConstructor.systemList[system].sysAmberPenalty + systemListConstructor.systemList[system].planetsInSystem[planet].amberPenalty;
+		float amberProd = (systemListConstructor.systemList[system].sysAmberModifier + systemListConstructor.systemList[system].planetsInSystem[planet].amberModifier) - 1;
+
+		if(knoTemp != 0f)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + Math.Round((improvementsBasic.knowledgePercentBonus - 1) * 100, 1) + "% Knowledge from Improvements";
+			temp = temp + Math.Round(knoTemp * 100, 1) + "% Knowledge from Improvements";
 		}
-		if(improvementsBasic.powerPercentBonus != 1f)
+		if(powTemp != 0f)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + Math.Round((improvementsBasic.powerPercentBonus - 1) * 100, 1) + "% Power from Improvements";
+			temp = temp + Math.Round(powTemp * 100, 1) + "% Power from Improvements";
 		}
-		if(improvementsBasic.growthModifier != 1f)
+		if(growTemp != 0f)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + Math.Round((improvementsBasic.growthModifier - 1) * 100, 1) + "% Growth from Improvements";
+			temp = temp + Math.Round(growTemp, 2) + "% Growth from Improvements";
 		}
-		if(improvementsBasic.maxPopulationBonus != 0f)
+		if(popTemp != 0f)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + Math.Round(improvementsBasic.maxPopulationBonus, 1) + "% Population from Improvements";
+			temp = temp + Math.Round(popTemp, 1) + "% Population from Improvements";
 		}
 
-		int standardSize = (int)systemListConstructor.FindPlanetSIM (systemListConstructor.systemList [selectedSystem].planetsInSystem [selectedPlanet].planetType, "Improvement Slots");
+		int standardSize = systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].baseImprovementSlots;
 
-		if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementSlots > standardSize)
+		if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots > standardSize)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + (systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementSlots - standardSize).ToString() + " Improvement Slots on Planet";
+			temp = temp + (systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots - standardSize).ToString() + " Improvement Slots on Planet";
 		}
-		if(improvementsBasic.amberPenalty != 1f)
+		if(amberPenalty != 1f)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + Math.Round ((improvementsBasic.amberPenalty - 1) * 100, 1) + "% Amber Penalty on System";
+			temp = temp + Math.Round ((1 - amberPenalty) * 100, 1) + "% Amber Penalty on System";
 		}
-		if(improvementsBasic.amberProductionBonus != 1f)
+		if(amberProd != 0)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + Math.Round ((improvementsBasic.amberProductionBonus - 1) * 100, 1) + "% Amber Production on System";
+			temp = temp + Math.Round (amberProd * 100, 1) + "% Amber Production on System";
 		}
 		if(improvementsBasic.improvementCostModifier != 0f)
 		{
@@ -434,7 +441,7 @@ public class SystemScrollviews : MasterScript
 		{
 			if(improvementsBasic.listOfImprovements[i].improvementName.ToUpper () == currentImprovement)
 			{
-				for(int j = 0; j < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementSlots; ++j)
+				for(int j = 0; j < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots; ++j)
 				{
 					if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[j] == null)
 					{
@@ -445,7 +452,6 @@ public class SystemScrollviews : MasterScript
 							UpdateImprovementsWindow(improvementsBasic.listOfImprovements[i].improvementLevel);
 							UpdateBuiltImprovements();
 							currentImprovement = null;
-							UpdateSystemEffects();
 							selectedSlot = -1;
 							break;
 						}

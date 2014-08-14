@@ -326,7 +326,7 @@ public class SystemListConstructor : MasterScript
 						newPlanet.planetPower = FindPlanetSIM(newPlanet.planetType, "Power");
 						newPlanet.wealthValue = (int)FindPlanetSIM(newPlanet.planetType, "Wealth");
 						newPlanet.maxPopulation = 0;
-						newPlanet.improvementSlots = (int)FindPlanetSIM(newPlanet.planetType, "Improvement Slots");
+						newPlanet.baseImprovementSlots = (int)FindPlanetSIM(newPlanet.planetType, "Improvement Slots");
 						newPlanet.underEnemyControl = false;
 						newPlanet.expansionPenaltyTimer = 0.0f;
 
@@ -498,7 +498,7 @@ public class Planet
 	public List<string> improvementsBuilt = new List<string> ();
 	public float planetKnowledge, planetPower, planetPopulation, planetCurrentDefence, planetMaxDefence, defenceRegeneration, planetOffence, virusTimer, chillTimer, poisonTimer, chillLength, maxPopulation, expansionPenaltyTimer;
 	public bool planetColonised, underEnemyControl, virusActive, chillActive, poisonActive;
-	public int planetImprovementLevel, improvementSlots, wealthValue;
+	public int planetImprovementLevel, currentImprovementSlots, baseImprovementSlots, wealthValue;
 	public float knowledgeModifier, powerModifier, growthModifier, maxPopulationModifier, resourceModifier, amberPenalty, amberModifier;
 }
 

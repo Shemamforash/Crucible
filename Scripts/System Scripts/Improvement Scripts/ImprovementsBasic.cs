@@ -7,10 +7,10 @@ using System.Xml;
 public class ImprovementsBasic : MasterScript 
 {
 	public float knowledgePercentBonus, powerPercentBonus, amberPenalty, amberProductionBonus, amberPointBonus, knowledgeTechModifier, growthModifier, maxPopulationBonus, resourceYieldBonus, wealthBonus;
-	public float researchCostReduction, improvementCostReduction, upkeepModifier, tempCount, tempBonusAmbition, ambitionPenalty, expansionPenaltyModifier, improvementSlotsBonus;
+	public float researchCostReduction, improvementCostReduction, upkeepModifier, tempCount, tempBonusAmbition, ambitionPenalty, expansionPenaltyModifier;
 	public List<string> planetToBuildOn;
 	public GameObject tooltip;
-	public int techTier = 0, improvementCostModifier = 0, researchCost, system;
+	public int techTier = 0, improvementCostModifier = 0, researchCost, system, improvementSlotsBonus;
 	private GenericImprovements genericImprovements;
 	public float upkeepPower, upkeepWealth;
 
@@ -59,23 +59,15 @@ public class ImprovementsBasic : MasterScript
 
 			listOfImprovements.Add(newImprovement);
 		}
-
-		if(systemListConstructor.systemList[RefreshCurrentSystem(gameObject)].systemName == "Nephthys")
-		{
-			for(int i = 0; i < listOfImprovements.Count; ++i)
-			{
-				Debug.Log (listOfImprovements[i].improvementName + " | " + i);
-			}
-		}
 	}
 
 	private void ResetModifiers()
 	{
 		knowledgePercentBonus = 1f; //Bonus knowledge % for system
 		powerPercentBonus = 1f; //Bonus power % for system
-		improvementCostModifier = 1; //Modifier of cost of improvements on system
-		knowledgeTechModifier = 1f; //Modifier of bonus knowledge
-		growthModifier = 1f; //Modifier of max population
+		improvementCostModifier = 0; //Modifier of cost of improvements on system
+		knowledgeTechModifier = 0f; //Modifier of bonus knowledge
+		growthModifier = 0f; //Modifier of max population
 		amberPenalty = 1f; //Modifer of all resources due to amber production
 		amberPointBonus = 1f; //Bonus to amber production in units
 		amberProductionBonus = 1f; //Bonus to amber production in %
@@ -83,7 +75,7 @@ public class ImprovementsBasic : MasterScript
 		maxPopulationBonus = 0f; 
 		resourceYieldBonus = 1f;
 		tempCount = 0.0f;
-		improvementSlotsBonus = 0f;
+		improvementSlotsBonus = 0;
 		ambitionPenalty = 1f;
 	}
 
@@ -103,7 +95,7 @@ public class ImprovementsBasic : MasterScript
 		{
 			systemListConstructor.systemList[system].planetsInSystem[planet].knowledgeModifier = (knowledgePercentBonus - 1) * knowledgeTechModifier;
 			systemListConstructor.systemList[system].planetsInSystem[planet].powerModifier = powerPercentBonus - 1;
-			systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier = growthModifier - 1;
+			systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier = growthModifier * ambitionPenalty * racialTraitScript.ambitionCounter / 40f;
 			systemListConstructor.systemList[system].planetsInSystem[planet].amberPenalty = amberPenalty - 1;
 			systemListConstructor.systemList[system].planetsInSystem[planet].amberModifier = amberProductionBonus - 1;
 			systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulationModifier = maxPopulationBonus;
@@ -152,6 +144,20 @@ public class ImprovementsBasic : MasterScript
 			}
 
 			AssignSystemModifierValues(curSystem, j);
+
+			systemListConstructor.systemList[curSystem].planetsInSystem[j].currentImprovementSlots = improvementSlotsBonus + systemListConstructor.systemList[curSystem].planetsInSystem[j].baseImprovementSlots;
+
+			if(systemListConstructor.systemList[curSystem].planetsInSystem[j].improvementsBuilt.Count > systemListConstructor.systemList[curSystem].planetsInSystem[j].currentImprovementSlots)
+			{
+				systemListConstructor.systemList[curSystem].planetsInSystem[j].improvementsBuilt.RemoveAt(systemListConstructor.systemList[curSystem].planetsInSystem[j].currentImprovementSlots - 1);
+			}
+			if(systemListConstructor.systemList[curSystem].planetsInSystem[j].improvementsBuilt.Count < systemListConstructor.systemList[curSystem].planetsInSystem[j].currentImprovementSlots)
+			{
+				while(systemListConstructor.systemList[curSystem].planetsInSystem[j].improvementsBuilt.Count != systemListConstructor.systemList[curSystem].planetsInSystem[j].currentImprovementSlots)
+				{
+					systemListConstructor.systemList[curSystem].planetsInSystem[j].improvementsBuilt.Add (null);
+				}
+			}
 		}
 
 		racialTraitScript.stacksGeneratedSinceLastUpdate = 0;

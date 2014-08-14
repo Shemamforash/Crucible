@@ -683,7 +683,7 @@
       D="200"
       E="4"
       F="8"
-      G="System"
+      G="Planet"
       H="+10(30)% Power"
       I="+10% Power on system. If all planets are colonised and improvement slots filled, gain +30% Power."
     />
@@ -788,8 +788,8 @@
       E="1"
       F="2"
       G="Planet"
-      H="+1/2 Amber"
-      I="Per planet/On hot planets. -5% Growth, resources produced per Amber produced."
+      H="+1/2/3 Amber"
+      I="Per planet/On hot planets/On Prairie type. -5% Growth, resources produced per Amber produced."
     />
   </Record>
   <Record>

@@ -19,44 +19,43 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 
 	public bool CheckIsDelaunay(Triangle triOne, Triangle triTwo)
 	{
-		List<GameObject> sharedSides = triangulation.CheckIfSharesSide(triOne, triTwo);
+		List<GameObject> sharedSides = triangulation.CheckIfSharesSide(triOne, triTwo); //Find if triangles share a side (this actually returns the 2 shared and 2 unshared vertices)
 
-		if(sharedSides.Count == 4)
+		if(sharedSides.Count == 4) //If 4 vertices are shared
 		{
-			GameObject sharedPointA = sharedSides[0];
+			GameObject sharedPointA = sharedSides[0]; //Assign the shared points
 			GameObject sharedPointB = sharedSides[1];
-			GameObject unsharedPointA = sharedSides[2];
+			GameObject unsharedPointA = sharedSides[2]; //Assign the unshared points
 			GameObject unsharedPointB = sharedSides[3];
-			float angleAlpha = 0f, angleBeta = 0f;
-			int a = 0, b = 0;
+			float angleAlpha = 0f, angleBeta = 0f; //Set some angles to 0
 
-			angleAlpha = MathsFunctions.AngleBetweenLineSegments (unsharedPointA.transform.position, sharedPointA.transform.position, sharedPointB.transform.position);
+			angleAlpha = MathsFunctions.AngleBetweenLineSegments (unsharedPointA.transform.position, sharedPointA.transform.position, sharedPointB.transform.position); //First angle is at one unshared point
 
-			angleBeta = MathsFunctions.AngleBetweenLineSegments (unsharedPointB.transform.position, sharedPointA.transform.position, sharedPointB.transform.position);
+			angleBeta = MathsFunctions.AngleBetweenLineSegments (unsharedPointB.transform.position, sharedPointA.transform.position, sharedPointB.transform.position); //Second angle is at the other unshared point
 
-			Vector3 sharedPointLine = MathsFunctions.ABCLineEquation (sharedPointA.transform.position, sharedPointB.transform.position);
-			Vector3 unsharedPointLine = MathsFunctions.ABCLineEquation (unsharedPointA.transform.position, unsharedPointB.transform.position);
-			Vector2 intersection = MathsFunctions.IntersectionOfTwoLines (sharedPointLine, unsharedPointLine);
+			Vector3 sharedPointLine = MathsFunctions.ABCLineEquation (sharedPointA.transform.position, sharedPointB.transform.position); //Get the line between the shared points
+			Vector3 unsharedPointLine = MathsFunctions.ABCLineEquation (unsharedPointA.transform.position, unsharedPointB.transform.position); //Get the line between the unshared points
+			Vector2 intersection = MathsFunctions.IntersectionOfTwoLines (sharedPointLine, unsharedPointLine); //Find the intersection of the two lines
 			
-			if(MathsFunctions.PointLiesOnLine(sharedPointA.transform.position, sharedPointB.transform.position, intersection) == false) //Is non-convex
+			if(MathsFunctions.PointLiesOnLine(sharedPointA.transform.position, sharedPointB.transform.position, intersection) == false) //If the intersection does not lie between the shared points then this is a non convex hull
 			{
-				return true;
+				return true; //So it cannot be flipped, continue to the next triangle
 			}
 
-			if(angleAlpha + angleBeta > 180f) //DUPLICATES ARE MADE HERE!!!
+			if(angleAlpha + angleBeta > 180f) //If the polygon is convex, and the two angles combine to be greater than 180 degrees, the triangles are non delaunay, so we flip them
 			{				      
-				int triPosOne = triangulation.triangles.IndexOf(triOne);
+				int triPosOne = triangulation.triangles.IndexOf(triOne); //Find the position of the two triangles in the triangles list
 				int triPosTwo = triangulation.triangles.IndexOf(triTwo);
 
-				triOne.points[0] = unsharedPointA;
+				triOne.points[0] = unsharedPointA; //Reassign the vertices of tri one to make the previously unshared vertices the shared vertices. One of the previously shared vertices is now the unshared vertex.
 				triOne.points[1] = unsharedPointB;
 				triOne.points[2] = sharedPointA;
-				triOne.lines[0] = MathsFunctions.ABCLineEquation (triOne.points[0].transform.position, triOne.points[1].transform.position);
+				triOne.lines[0] = MathsFunctions.ABCLineEquation (triOne.points[0].transform.position, triOne.points[1].transform.position); //Get the line equations for all the sides
 				triOne.lines[1] = MathsFunctions.ABCLineEquation (triOne.points[1].transform.position, triOne.points[2].transform.position);
 				triOne.lines[2] = MathsFunctions.ABCLineEquation (triOne.points[2].transform.position, triOne.points[0].transform.position);
-				triangulation.triangles[triPosOne] = triOne;
+				triangulation.triangles[triPosOne] = triOne; //Replace the original triangle with this new, flipped triangle
 
-				triTwo.points[0] = unsharedPointA;
+				triTwo.points[0] = unsharedPointA; //Do the same for tri two
 				triTwo.points[1] = unsharedPointB;
 				triTwo.points[2] = sharedPointB;
 				triTwo.lines[0] = MathsFunctions.ABCLineEquation (triTwo.points[0].transform.position, triTwo.points[1].transform.position);
@@ -64,24 +63,24 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 				triTwo.lines[2] = MathsFunctions.ABCLineEquation (triTwo.points[2].transform.position, triTwo.points[0].transform.position);
 				triangulation.triangles[triPosTwo] = triTwo;
 
-				++flips;
+				++flips; //Increase the number of flips that have been made this pass.
 
-				return false;
+				return false; //Return false (a flip has been made)
 			}
 		}
 
-		return true;
+		return true; //Otherwise continue to the next triangle
 	}
 
 	public float AngleBetweenLinesOfTri(Triangle tri, int anglePoint) //Anglepoint is the point at which the angle needs to be found (this works)
 	{
-		float lengthAB = Mathf.Sqrt(Mathf.Pow(tri.points[0].transform.position.x - tri.points[1].transform.position.x, 2f) + Mathf.Pow(tri.points[0].transform.position.y - tri.points[1].transform.position.y, 2f));
+		float lengthAB = Mathf.Sqrt(Mathf.Pow(tri.points[0].transform.position.x - tri.points[1].transform.position.x, 2f) + Mathf.Pow(tri.points[0].transform.position.y - tri.points[1].transform.position.y, 2f)); //Get the lengths of all 3 sides of the tri
 		float lengthBC = Mathf.Sqrt(Mathf.Pow(tri.points[1].transform.position.x - tri.points[2].transform.position.x, 2f) + Mathf.Pow(tri.points[1].transform.position.y - tri.points[2].transform.position.y, 2f));
 		float lengthCA = Mathf.Sqrt(Mathf.Pow(tri.points[0].transform.position.x - tri.points[2].transform.position.x, 2f) + Mathf.Pow(tri.points[0].transform.position.y - tri.points[2].transform.position.y, 2f));
 		
 		float angle = 0f;
 		
-		if(anglePoint == 0)
+		if(anglePoint == 0) //The vertex whose angle we are finding dictates the order in which the sides are used in the cos law
 		{
 			angle = CosLawAngle(lengthBC, lengthCA, lengthAB);
 		}
@@ -94,10 +93,10 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 			angle = CosLawAngle(lengthAB, lengthBC, lengthCA);
 		}
 		
-		return angle;
+		return angle; //Return the angle at the point required
 	}
 
-	private float CosLawAngle(float a, float b, float c)
+	private float CosLawAngle(float a, float b, float c) //This uses the cos law aCos(b^2 + c^2 - a^2 / 2bc) = angle at A in radians
 	{
 		float numerator = (b * b) + (c * c) - (a * a);
 		float denominator = 2 * b * c;
@@ -106,35 +105,35 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 		return angleRad * Mathf.Rad2Deg;
 	}
 
-	public bool TriangulationToDelaunay()
+	public bool TriangulationToDelaunay() //This takes the triangle list and converts it to a delaunay triangulation
 	{
-		flips = 0;
+		flips = 0; //Say no flips have been made
 
-		for(int i = 0; i < triangulation.triangles.Count; ++i)
+		for(int i = 0; i < triangulation.triangles.Count; ++i) //For all triangles
 		{
-			for(int j = 0; j < triangulation.triangles.Count; ++j)
+			for(int j = 0; j < triangulation.triangles.Count; ++j) //For all other triangles
 			{
 				if(i == j)
 				{
 					continue;
 				}
 		
-				if(CheckIsDelaunay(triangulation.triangles[i], triangulation.triangles[j]) == false)
+				if(CheckIsDelaunay(triangulation.triangles[i], triangulation.triangles[j]) == false) //Check that the triangle is delaunay (must obviously be connected but this is tested in the CheckIsDelaunay method)
 				{
-					return false;
+					return false; //If it wasn't delaunay then we return false
 				}
 			}
 		}
 
-		if(flips > 0)
+		if(flips > 0) //If there were any flips we return false
 		{
 			return false;
 		}
 
-		return true;
+		return true; //Otherwise we can verify that the triangulation is Delaunay
 	}
 	
-	public void CreateVoronoiCells()
+	public void CreateVoronoiCells() //This appears to be fine
 	{
 		triangulation.SimpleTriangulation ();
 

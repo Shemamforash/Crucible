@@ -165,9 +165,9 @@ public class SystemSIMData : MasterScript
 		systemFunctions.CheckImprovement(thisSystem, planet);
 		
 		tempSci = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetKnowledge * (systemKnowledgeModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier)
-				* turnInfoScript.expansionPenaltyModifier;
+				* turnInfoScript.expansionPenaltyModifier * planetKnowledgeModifier;
 		tempInd = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetPower * (systemKnowledgeModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier)
-				* turnInfoScript.expansionPenaltyModifier;
+				* turnInfoScript.expansionPenaltyModifier * planetPowerModifier;
 		
 		if(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetColonised == true)
 		{
@@ -196,7 +196,7 @@ public class SystemSIMData : MasterScript
 	{
 		systemDefence.CheckStatusEffects(planet);
 		
-		baseResourceBonus = systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation / 66.6666f;
+		baseResourceBonus = systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation / 6.666f;
 		planetKnowledgeModifier = (thisPlayer.raceKnowledge + secRecKnowledgeMod) * baseResourceBonus * knowledgeBuffModifier;
 		planetPowerModifier = (thisPlayer.racePower + secRecPowerMod) * baseResourceBonus * powerBuffModifier;
 	}	
@@ -218,7 +218,7 @@ public class SystemSIMData : MasterScript
 
 					maxPopPlanet = Mathf.RoundToInt(maxPopPlanet);
 
-					populationToAdd = 0.1f * (systemgrowthModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[j].growthModifier) * secRecPopulationMod; //Growth is the standard growth rate for the planets in the system multiplied by secondary resource modifiers
+					populationToAdd = (0.1f + systemgrowthModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[j].growthModifier) * secRecPopulationMod; //Growth is the standard growth rate for the planets in the system multiplied by secondary resource modifiers
 
 					if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation < 0) //If population is less than 0, the planet must be reset
 					{

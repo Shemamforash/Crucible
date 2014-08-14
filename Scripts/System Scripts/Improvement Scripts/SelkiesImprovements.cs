@@ -224,7 +224,7 @@ public class SelkiesImprovements : MasterScript
 		int temp = systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetImprovementLevel;
 
 		improvements.growthModifier += temp * 0.01f;
-		improvements.maxPopulationBonus += temp * 0.1f;
+		improvements.maxPopulationBonus += temp * 10f;
 
 		if(checkValue == false)
 		{

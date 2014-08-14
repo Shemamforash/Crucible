@@ -404,7 +404,7 @@ public class AIBasicParent : TurnInfo
 					}
 
 					tempSIM = (systemListConstructor.systemList[i].planetsInSystem[j].planetKnowledge + systemListConstructor.systemList[i].planetsInSystem[j].planetPower)
-						* (systemListConstructor.systemList[i].planetsInSystem[j].improvementSlots * 1.5f);
+						* (systemListConstructor.systemList[i].planetsInSystem[j].currentImprovementSlots * 1.5f);
 
 					if(tempSIM > highestSIM)
 					{
@@ -450,7 +450,7 @@ public class AIBasicParent : TurnInfo
 							for(int l = 0; l < systemListConstructor.systemList[k].systemSize; ++l)
 							{
 								tempPlanetSIM = (systemListConstructor.systemList[k].planetsInSystem[l].planetKnowledge + systemListConstructor.systemList[k].planetsInSystem[l].planetPower)  
-									* (systemListConstructor.systemList[k].planetsInSystem[l].improvementSlots);
+									* (systemListConstructor.systemList[k].planetsInSystem[l].currentImprovementSlots);
 
 								if(tempPlanetSIM > tempHighestPlanetSIM)
 								{
