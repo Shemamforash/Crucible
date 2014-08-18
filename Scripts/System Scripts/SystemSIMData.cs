@@ -57,15 +57,15 @@ public class SystemSIMData : MasterScript
 			{
 				switch(systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType)
 				{
-				case "Antimatter":
+				case "ANTIMATTER":
 					break;
-				case "Liquid Hydrogen":
+				case "LIQUID HYDROGEN":
 					secRecKnowledgeMod += 0.01f * thisPlayer.liquidH2;
 					break;
-				case "Blue Carbon":
+				case "BLUE CARBON":
 					secRecPopulationMod += 0.01f * thisPlayer.blueCarbon;
 					break;
-				case "Radioisotopes":
+				case "RADIOISOTOPES":
 					secRecPowerMod += 0.01f * thisPlayer.radioisotopes;
 					break;
 				default:
@@ -80,21 +80,23 @@ public class SystemSIMData : MasterScript
 		if(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType != null)
 		{
 			int rnd = UnityEngine.Random.Range (0, 100);
-			
+
+			Debug.Log (improvementsBasic.resourceYieldBonus);
+
 			if(rnd < 4 * improvementsBasic.resourceYieldBonus)
 			{
 				switch(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType)
 				{
-				case "Antimatter":
+				case "ANTIMATTER":
 					++player.antimatter;
 					break;
-				case "Liquid Hydrogen":
+				case "LIQUID HYDROGEN":
 					++player.liquidH2;
 					break;
-				case "Blue Carbon":
+				case "BLUE CARBON":
 					++player.blueCarbon;
 					break;
-				case "Radioisotopes":
+				case "RADIOISOTOPES":
 					++player.radioisotopes;
 					break;
 				default:

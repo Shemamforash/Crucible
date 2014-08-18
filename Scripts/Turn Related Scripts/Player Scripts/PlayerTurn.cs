@@ -91,8 +91,8 @@ public class PlayerTurn : TurnInfo
 
 				systemListConstructor.systemList[system].systemOwnedBy = playerRace;
 
-				voronoiGenerator.voronoiCells[system].renderer.material = materialInUse;
-				voronoiGenerator.voronoiCells[system].renderer.material.shader = Shader.Find("Transparent/Diffuse");
+				//voronoiGenerator.voronoiCells[system].renderer.material = materialInUse;
+				//voronoiGenerator.voronoiCells[system].renderer.material.shader = Shader.Find("Transparent/Diffuse");
 				
 				playerTurnScript.wealth -= 10.0f;
 
@@ -123,8 +123,8 @@ public class PlayerTurn : TurnInfo
 
 		systemListConstructor.systemList[i].systemOwnedBy = playerRace;
 
-		voronoiGenerator.voronoiCells[i].renderer.material = materialInUse;
-		voronoiGenerator.voronoiCells[i].renderer.material.shader = Shader.Find("Transparent/Diffuse");
+		//voronoiGenerator.voronoiCells[i].renderer.material = materialInUse;
+		//voronoiGenerator.voronoiCells[i].renderer.material.shader = Shader.Find("Transparent/Diffuse");
 
 		for(int j = 0; j < systemListConstructor.systemList[i].systemSize; ++j)
 		{

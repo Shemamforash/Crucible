@@ -174,16 +174,16 @@ public class HumanImprovements : MasterScript
 				switch(rnd)
 				{
 				case 0:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "Antimatter";
+					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "ANTIMATTER";
 					break;
 				case 1:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "Liquid Hydrogen";
+					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "LIQUID HYDROGEN";
 					break;
 				case 2:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "Blue Carbon";
+					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "BLUE CARBON";
 					break;
 				case 3:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "Radioisotopes";
+					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "RADIOISOTOPES";
 					break;
 				default:
 					break;

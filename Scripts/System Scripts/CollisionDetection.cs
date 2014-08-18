@@ -30,8 +30,8 @@ public class CollisionDetection : MasterScript
 
 			for(int i = startNo; i < startNo + 5; ++i)
 			{
-				UpdateConnections (i);
-				CheckForGraphComplete ();
+				//UpdateConnections (i);
+				//CheckForGraphComplete ();
 			}
 
 			t = 0f;

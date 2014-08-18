@@ -134,50 +134,41 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 	}
 	
 	public void CreateVoronoiCells() //This appears to be fine
-	{
+	{			
 		triangulation.SimpleTriangulation ();
 
-		for(int j = 0; j < systemListConstructor.systemList.Count; ++j)
+		for(int j = 0; j < systemListConstructor.systemList.Count; ++j) //For all systems
 		{
 			VoronoiCellVertices newCell = new VoronoiCellVertices(); //Create new voronoi cell
 
-			Vector3 voronoiCentre = systemListConstructor.systemList[j].systemObject.transform.position;
+			Vector3 voronoiCentre = systemListConstructor.systemList[j].systemObject.transform.position; //Centre of voronoi cell is the current system location
 
-			for(int i = 0; i < triangulation.triangles.Count; ++i) //For all systems
+			for(int i = 0; i < triangulation.triangles.Count; ++i) //For all triangles
 			{
-				if(triangulation.triangles[i].points.Contains(systemListConstructor.systemList[j].systemObject))
+				if(triangulation.triangles[i].points.Contains(systemListConstructor.systemList[j].systemObject)) //If the triangle has the current system as one of it's vertices
 				{
-					bool looped = false;
-
 					Vector3 systemA = triangulation.triangles[i].points[0].transform.position; //System A equals this system
+					Vector3 systemB = triangulation.triangles[i].points[1].transform.position; //System B is another point in the triangle
+					Vector3 systemC = triangulation.triangles[i].points[2].transform.position; //System C is the final point in the triangle
 
-					Vector3 systemB = triangulation.triangles[i].points[1].transform.position;
-
-					Vector3 systemC = triangulation.triangles[i].points[2].transform.position;
-
-					Vector3 lineAB = MathsFunctions.PerpendicularLineEquation(systemA, systemB);
+					Vector3 lineAB = MathsFunctions.PerpendicularLineEquation(systemA, systemB); //Get the line equations of the line perpendicular to the midpoint between two points
 					Vector3 lineBC = MathsFunctions.PerpendicularLineEquation(systemB, systemC);
 
-					Vector3 voronoiVertex = MathsFunctions.IntersectionOfTwoLines(lineAB, lineBC);
+					Vector3 voronoiVertex = MathsFunctions.IntersectionOfTwoLines(lineAB, lineBC); //One of the voronoi vertices is the circumcentre of the triangle
 
-					float angle = MathsFunctions.RotationOfLine(voronoiVertex, voronoiCentre);
+					float angle = MathsFunctions.RotationOfLine(voronoiVertex, voronoiCentre); //Get the angle of the vertex relative to the centre of the voronoi cell
 
-					newCell.vertexAngles.Add(angle);
-					newCell.vertices.Add (voronoiVertex);
-
-					if(looped)
-					{
-						break;
-					}
+					newCell.vertexAngles.Add(angle); //Add the angle to the cells angle list (this is to sort the vertices clockwise)
+					newCell.vertices.Add (voronoiVertex); //Add the vertex to the cells vertex list
 				}
 			}
 
-			voronoiVertices.Add (newCell);
+			voronoiVertices.Add (newCell); //Add the cell to the list of cells
 		}
 
-		for(int i = 0; i < voronoiVertices.Count; ++i)
+		for(int i = 0; i < voronoiVertices.Count; ++i) //For all voronoi cells
 		{
-			for(int j = voronoiVertices[i].vertexAngles.Count; j > 0; --j) //For all unvisited stars
+			for(int j = voronoiVertices[i].vertexAngles.Count; j > 0; --j) //For all vertices in the cell
 			{
 				bool swapsMade = false;
 				
@@ -201,37 +192,37 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 				}
 			}
 
-			for(int j = 1; j < voronoiVertices[i].vertices.Count; ++j)
+			for(int j = 1; j < voronoiVertices[i].vertices.Count; ++j) //For all the vertices
 			{
-				if(voronoiVertices[i].vertices[j] == voronoiVertices[i].vertices[j - 1])
+				if(voronoiVertices[i].vertices[j] == voronoiVertices[i].vertices[j - 1]) //If there are duplicates
 				{
-					voronoiVertices[i].vertices.RemoveAt(j);
+					voronoiVertices[i].vertices.RemoveAt(j); //Remove one
 					--j;
 				}
 			}
 		}
 
-		for(int i = 0; i < voronoiVertices.Count; ++i)
+		for(int i = 0; i < voronoiVertices.Count; ++i) //For all cells
 		{
-			GameObject newCell = new GameObject("Voronoi Cell");
-			newCell.AddComponent("MeshRenderer");
-			newCell.AddComponent("MeshFilter");
-			newCell.AddComponent("MeshCollider");
+			GameObject newCell = new GameObject("Voronoi Cell"); //Create new gameobject
+			newCell.AddComponent("MeshRenderer"); //Add meshrenderer to create a mesh
+			newCell.AddComponent("MeshFilter"); //Add meshfilter to apply materials
+			newCell.AddComponent("MeshCollider"); //Add meshcollider (why?)
 		
-			MeshFilter newMesh = (MeshFilter)newCell.GetComponent("MeshFilter");
+			MeshFilter newMesh = (MeshFilter)newCell.GetComponent("MeshFilter"); //Get a reference to the meshfilter
 
-			List<Vector3> vertices = new List<Vector3>();
+			List<Vector3> vertices = new List<Vector3>(); //Create new list of vertices
 
-			for(int j = 0; j < voronoiVertices[i].vertices.Count; ++j)
+			for(int j = 0; j < voronoiVertices[i].vertices.Count; ++j) //For all the voronoi cell's vertices
 			{
-				int nextVertex = j + 1;
+				int nextVertex = j + 1; //Get the next vertex
 
 				if(nextVertex == voronoiVertices[i].vertices.Count)
 				{
 					nextVertex = 0;
 				}
 
-				int prevVertex = j - 1;
+				int prevVertex = j - 1; //Get the previous vertex
 
 				if(prevVertex == -1)
 				{
@@ -242,35 +233,60 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 				Vector3 lineB = voronoiVertices[i].vertices[nextVertex] - voronoiVertices[i].vertices[j]; //Line from vertex to previous vertex
 
 				Vector3 bisector = (lineA.normalized + lineB.normalized) / 2f; //Bisector line
-				float cIntersect = voronoiVertices[i].vertices[j].y - (bisector.y / bisector.x) * voronoiVertices[i].vertices[j].x; //Cintersect = y - mx
-				Vector3 bisectorIntersect = new Vector3(0f, cIntersect, 0f);
+				float yIntersect = voronoiVertices[i].vertices[j].y - (bisector.y / bisector.x) * voronoiVertices[i].vertices[j].x; //Cintersect = y - mx
+				Vector3 bisectorIntersect = new Vector3(0f, yIntersect, 0f); //Get the y intersect of the bisector
 
-				float vertAngle = MathsFunctions.AngleBetweenLineSegments(voronoiVertices[i].vertices[j], voronoiVertices[i].vertices[prevVertex], voronoiVertices[i].vertices[nextVertex]) / 2f;
+				float vertAngle = MathsFunctions.AngleBetweenLineSegments(voronoiVertices[i].vertices[j], voronoiVertices[i].vertices[prevVertex], voronoiVertices[i].vertices[nextVertex]) / 2f; //Get the angle between the lines
 
-				float hypotenuseLength = 0.25f / Mathf.Sin(vertAngle * Mathf.Deg2Rad);
+				float hypotenuseLength = 0.5f / Mathf.Sin(vertAngle * Mathf.Deg2Rad); //Find the length of the hypotenuse (how far in the new vertex should be
 
-				Vector3 dir = bisectorIntersect - voronoiVertices[i].vertices[j]; //Intersect
-				dir = bisector.normalized;
-				vertices.Add (voronoiVertices[i].vertices[j] + (dir * hypotenuseLength));
+				Vector3 dir = bisectorIntersect - voronoiVertices[i].vertices[j]; //Find the direction that the new vertex points to from the current vertex
+				dir = bisector.normalized; //Normalise the direction
+				vertices.Add (voronoiVertices[i].vertices[j]); //Add the original vertex to the new vertex list
+				vertices.Add (voronoiVertices[i].vertices[j] + (dir * hypotenuseLength)); //Add this indented vertex to the new vertex list
 			}
 
-			for(int j = 0; j < vertices.Count; ++j)
+			for(int j = 0; j < vertices.Count; ++j) //For all the vertices
 			{
-				float x = vertices[j].x - systemListConstructor.systemList[i].systemObject.transform.position.x;
-				float y = vertices[j].y - systemListConstructor.systemList[i].systemObject.transform.position.y;
+				float x = vertices[j].x - systemListConstructor.systemList[i].systemObject.transform.position.x; //Set the x relative to the centre (used to be prevent the vertices being offset from the gameobject centre)
+				float y = vertices[j].y - systemListConstructor.systemList[i].systemObject.transform.position.y; //Do the same for the y
 				Vector3 newPos = new Vector3(x, y, 0f);
 				vertices[j] = newPos;
 			}
 
-			newMesh.mesh.vertices = vertices.ToArray();
+			newMesh.mesh.vertices = vertices.ToArray(); //Add the vertices to the mesh vertex list
 
-			List<int> tris = new List<int>();
+			List<int> tris = new List<int>(); //Create new tris
 
-			for(int j = 2; j < voronoiVertices[i].vertices.Count; ++j)
+			for(int j = 0; j < vertices.Count; ++j) //Create tris from the vertices
 			{
-				tris.Add (0);
-				tris.Add (j);
-				tris.Add (j-1);
+				int nextVertex = j + 1;
+				int afterNextVertex = j + 2;
+
+				if(nextVertex == vertices.Count)
+				{
+					nextVertex = 0;
+					afterNextVertex = 1;
+				}
+
+				if(afterNextVertex == vertices.Count)
+				{
+					afterNextVertex = 0;
+				}
+
+				if(j % 2 != 0)
+				{
+					tris.Add (afterNextVertex);
+					tris.Add (nextVertex);
+					tris.Add (j);
+				}
+
+				else
+				{
+					tris.Add (j);
+					tris.Add (nextVertex);
+					tris.Add (afterNextVertex);
+				}
 			}
 
 			List<Vector2> uvs =new List<Vector2>();
@@ -299,7 +315,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 			newCell.transform.position = new Vector3(systemListConstructor.systemList[i].systemObject.transform.position.x, systemListConstructor.systemList[i].systemObject.transform.position.y, 0f);
 			newCell.transform.parent = voronoiCellContainer.transform;
 
-			voronoiCells.Add (newCell);
+			//voronoiCells.Add (newCell);
 		}
 	}
 

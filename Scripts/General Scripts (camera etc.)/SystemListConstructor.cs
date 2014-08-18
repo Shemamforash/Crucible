@@ -24,10 +24,11 @@ public class SystemListConstructor : MasterScript
 	private float xPos, yPos, distanceXY;
 	public float systemScale = 0.0f, sysDistMin;
 	public Transform systemContainer;
-	public bool loaded = false;
+	public bool loaded;
 
 	private void Start()
 	{
+
 		mapSize = PlayerPrefs.GetInt ("Map Size");
 		PlanetRead ();
 		SystemRead ();
@@ -51,7 +52,7 @@ public class SystemListConstructor : MasterScript
 			lineRenderScript.StartUp();
 		}
 
-		systemPopup.LoadOverlays ();
+		//systemPopup.LoadOverlays ();
 
 		galaxyGUI.SelectRace(PlayerPrefs.GetString ("Player Race"));
 		loaded = true;

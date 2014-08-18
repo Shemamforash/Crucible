@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public class Triangulation : MasterScript 
 {
@@ -9,76 +10,143 @@ public class Triangulation : MasterScript
 	private List<Triangle> tempTri = new List<Triangle>();
 	private List<GameObject> unvisitedStars = new List<GameObject> ();
 	private List<GameObject> externalPoints = new List<GameObject> ();
+	public bool start, iterate = false;
+	public float timer = -1f;
+	public int iterator = 0;
 
-	public void SimpleTriangulation()
+	public void Update()
 	{
-		CacheNearestStars ();
-		
-		Triangle newTri = new Triangle();
-		newTri.points.Add (unvisitedStars [0]);
-		newTri.points.Add (unvisitedStars [1]);
-		for(int i = 2; i < unvisitedStars.Count; ++i)
+		if(systemListConstructor.loaded == true && iterator == 0)
 		{
-			if(MathsFunctions.PointsAreColinear(unvisitedStars[0].transform.position, unvisitedStars[1].transform.position, unvisitedStars[i].transform.position) == false)
-			{
-				newTri.points.Add (unvisitedStars[i]);
-				newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[0].transform.position, newTri.points[1].transform.position));
-				newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[1].transform.position, newTri.points[2].transform.position));
-				newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[2].transform.position, newTri.points[0].transform.position));
-				externalPoints.Add (unvisitedStars [0]);
-				externalPoints.Add (unvisitedStars [1]);
-				externalPoints.Add (unvisitedStars [i]);
-				triangles.Add (newTri);
-				unvisitedStars.RemoveAt(i);
-				unvisitedStars.RemoveRange(0, 2);
-				break;
-			}
+			start = true;
 		}
+
+		if(start == true)
+		{
+			triangles.Clear();
+			tempTri.Clear();
+			unvisitedStars.Clear ();
+			externalPoints.Clear ();
+
+			CacheNearestStars (); //First add all the star systems to a list
+			
+			Triangle newTri = new Triangle(); //Create a new triangle
+			newTri.points.Add (unvisitedStars [0]); //Add the first 3 ordered points from the centre
+			newTri.points.Add (unvisitedStars [1]);
+			newTri.points.Add (unvisitedStars[2]);
+			
+			newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[0].transform.position, newTri.points[1].transform.position)); //Calculate the line equations between the points
+			newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[1].transform.position, newTri.points[2].transform.position));
+			newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[2].transform.position, newTri.points[0].transform.position));
+			
+			externalPoints.Add (unvisitedStars [0]); //Add the points to the external points list
+			externalPoints.Add (unvisitedStars [1]);
+			externalPoints.Add (unvisitedStars [2]);
+			
+			triangles.Add (newTri); //Add the triangle to the triangle list
+			
+			unvisitedStars.RemoveRange(0, 3); //Remove the points from the unvisited points list
+
+			start = false;
+			iterate = true;
+
+			timer = Time.time;
+		}
+
+		if(start == false && iterate == true)
+		{
+				if(iterator < unvisitedStars.Count)
+				{
+					LinkPointToTris(iterator);
+					CacheTempTris(iterator);
+					DrawDebugTriangles();
+					++iterator;
+					timer = Time.time;
+				}
+
+				if(iterator == unvisitedStars.Count)
+				{
+					DrawDebugTriangles();
+					iterate = false;
+				}
+		}
+	}
+
+	private void DrawDebugTriangles()
+	{
+		for(int i = 0; i < triangles.Count; ++i)
+		{
+			voronoiGenerator.DrawDebugLine(triangles[i].points[0].transform.position, triangles[i].points[1].transform.position, turnInfoScript.selkiesMaterial);
+			voronoiGenerator.DrawDebugLine(triangles[i].points[1].transform.position, triangles[i].points[2].transform.position, turnInfoScript.selkiesMaterial);
+			voronoiGenerator.DrawDebugLine(triangles[i].points[2].transform.position, triangles[i].points[0].transform.position, turnInfoScript.selkiesMaterial);
+		}
+	}
+
+	public void SimpleTriangulation() //This function controls the triangulation and conversion to delaunay of the stars
+	{
+		CacheNearestStars (); //First add all the star systems to a list
+		
+		Triangle newTri = new Triangle(); //Create a new triangle
+		newTri.points.Add (unvisitedStars [0]); //Add the first 3 ordered points from the centre
+		newTri.points.Add (unvisitedStars [1]);
+		newTri.points.Add (unvisitedStars[2]);
+
+		newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[0].transform.position, newTri.points[1].transform.position)); //Calculate the line equations between the points
+		newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[1].transform.position, newTri.points[2].transform.position));
+		newTri.lines.Add (MathsFunctions.ABCLineEquation (newTri.points[2].transform.position, newTri.points[0].transform.position));
+
+		externalPoints.Add (unvisitedStars [0]); //Add the points to the external points list
+		externalPoints.Add (unvisitedStars [1]);
+		externalPoints.Add (unvisitedStars [2]);
+
+		triangles.Add (newTri); //Add the triangle to the triangle list
+
+		unvisitedStars.RemoveRange(0, 3); //Remove the points from the unvisited points list
 
 		for(int i = 0; i < unvisitedStars.Count; ++i) //For all unchecked points
 		{
-			LinkPointToTris(i);
-			CacheTempTris(i);
+			LinkPointToTris(i); //Link this unvisited point to all possible external points
+			CacheTempTris(i); //Add all the triangles formed by this linking to the triangle list
 		}
 			
-		bool isDelaunay = false;
+		bool isDelaunay = false; //Say that the list isn't delaunay
 
-		while(isDelaunay == false)
+		while(isDelaunay == false) //While it isn't delaunay
 		{
-			isDelaunay = voronoiGenerator.TriangulationToDelaunay ();
+			isDelaunay = voronoiGenerator.TriangulationToDelaunay (); //Make it delaunay, if the method returns true, the triangulation is delaunay and the while loop will stop
 		}
 
-		CheckForNonDelaunayTriangles ();
+		CheckForNonDelaunayTriangles (); //Debugging method outputs the number of non-delaunay triangles to the log. This has not output any bad values for some time.
 	}
 	
-	private void CacheNearestStars()
+	private void CacheNearestStars() //Used to add the star systems to a list of points and sort them NO ISSUES HERE
 	{
 		for(int i = 0; i < systemListConstructor.systemList.Count; ++i) //Add all systems to a list of unvisited nodes
 		{
 			unvisitedStars.Add (systemListConstructor.systemList[i].systemObject);
 		}
 
-		float theta = 0f;
+		float theta = 0f; //Set a variable to represent angle
 
-		while(theta < 360f)
+		while(theta < 360f) //While the angle is less than 360 degrees
 		{
-			float xPos = 50f + 60f * Mathf.Cos (theta * Mathf.Deg2Rad);
-			float yPos = 50f + 60f * Mathf.Sin (theta * Mathf.Deg2Rad);
+			float xPos = 50f + 70f * Mathf.Cos (theta * Mathf.Deg2Rad); //Get the xposition of a point 60 units from the centre of the map at the desired angle from 0 degrees.
+			float yPos = 50f + 70f * Mathf.Sin (theta * Mathf.Deg2Rad); //Get the yposition
 
-			Vector3 newPos = new Vector3 (xPos, yPos, 0f);
+			Vector3 newPos = new Vector3 (xPos, yPos, 0f); //Create a new vector3 for this position
 			
-			GameObject edgePoint = new GameObject();
-			edgePoint.name = ((int)(theta / 15f)).ToString();
-			edgePoint.transform.position = newPos;
-			unvisitedStars.Add (edgePoint); //This adds bounds to the voronoi diagram (forces it to be a circle);
-			theta += 15f;
+			GameObject edgePoint = new GameObject(); //Create a new gameobject called edgepoint
+			edgePoint.name = ((int)(theta / 15f)).ToString(); //Set the name to the angle over 15 (this will make the points have names 0-23)
+			edgePoint.transform.position = newPos; //Set the position of the gameobject to the previously calculated position
+			unvisitedStars.Add (edgePoint); //This adds a circular boundary to the points so that the voronoi cells are calculated properly
+			theta += 15f; //Move onto the next point on the circle
 		}
 		
 		Vector3 centre = new Vector3 (50f, 50f, 0f); //Create centre point at middle of map
 		
 		for(int j = unvisitedStars.Count; j > 0; --j) //For all unvisited stars
 		{
-			bool swapsMade = false;
+			bool swapsMade = false; //Say no swaps have been made
 			
 			for(int k = 1; k < j; ++k) //While k is less than j (anything above current j value is sorted)
 			{
@@ -87,10 +155,10 @@ public class Triangulation : MasterScript
 				
 				if(distanceA < distanceB) //Sort smallest to largest
 				{
-					GameObject temp = unvisitedStars[k];
+					GameObject temp = unvisitedStars[k]; //Swap the points
 					unvisitedStars[k] = unvisitedStars[k - 1];
 					unvisitedStars[k - 1] = temp;
-					swapsMade = true;
+					swapsMade = true; //A swap has been made
 				}
 			}
 			
@@ -107,75 +175,73 @@ public class Triangulation : MasterScript
 		{
 			int nextPoint = i + 1; //Assign the next point
 
-			if(nextPoint == externalPoints.Count) //If the next point
+			if(nextPoint == externalPoints.Count) //If the next point is out of range
 			{
-				nextPoint = 0;
+				nextPoint = 0; //Set it to the first point in the list
 			}
 
 			Vector3 lineCurToExternal = MathsFunctions.ABCLineEquation(unvisitedStars[curPoint].transform.position, externalPoints[i].transform.position); //Create a line between the external point and the unvisited star
 
-			if(IsIllegalIntersection(i, curPoint, lineCurToExternal)) //This is where the issue lies
+			if(IsIllegalIntersection(i, curPoint, lineCurToExternal)) //If there is an illegal intersection between the external point-current point line and the external point-unvisited point line
 			{
-				continue;
+				continue; //Move onto the next external point
 			}
 
 			Vector3 lineCurToNextExternal = MathsFunctions.ABCLineEquation(unvisitedStars[curPoint].transform.position, externalPoints[nextPoint].transform.position);
 
-			if(IsIllegalIntersection(nextPoint, curPoint, lineCurToNextExternal))
+			if(IsIllegalIntersection(nextPoint, curPoint, lineCurToNextExternal)) //If there is an illegal intersection between the next point-current point line and the external point-unvisited point line
 			{
-				continue;
+				continue; //Move onto the next external point
 			}
 
-			bool illegal = false;
+			bool illegal = false; //Say that the line is not illegal
 
-			for(int j = 0; j < externalPoints.Count; ++j)
+			for(int j = 0; j < externalPoints.Count; ++j) //Check through all other external points
 			{
 				if(j == i || j == nextPoint)
 				{
 					continue;
 				}
 
-				if(MathsFunctions.IsInTriangle(externalPoints[i].transform.position, externalPoints[nextPoint].transform.position, unvisitedStars[curPoint].transform.position, externalPoints[j].transform.position) == true)
+				if(MathsFunctions.IsInTriangle(externalPoints[i].transform.position, externalPoints[nextPoint].transform.position, unvisitedStars[curPoint].transform.position, externalPoints[j].transform.position) == true) //If the point lies in any of the triangles
 				{
-					if(MathsFunctions.PointsAreColinear(externalPoints[i].transform.position, externalPoints[nextPoint].transform.position, externalPoints[j].transform.position) == false)
-					{
-						if(MathsFunctions.PointsAreColinear(externalPoints[i].transform.position, unvisitedStars[curPoint].transform.position, externalPoints[j].transform.position) == false)
-						{
-							if(MathsFunctions.PointsAreColinear(externalPoints[nextPoint].transform.position, unvisitedStars[curPoint].transform.position, externalPoints[j].transform.position) == false)
-							{
-								illegal = true;
-								break;
-							}
-						}
-					}
+					//if(MathsFunctions.PointsAreColinear(externalPoints[i].transform.position, externalPoints[nextPoint].transform.position, externalPoints[j].transform.position) == false)
+					//{
+						//if(MathsFunctions.PointsAreColinear(externalPoints[i].transform.position, unvisitedStars[curPoint].transform.position, externalPoints[j].transform.position) == false)
+						//{
+							//if(MathsFunctions.PointsAreColinear(externalPoints[nextPoint].transform.position, unvisitedStars[curPoint].transform.position, externalPoints[j].transform.position) == false)
+							//{
+								illegal = true; //It is an illegal triangle
+								break; //
+							//}
+						//}
+					//}
 				}
 			}
 
-			if(illegal)
+			if(illegal) //If it's an illegal triangle
 			{
-				continue;
+				continue; //Skip to the next point
 			}
 
-			GameObject pointA = externalPoints[i];
+			GameObject pointA = externalPoints[i]; //Otherwise assign the points of the triangle
 			GameObject pointB = externalPoints[nextPoint];
 			GameObject pointC = unvisitedStars[curPoint];
 
-			Triangle newTri = new Triangle();
-			newTri.points.Add (pointA);
+			Triangle newTri = new Triangle(); //Create a new triangle object
+			newTri.points.Add (pointA); //Add the points
 			newTri.points.Add (pointB);
 			newTri.points.Add (pointC);
-			newTri.lines.Add (MathsFunctions.ABCLineEquation (pointA.transform.position, pointB.transform.position));
+			newTri.lines.Add (MathsFunctions.ABCLineEquation (pointA.transform.position, pointB.transform.position)); //Calculate the line equations between the points
 			newTri.lines.Add (MathsFunctions.ABCLineEquation (pointB.transform.position, pointC.transform.position));
 			newTri.lines.Add (MathsFunctions.ABCLineEquation (pointC.transform.position, pointA.transform.position));
-			tempTri.Add (newTri);
+			tempTri.Add (newTri); //Add the triangle to the temptriangle list
 		}
 	}
 
 	public List<GameObject> CheckIfSharesSide(Triangle triOne, Triangle triTwo) //Just return the points
 	{
-		List<GameObject> pointList = new List<GameObject> ();
-
-		int counter = 0;
+		List<GameObject> pointList = new List<GameObject> (); //New empty list of points
 
 		for(int i = 0; i < 3; ++i) //For all points in tri one
 		{
@@ -183,28 +249,28 @@ public class Triangulation : MasterScript
 			{
 				if(triOne.points[i].name == triTwo.points[j].name) //If tri one shares a point with tri two
 				{
-					pointList.Add(triOne.points[i]);
-					break;
+					pointList.Add(triOne.points[i]); //Add the trione point
+					break; //Go to the next point in tri one
 				}
 			}
 		}
 
-		if(pointList.Count == 2)
+		if(pointList.Count == 2) //If there are 2 shared points (i.e an edge)
 		{
-			for(int i = 0; i < 3; ++i)
+			for(int i = 0; i < 3; ++i) //For all points in the triangles
 			{
-				if(triOne.points[i].name != pointList[0].name && triOne.points[i].name != pointList[1].name)
+				if(triOne.points[i].name != pointList[0].name && triOne.points[i].name != pointList[1].name) //Find the unshared points in triOne
 				{
-					pointList.Add(triOne.points[i]);
+					pointList.Add(triOne.points[i]); //Add them to the list
 				}
-				if(triTwo.points[i].name != pointList[0].name && triTwo.points[i].name != pointList[1].name)
+				if(triTwo.points[i].name != pointList[0].name && triTwo.points[i].name != pointList[1].name) //Find the unshared points in triTwo
 				{
-					pointList.Add (triTwo.points[i]);
+					pointList.Add (triTwo.points[i]); //Add them to the list
 				}
 			}
 		}
 	
-		return pointList;
+		return pointList; //Return the list of points
 	}
 
 	private void CheckForNonDelaunayTriangles()
@@ -268,42 +334,41 @@ public class Triangulation : MasterScript
 		Debug.Log(numberofnondelaunay.Count + " | " + triangles.Count);
 	}
 
-	private void CacheTempTris(int curPoint)
+	private void CacheTempTris(int curPoint) //Used to cache all the tris formed by connecting the current unvisited point to available external points
 	{
-		for(int i = 0; i < tempTri.Count; ++i)
+		for(int i = 0; i < tempTri.Count; ++i) //For all temporary triangles
 		{
-			triangles.Add (tempTri[i]);
+			triangles.Add (tempTri[i]); //Add the triangle to the triangle list
 		}
 
-		if(tempTri.Count == 0)
+		if(tempTri.Count == 0) //If there are no temporary triangles
 		{
-			Debug.Log ("wut" + unvisitedStars[curPoint]);
-			Instantiate (systemInvasion.invasionQuad, unvisitedStars[curPoint].transform.position, Quaternion.identity);
+			Debug.Log ("wut" + unvisitedStars[curPoint]); //Something must have gone wrong so debug the unvisited point
 		}
 
-		externalPoints.Add (unvisitedStars [curPoint]);
-		CheckInteriorPoints ();
-		SortExternalPoints ();
-		tempTri.Clear ();
+		externalPoints.Add (unvisitedStars [curPoint]); //Add the unvisted star to the external points (it must be external)
+		CheckInteriorPoints (); //Check to see if any other points have become internal
+		SortExternalPoints (); //Sort the external points clockwise
+		tempTri.Clear (); //Clear the temporary triangles list
 	}
 
-	private void SortExternalPoints()
+	private void SortExternalPoints() //Used to sort the external points clockwise from the centre of the map
 	{
-		for(int j = externalPoints.Count; j > 0; --j) //For all unvisited stars
+		for(int j = externalPoints.Count; j > 0; --j) //For all external points
 		{
-			bool swapsMade = false;
+			bool swapsMade = false; //Say no swaps have been made
 			
 			for(int k = 1; k < j; ++k) //While k is less than j (anything above current j value is sorted)
 			{
-				float angleK = MathsFunctions.RotationOfLine(new Vector3(50f, 50f, 0f), externalPoints[k].transform.position);
-				float angleKMinus1 = MathsFunctions.RotationOfLine(new Vector3(50f, 50f, 0f), externalPoints[k - 1].transform.position);
+				float angleK = MathsFunctions.RotationOfLine(new Vector3(50f, 50f, 0f), externalPoints[k].transform.position); //Get the angle the current external point makes with the centre
+				float angleKMinus1 = MathsFunctions.RotationOfLine(new Vector3(50f, 50f, 0f), externalPoints[k - 1].transform.position); //Get the angle the previous point makes with the centre
 
-				if(angleK < angleKMinus1) //Sort smallest to largest
+				if(angleK < angleKMinus1) //Sort smallest to largest 
 				{
-					GameObject tempExternal = externalPoints[k];
-					externalPoints[k] = externalPoints[k - 1];
+					GameObject tempExternal = externalPoints[k]; //Create a temporary gameobject to store the point
+					externalPoints[k] = externalPoints[k - 1]; //And swap them
 					externalPoints[k - 1] = tempExternal;
-					swapsMade = true;
+					swapsMade = true; //A swap has been made
 				}
 			}
 			
@@ -314,11 +379,11 @@ public class Triangulation : MasterScript
 		}
 	}
 
-	private bool IsIllegalIntersection(int external, int point, Vector3 curToExt)
+	private bool IsIllegalIntersection(int externalPoint, int unvisitedPoint, Vector3 curToExtLine)
 	{
 		for(int j = 0; j < triangles.Count; ++j) //For every triangle
 		{
-			if(triangles[j].isInternal == true)
+			if(triangles[j].isInternal == true) //If the triangle is internal we don't need to worry about it, so move onto the next triangle
 			{
 				continue;
 			}
@@ -344,14 +409,14 @@ public class Triangulation : MasterScript
 					pointB = triangles[j].points[0];
 				}
 
-				if(pointA.name == externalPoints[external].name || pointB.name == externalPoints[external].name) //If the line contains the external point we can ignore it
+				if(pointA.name == externalPoints[externalPoint].name || pointB.name == externalPoints[externalPoint].name) //If the line contains the external point we can ignore it
 				{
 					continue;
 				}
 
-				Vector2 intersection = MathsFunctions.IntersectionOfTwoLines(curToExt, triangles[j].lines[k]); //Get the intersection of the line with the current star to external point line
+				Vector2 intersection = MathsFunctions.IntersectionOfTwoLines(curToExtLine, triangles[j].lines[k]); //Get the intersection of the line with the current star to external point line
 				
-				if(MathsFunctions.PointLiesOnLine(externalPoints[external].transform.position, unvisitedStars[point].transform.position, intersection)) //If the point lies elsewhere on the line
+				if(MathsFunctions.PointLiesOnLine(externalPoints[externalPoint].transform.position, unvisitedStars[unvisitedPoint].transform.position, intersection)) //If the point lies elsewhere on the line
 				{
 					if(MathsFunctions.PointLiesOnLine(pointA.transform.position, pointB.transform.position, intersection))
 					{
@@ -405,7 +470,7 @@ public class Triangulation : MasterScript
 				}
 			}
 
-			if(tempAngle > 359f)
+			if(Math.Round(tempAngle, 2) >= 360f)
 			{
 				pointsToRemove.Add (i);
 			}
@@ -435,14 +500,6 @@ public class Triangulation : MasterScript
 		{
 			externalPoints.RemoveAt(pointsToRemove[i] - counter);
 			++counter;
-		}
-		
-		for(int i = 0; i < externalPoints.Count; ++i)
-		{
-			if(externalPoints[i] == null)
-			{
-				Debug.Log ("whu");
-			}
 		}
 	}
 }

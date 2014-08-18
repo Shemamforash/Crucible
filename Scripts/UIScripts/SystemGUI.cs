@@ -46,28 +46,27 @@ public class SystemGUI : MasterScript
 		}
 	}
 
-	private void CheckSystemSize()
+	private void CheckSystemSize() //Used to enable or disable parts of the UI depending on the system size
 	{
-		for(int i = 0; i < 6; i++) //This sections of the function evaluates the improvement level of each system, and improves it if the button is clicked
+		for(int i = 0; i < 6; i++) //For all possible planets
 		{	
-			if(i < systemListConstructor.systemList[selectedSystem].systemSize)
+			if(i < systemListConstructor.systemList[selectedSystem].systemSize) //If the planet is in the system
 			{
-				NGUITools.SetActive(planetObjects[i], true);
+				NGUITools.SetActive(planetObjects[i], true); //Enable it's relevant UI part on the far left hand side
 				
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true)
+				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true) //If it is also colonised
 				{
-					UpdateColonisedPlanetDetails(i, selectedSystem);
+					UpdateColonisedPlanetDetails(i, selectedSystem); //Update the relevant details
 				}
-				
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == false)
+				else //If it's not
 				{
-					UpdateUncolonisedPlanetDetails(i);
+					UpdateUncolonisedPlanetDetails(i); //Update those details
 				}
 			}
 			
-			if(i >= systemListConstructor.systemList[selectedSystem].systemSize)
+			if(i >= systemListConstructor.systemList[selectedSystem].systemSize) //If the possible planet is not within the number of planets in the system
 			{
-				NGUITools.SetActive(planetObjects[i], false);
+				NGUITools.SetActive(planetObjects[i], false); //Disable the corresponding ui object
 			}
 		}
 	}
@@ -260,41 +259,39 @@ public class SystemGUI : MasterScript
 				playerTurnScript.power -= powerImprovementCost;
 				playerTurnScript.wealth -= systemSIMData.improvementCost;
 				++systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetImprovementLevel;
-				UpdateColonisedPlanetDetails(selectedPlanet, selectedSystem);
 			}
 		}
 	}
 
 	private void UpdateColonisedPlanetDetails(int i, int system)
 	{
-		NGUITools.SetActive (planetElementList [i].knowledge.gameObject, true);
-		NGUITools.SetActive (planetElementList [i].power.gameObject, true);
-		NGUITools.SetActive (planetElementList [i].population.gameObject, true);
-		NGUITools.SetActive (planetElementList [i].quality.gameObject, true);
-		NGUITools.SetActive (planetElementList [i].name.gameObject, true);
-		
-		NGUITools.SetActive (planetElementList [i].uncolonised.gameObject, false);
-
 		planetElementList [i].name.text = systemListConstructor.systemList [selectedSystem].planetsInSystem [i].planetType.ToUpper();
-
+		
 		planetElementList [i].quality.text = systemSIMData.allPlanetsInfo [i].generalInfo.ToUpper();
 		planetElementList [i].powerOP.text = systemSIMData.allPlanetsInfo [i].powerOutput;
 		planetElementList [i].knowledgeOP.text = systemSIMData.allPlanetsInfo [i].knowledgeOutput;
 		planetElementList [i].population.text = systemSIMData.allPlanetsInfo [i].population;
-
-		float maxPopPlanet = systemListConstructor.systemList[system].sysMaxPopulationModifier + systemListConstructor.systemList[system].planetsInSystem[i].maxPopulationModifier
-			+ systemListConstructor.systemList[system].planetsInSystem[i].maxPopulation;
-
-		population.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetPopulation, 1).ToString () + "%/" + 
-			Math.Round (maxPopPlanet, 1).ToString () + "% COLONISED";
-		growth.text = Math.Round (systemSIMData.populationToAdd, 1).ToString() + "% GROWTH";
-
-		defence.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetCurrentDefence, 0).ToString () + "/" +
-						Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetMaxDefence, 0).ToString () + " DEFENCE (+" + 
-						Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].defenceRegeneration, 1).ToString () + "/S)";
-
-		if(rareResourceLabel.text == "2NDRY RESOURCE")
+		
+		if(i == selectedPlanet)
 		{
+			NGUITools.SetActive (planetElementList [i].knowledge.gameObject, true);
+			NGUITools.SetActive (planetElementList [i].power.gameObject, true);
+			NGUITools.SetActive (planetElementList [i].population.gameObject, true);
+			NGUITools.SetActive (planetElementList [i].quality.gameObject, true);
+			NGUITools.SetActive (planetElementList [i].name.gameObject, true);
+			NGUITools.SetActive (planetElementList [i].uncolonised.gameObject, false);
+
+			float maxPopPlanet = systemListConstructor.systemList[system].sysMaxPopulationModifier + systemListConstructor.systemList[system].planetsInSystem[i].maxPopulationModifier
+				+ systemListConstructor.systemList[system].planetsInSystem[i].maxPopulation;
+
+			population.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetPopulation, 1).ToString () + "%/" + 
+				Math.Round (maxPopPlanet, 1).ToString () + "% COLONISED";
+			growth.text = Math.Round (systemSIMData.populationToAdd, 1).ToString() + "% GROWTH";
+
+			defence.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetCurrentDefence, 0).ToString () + "/" +
+							Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetMaxDefence, 0).ToString () + " DEFENCE (+" + 
+							Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].defenceRegeneration, 1).ToString () + "/S)";
+
 			string tempRes = systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType;
 
 			if(tempRes == null)
@@ -303,27 +300,25 @@ public class SystemGUI : MasterScript
 			}
 
 			rareResourceLabel.text = tempRes;
-
-			NGUITools.SetActive(rareResourceLabel.gameObject, true);
-		}
-				
-		if(systemSIMData.improvementNumber < 3)
-		{
-			if(improveButton.GetComponent<UIButton>().isEnabled == false)
+							
+			if(systemSIMData.improvementNumber < 3)
 			{
-				improveButton.GetComponent<UIButton>().isEnabled = true;
-			}
+				if(improveButton.GetComponent<UIButton>().isEnabled == false)
+				{
+					improveButton.GetComponent<UIButton>().isEnabled = true;
+				}
 
-			float temp = systemFunctions.PowerCost(systemSIMData.improvementNumber, selectedSystem, i);
-			improveButtonPower.text = Math.Round (temp, 1).ToString();
-			improveButtonWealth.text = systemSIMData.improvementCost.ToString();
-		}
-		
-		if(systemSIMData.improvementNumber == 3 && improveButton.GetComponent<UIButton>().isEnabled == true)
-		{
-			improveButtonPower.text = "-";
-			improveButtonWealth.text = "-";
-			improveButton.GetComponent<UIButton>().isEnabled = false;
+				float temp = systemFunctions.PowerCost(systemSIMData.improvementNumber, selectedSystem, i);
+				improveButtonPower.text = Math.Round (temp, 1).ToString();
+				improveButtonWealth.text = systemSIMData.improvementCost.ToString();
+			}
+			
+			if(systemSIMData.improvementNumber == 3 && improveButton.GetComponent<UIButton>().isEnabled == true)
+			{
+				improveButtonPower.text = "-";
+				improveButtonWealth.text = "-";
+				improveButton.GetComponent<UIButton>().isEnabled = false;
+			}
 		}
 	}
 
