@@ -81,8 +81,6 @@ public class SystemSIMData : MasterScript
 		{
 			int rnd = UnityEngine.Random.Range (0, 100);
 
-			Debug.Log (improvementsBasic.resourceYieldBonus);
-
 			if(rnd < 4 * improvementsBasic.resourceYieldBonus)
 			{
 				switch(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType)

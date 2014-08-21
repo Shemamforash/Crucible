@@ -21,7 +21,7 @@ public class EnemyOne : AIBasicParent
 			{
 				systemListConstructor.systemList[i].systemOwnedBy = playerRace;
 
-				//voronoiGenerator.voronoiCells[i].renderer.material = materialInUse;
+				//voronoiGenerator.voronoiCells[i].renderer.material = materialInUse; //TODO
 				//voronoiGenerator.voronoiCells[i].renderer.material.shader = Shader.Find("Transparent/Diffuse");
 
 				for(int j = 0; j < systemListConstructor.systemList[i].systemSize; ++j)

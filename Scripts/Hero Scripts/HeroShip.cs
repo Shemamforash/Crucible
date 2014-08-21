@@ -14,93 +14,6 @@ public class HeroShip : MasterScript
 		heroMovement = gameObject.GetComponent<HeroMovement> ();
 	}
 
-	private void CheckButtonsAllowed()
-	{
-		if(heroScript.heroType == "Diplomat")
-		{
-			NGUITools.SetActive(heroGUI.promoteButton, true);
-			NGUITools.SetActive(heroGUI.embargoButton, true);
-			tempChildren = tempChildren + 2;
-		}
-
-		else
-		{
-			NGUITools.SetActive(heroGUI.promoteButton, false);
-			NGUITools.SetActive(heroGUI.embargoButton, false);
-		}
-	}
-
-	public void UpdateButtons()
-	{
-		tempChildren = 0;
-	
-		if(heroScript.heroOwnedBy == playerTurnScript.playerRace)
-		{
-			if(heroMovement.TestForProximity (gameObject.transform.position, heroMovement.HeroPositionAroundStar(heroScript.heroLocation)) == true)
-			{
-				system = RefreshCurrentSystem(heroScript.heroLocation);
-
-				if(heroScript.heroType == "Soldier")
-				{
-					NGUITools.SetActive(heroGUI.guardButton, true);
-					if(systemListConstructor.systemList[system].systemOwnedBy == null)
-					{
-						heroGUI.guardButton.GetComponent<UILabel>().text = "Guard";
-					}
-					if(systemListConstructor.systemList[system].systemOwnedBy == heroScript.heroOwnedBy)
-					{
-						heroGUI.guardButton.GetComponent<UILabel>().text = "Protect";
-					}
-					++tempChildren;
-				}
-
-				if(systemListConstructor.systemList[system].systemOwnedBy != heroScript.heroOwnedBy && systemListConstructor.systemList[system].systemOwnedBy != null)
-				{
-					++tempChildren;
-
-					CheckButtonsAllowed();
-
-					if(canViewSystem == true)
-					{
-						heroGUI.invasionButton.GetComponent<UILabel>().text = "Enter System";
-						NGUITools.SetActive(heroGUI.invasionButton, false);
-					}
-					else
-					{
-						NGUITools.SetActive(heroGUI.invasionButton, true);
-						heroGUI.invasionButton.GetComponent<UILabel>().text = "Invade System";
-					}
-				}
-			}
-		}
-
-		else
-		{
-			NGUITools.SetActive(heroGUI.guardButton, false);
-			NGUITools.SetActive(heroGUI.embargoButton, false);
-			NGUITools.SetActive(heroGUI.promoteButton, false);
-			NGUITools.SetActive(heroGUI.invasionButton, false);
-		}
-
-		RepositionButtons();
-	}
-
-	private void RepositionButtons()
-	{
-		if(gridChildren != tempChildren)
-		{
-			gridChildren = tempChildren;
-			
-			float gridWidth = (gridChildren * heroGUI.buttonContainer.GetComponent<UIGrid>().cellWidth) / 2 - (heroGUI.buttonContainer.GetComponent<UIGrid>().cellWidth/2);
-			
-			heroGUI.buttonContainer.transform.localPosition = new Vector3(systemGUI.playerSystemInfoScreen.transform.localPosition.x - gridWidth / 2,  //Check
-			                                                              heroGUI.turnInfoBar.transform.localPosition.y + 50.0f, 
-			                                                              0.0f);
-			
-			heroGUI.buttonContainer.GetComponent<UIGrid>().repositionNow = true;
-		}
-	}
-
 	public void ShipAbilities(TurnInfo thisPlayer)
 	{
 		heroScript = gameObject.GetComponent<HeroScriptParent> ();
@@ -115,19 +28,9 @@ public class HeroShip : MasterScript
 		{
 			heroScript.auxiliaryDamage = ShipFunctions.dropshipPower * heroScript.auxiliaryDamage;
 
-			int numberOfMerchants = 0;
+			DiplomatFunctions((ShipFunctions.logisticsRating + 10), thisPlayer);
 
-				for(int i = 0; i < thisPlayer.playerOwnedHeroes.Count; i++)
-				{
-					HeroScriptParent tempScript = thisPlayer.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
-
-					if(tempScript.heroType == "Merchant")
-					{
-						++numberOfMerchants;
-					}
-				}
-
-			MerchantFunctions((ShipFunctions.logisticsRating + 1) * numberOfMerchants, thisPlayer);
+			canViewSystem = true;
 		}
 
 		if(heroScript.heroType == "Infiltrator")
@@ -170,42 +73,54 @@ public class HeroShip : MasterScript
 
 	private void MakeNewTradeRoutes(TurnInfo thisPlayer)
 	{
-		float tempWlthKnwl = 0;
+		float tempSystemSI = 0;
 		int chosenEnemySystem = -1, chosenPlayerSystem = -1;
+		string tempOwner = null;
 
 		for(int i = 0; i < systemListConstructor.systemList.Count; ++i) //For all systems
 		{
-			for(int j = 0; j < turnInfoScript.allPlayers.Count; ++j) //For all enemy players
+			if(systemListConstructor.systemList[i].systemOwnedBy == null) //If system is not owned ignore it
 			{
-				if(systemListConstructor.systemList[i].systemOwnedBy == turnInfoScript.allPlayers[j].playerRace) //If system is owned by enemy
+				continue;
+			}
+			if(systemListConstructor.systemList[i].systemOwnedBy == thisPlayer.playerRace) //If system is owned by the player
+			{
+				for(int j = 0; j < systemListConstructor.systemList[i].permanentConnections.Count; ++j) //For all systems connected to this system
 				{
-					for(int k = 0; k < systemListConstructor.systemList[i].permanentConnections.Count; ++k) //For all connections in system
+					int sys = RefreshCurrentSystem(systemListConstructor.systemList[i].permanentConnections[j]);
+
+					if(systemListConstructor.systemList[sys].systemOwnedBy == null || systemListConstructor.systemList[sys].systemOwnedBy == thisPlayer.playerRace) //If the system is owned by this player or not at all ignore it
 					{
-						int system = RefreshCurrentSystem(systemListConstructor.systemList[i].permanentConnections[k]);
+						continue;
+					}
 
-						if(systemListConstructor.systemList[system].systemOwnedBy == thisPlayer.playerRace) //If connection is owned by player
+					GameObject playerSystem = systemListConstructor.systemList[i].systemObject; //Get references to player and enemy system
+					GameObject enemySystem = systemListConstructor.systemList[sys].systemObject;
+
+					bool routeExists = false; //Say the proposed route between these systems does not exist
+
+					for(int k = 0; k < allTradeRoutes.Count; ++k) //For all existing trade routes
+					{
+						if((allTradeRoutes[k].enemySystem == sys && allTradeRoutes[k].playerSystem == i) || 
+						   (allTradeRoutes[k].playerSystem == sys && allTradeRoutes[k].enemySystem == i)) //Check to see if the proposed one exists
 						{
-							bool skip = false;
+							routeExists = true;
+						}
+					}
 
-							for(int l = 0; l < allTradeRoutes.Count; ++l)
-							{
-								if(allTradeRoutes[l].playerSystem == systemListConstructor.systemList[system].systemObject)
-								{
-									skip = true;
-								}
-							}
+					if(routeExists == false) //If the route doesn't exist
+					{
+						systemSIMData = enemySystem.GetComponent<SystemSIMData>(); //Get a reference to the SI output data
 
-							if(skip == false)
-							{
-								systemSIMData = systemListConstructor.systemList[system].systemObject.GetComponent<SystemSIMData>();
+						float temp = systemSIMData.totalSystemPower + systemSIMData.totalSystemKnowledge; //Calculate the system power plus it's knowledge
 
-								float temp = systemSIMData.totalSystemPower + systemSIMData.totalSystemKnowledge; //Get the system output
+						if(temp > tempSystemSI) //If the calculated value is greater than the stored value, this trade route is more valuable than the cached one
+						{
+							tempSystemSI = temp; //So cache this one over it!
 
-								if(temp > tempWlthKnwl) //If its larger than the previous output
-								{
-									chosenEnemySystem = i; //Set the enemy system to connect to this system
-								}
-							}
+							chosenEnemySystem = sys;
+							chosenPlayerSystem = i;
+							tempOwner = systemListConstructor.systemList[sys].systemOwnedBy;
 						}
 					}
 				}
@@ -214,107 +129,99 @@ public class HeroShip : MasterScript
 
 		if(chosenEnemySystem != -1)
 		{
-			tempWlthKnwl = 0;
+			TradeRoute route = new TradeRoute();
+			
+			route.playerSystem = chosenPlayerSystem;
+			route.enemySystem = chosenEnemySystem;
+			route.connectorObject = uiObjects.CreateConnectionLine(systemListConstructor.systemList[route.playerSystem].systemObject, systemListConstructor.systemList[route.enemySystem].systemObject);
+			route.enemySystemOwner = tempOwner;
 
-			for(int i = 0; i < systemListConstructor.systemList[chosenEnemySystem].permanentConnections.Count; ++i) //For all connections in enemy system
+			for(int i = 0; i < turnInfoScript.allPlayers.Count; ++i)
 			{
-				int system = RefreshCurrentSystem(systemListConstructor.systemList[chosenEnemySystem].permanentConnections[i]);
-				
-				if(systemListConstructor.systemList[system].systemOwnedBy == thisPlayer.playerRace) //If connection is owned by player
+				if(turnInfoScript.allPlayers[i].playerRace == tempOwner)
 				{
-					bool skip = false;
-
-					for(int l = 0; l < allTradeRoutes.Count; ++l)
-					{
-						if(allTradeRoutes[l].playerSystem == systemListConstructor.systemList[system].systemObject)
-						{
-							skip = true;
-						}
-					}
-
-					if(skip == false)
-					{
-						systemSIMData = systemListConstructor.systemList[system].systemObject.GetComponent<SystemSIMData>();
-						
-						float temp = systemSIMData.totalSystemPower + systemSIMData.totalSystemKnowledge; //Get the system output
-						
-						if(temp >= tempWlthKnwl) //If its larger than the previous output
-						{
-							chosenPlayerSystem = system; //Set the player system to connect to this system
-						}
-					}
+					route.enemyPlayer = turnInfoScript.allPlayers[i];
 				}
 			}
 
-			TradeRoute route = new TradeRoute();
-			
-			route.playerSystem = systemListConstructor.systemList[chosenPlayerSystem].systemObject;
-			route.enemySystem = systemListConstructor.systemList[chosenEnemySystem].systemObject;
-			route.connectorObject = uiObjects.CreateConnectionLine(route.playerSystem, route.enemySystem);
-			
 			allTradeRoutes.Add (route);
 		}
 	}
 
-	public void MerchantFunctions(int links, TurnInfo thisPlayer)
+	private void CheckTradeRoutesAreValid(TurnInfo thisPlayer)
 	{
-		for(int i = 0; i < allTradeRoutes.Count; ++i)
+		for(int i = 0; i < allTradeRoutes.Count; ++i) //For all existing trade routes
 		{
-			int pSys = RefreshCurrentSystem(allTradeRoutes[i].playerSystem);
-
-			if(systemListConstructor.systemList[pSys].systemOwnedBy != thisPlayer.playerRace)
+			int playerSystem = allTradeRoutes[i].playerSystem; //Get the player system
+			int enemySystem = allTradeRoutes[i].enemySystem;
+			bool invalidRoute = false;
+			
+			if(systemListConstructor.systemList[playerSystem].systemOwnedBy != thisPlayer.playerRace) //If this system is not owned by this player
 			{
-				int eSys = RefreshCurrentSystem(allTradeRoutes[i].enemySystem);
-				bool notEnemyOwned = false;
-
-				for(int j = 0; j < turnInfoScript.allPlayers.Count; ++j)
-				{
-					if(systemListConstructor.systemList[eSys].systemOwnedBy != turnInfoScript.allPlayers[i].playerRace)
-					{
-						notEnemyOwned = true;
-						break;
-					}
-				}
-
-				if(notEnemyOwned == true)
-				{
-					GameObject.Destroy(allTradeRoutes[i].connectorObject);
-					allTradeRoutes.RemoveAt(i);
-				}
+				invalidRoute = true; //This trade route is invalidated
+			}
+			if(systemListConstructor.systemList[enemySystem].systemOwnedBy != allTradeRoutes[i].enemySystemOwner) //Or the enemy system has changed owned
+			{
+				invalidRoute = true; //This trade route is invalidated
+			}
+			if(invalidRoute == true) //If the trade route is no longer valid
+			{
+				GameObject.Destroy(allTradeRoutes[i].connectorObject); //Destroy it
+				allTradeRoutes.RemoveAt(i);
 			}
 		}
+	}
+
+	private void ActivateCurrentTradeRoutes(int i, TurnInfo thisPlayer)
+	{
+		if(i < allTradeRoutes.Count)
+		{
+			int pSys = allTradeRoutes[i].playerSystem;
+			int eSys = allTradeRoutes[i].enemySystem;
+			
+			SystemSIMData playerSystemData = systemListConstructor.systemList[pSys].systemObject.GetComponent<SystemSIMData>();
+			SystemSIMData enemySystemData = systemListConstructor.systemList[eSys].systemObject.GetComponent<SystemSIMData>();
+			
+			float playerPowerTransfer = playerSystemData.totalSystemPower / 2;
+			float playerKnowledgeTransfer = playerSystemData.totalSystemKnowledge / 2;
+			
+			float enemyPowerTransfer = enemySystemData.totalSystemPower / 2;
+			float enemyKnowledgeTransfer = enemySystemData.totalSystemKnowledge / 2;
+			
+			playerSystemData.totalSystemPower += playerPowerTransfer;
+			playerSystemData.totalSystemKnowledge += playerKnowledgeTransfer;
+			enemySystemData.totalSystemPower += enemyPowerTransfer;
+			enemySystemData.totalSystemKnowledge += enemyKnowledgeTransfer;
+		}
+	}
+
+	public void DiplomatFunctions(int links, TurnInfo thisPlayer)
+	{
+		CheckTradeRoutesAreValid(thisPlayer);
 
 		for(int i = 0; i < links; ++i)
 		{
-			if(i < allTradeRoutes.Count)
-			{
-				int pSys = RefreshCurrentSystem(allTradeRoutes[i].playerSystem);
-				int eSys = RefreshCurrentSystem(allTradeRoutes[i].enemySystem);
+			ActivateCurrentTradeRoutes(i, thisPlayer);
 
-				SystemSIMData pSysData = systemListConstructor.systemList[pSys].systemObject.GetComponent<SystemSIMData>();
-				SystemSIMData eSysData = systemListConstructor.systemList[eSys].systemObject.GetComponent<SystemSIMData>();
-
-				float pIndTransfer = pSysData.totalSystemPower / 2;
-				float pSciTransfer = pSysData.totalSystemKnowledge / 2;
-
-				float eIndTransfer = eSysData.totalSystemPower / 2;
-				float eSciTransfer = eSysData.totalSystemKnowledge / 2;
-
-				eSysData.totalSystemPower += pIndTransfer;
-				eSysData.totalSystemKnowledge += pSciTransfer;
-				pSysData.totalSystemPower += eIndTransfer;
-				pSysData.totalSystemKnowledge += eSciTransfer;
-			}
-
-			else if(i >= allTradeRoutes.Count)
+			if(i >= allTradeRoutes.Count)
 			{
 				MakeNewTradeRoutes(thisPlayer);
 			}
+		}
+
+		if(heroScript.heroOwnedBy == thisPlayer.playerRace)
+		{
+			systemSIMData = heroScript.heroLocation.GetComponent<SystemSIMData>();
+			systemSIMData.totalSystemPower += systemSIMData.totalSystemPower * (0.2f + thisPlayer.racePower);
+			systemSIMData.totalSystemKnowledge += systemSIMData.totalSystemKnowledge * (0.2f + thisPlayer.raceKnowledge);
 		}
 	}
 }
 
 public class TradeRoute
 {
-	public GameObject playerSystem, enemySystem, connectorObject;
+	public int playerSystem, enemySystem;
+	public string enemySystemOwner;
+	public GameObject connectorObject;
+	public TurnInfo enemyPlayer;
 }

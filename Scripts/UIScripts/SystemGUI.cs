@@ -73,13 +73,13 @@ public class SystemGUI : MasterScript
 
 	private void Update()
 	{
-		if(cameraFunctionsScript.openMenu == true)
+		if(cameraFunctionsScript.openMenu == true) //If the menu should be open
 		{
-			NGUITools.SetActive(systemPopup.overlayContainer, false);
+			NGUITools.SetActive(systemPopup.overlayContainer, false); //Disable all the overlays
 
-			if(playerTurnScript.tempObject != null)
+			if(playerTurnScript.tempObject != null) //If there is a selected system
 			{
-				selectedSystem = RefreshCurrentSystem(cameraFunctionsScript.selectedSystem);
+				selectedSystem = RefreshCurrentSystem(cameraFunctionsScript.selectedSystem); //Get references to the required scripts
 				systemSIMData = playerTurnScript.tempObject.GetComponent<SystemSIMData>();
 				improvementsBasic = playerTurnScript.tempObject.GetComponent<ImprovementsBasic>();
 			}
@@ -89,14 +89,14 @@ public class SystemGUI : MasterScript
 			CheckSystemSize();
 		}
 
-		if(cameraFunctionsScript.openMenu == false)
+		if(cameraFunctionsScript.openMenu == false) //If the menu should be closed
 		{
-			NGUITools.SetActive(systemPopup.overlayContainer, true);
+			NGUITools.SetActive(systemPopup.overlayContainer, true); //Enable the overlays
 
-			if(playerSystemInfoScreen.activeInHierarchy == true)
+			if(playerSystemInfoScreen.activeInHierarchy == true) //If there are any menu components active
 			{
-				NGUITools.SetActive(playerSystemInfoScreen, false);
-				selectedPlanet = -1;
+				NGUITools.SetActive(playerSystemInfoScreen, false); //Disable them
+				selectedPlanet = -1; //Reset the selected planet
 				systemScrollviews.selectedPlanet = -1;
 			}
 		}
@@ -147,7 +147,7 @@ public class SystemGUI : MasterScript
 
 	private void UpdateOverview()
 	{
-		if(playerTurnScript.playerRace != null && cameraFunctionsScript.selectedSystem != null)
+		if(cameraFunctionsScript.selectedSystem != null)
 		{
 			selectedSystem = cameraFunctionsScript.selectedSystemNumber;
 

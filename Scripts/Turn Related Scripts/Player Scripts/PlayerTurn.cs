@@ -91,7 +91,7 @@ public class PlayerTurn : TurnInfo
 
 				systemListConstructor.systemList[system].systemOwnedBy = playerRace;
 
-				//voronoiGenerator.voronoiCells[system].renderer.material = materialInUse;
+				//voronoiGenerator.voronoiCells[system].renderer.material = materialInUse; //TODO
 				//voronoiGenerator.voronoiCells[system].renderer.material.shader = Shader.Find("Transparent/Diffuse");
 				
 				playerTurnScript.wealth -= 10.0f;
