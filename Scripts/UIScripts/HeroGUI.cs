@@ -6,9 +6,10 @@ using System;
 public class HeroGUI : MasterScript 
 {
 	public bool openHeroLevellingScreen;
-	public GameObject heroObject, merchantQuad, turnInfoBar, heroDetailsContainer, currentHero;
+	public GameObject heroObject, merchantQuad, turnInfoBar, heroDetailsContainer, currentHero, currentTarget;
 	public GameObject[] heroUIParents = new GameObject[3];
 	private List<HeroUI> heroUIInterfaces = new List<HeroUI>();
+	private List<GameObject> pathToSystem = new List<GameObject>();
 	private RaycastHit hit;
 
 	void Start()
@@ -19,6 +20,7 @@ public class HeroGUI : MasterScript
 		{
 			HeroUI newUI = new HeroUI();
 			newUI.uiParent = heroDetailsContainer.transform.FindChild(heroNames[i]).gameObject;
+			newUI.background = newUI.uiParent.transform.FindChild("Background").gameObject;
 			newUI.armour = newUI.uiParent.transform.FindChild ("Armour").GetComponent<UILabel>();
 			newUI.name = newUI.uiParent.transform.FindChild ("Name").GetComponent<UILabel>();
 			newUI.nameInterface = newUI.name.transform.FindChild ("Button").GetComponent<UIButton>();
@@ -35,21 +37,18 @@ public class HeroGUI : MasterScript
 			newUI.guard = temp.FindChild ("Guard Button").GetComponent<UIButton>();
 			newUI.invade = temp.FindChild ("Invasion Button").GetComponent<UIButton>();
 			heroUIInterfaces.Add (newUI);
-			NGUITools.SetActive (newUI.claim.transform.parent.gameObject, false);
-			NGUITools.SetActive (newUI.embargo.transform.parent.gameObject, false);
-			NGUITools.SetActive (newUI.strike.transform.parent.gameObject, false);
-			NGUITools.SetActiveSelf (newUI.uiParent, false);
-
+			ActivateHeroUI(i, false);
 		}
 	}
 
 	void Update()
 	{
 		hit = new RaycastHit();
+		currentTarget = null;
 		
-		if(Input.GetMouseButtonDown(0)) //Used to start double click events and to identify systems when clicked on. Throws up error if click on a connector object.
+		if(Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit))
 		{
-			if(Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit))
+			if(Input.GetMouseButtonDown(0)) //Used to start double click events and to identify systems when clicked on. Throws up error if click on a connector object.
 			{
 				if(hit.collider.gameObject.tag == "Hero")
 				{
@@ -63,27 +62,60 @@ public class HeroGUI : MasterScript
 					}
 				}
 			}
-		}
 
-		if(Input.GetMouseButtonDown (1) && currentHero != null)
-		{
-			if(Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit))
+			if(hit.collider.gameObject.tag == "StarSystem")
 			{
-				if(hit.collider.gameObject.tag == "StarSystem")
+				if(currentHero != null)
 				{
+					currentTarget = hit.collider.gameObject;
 					heroMovement = currentHero.GetComponent<HeroMovement> ();
-					heroMovement.FindPath(heroScript.heroLocation, hit.collider.gameObject);
-					if(heroScript.invasionObject != null)
+					heroMovement.FindPath(heroScript.heroLocation, hit.collider.gameObject, false);
+					
+					if(Input.GetMouseButtonDown (1))
 					{
-						Destroy (heroScript.invasionObject);
+						heroMovement.allowMovement = true;
+						if(heroScript.invasionObject != null)
+						{
+							Destroy (heroScript.invasionObject);
+						}
+					}
+
+					DestroyUIPath();
+
+					for(int i = 0; i < heroMovement.finalPath.Count - 1; ++i)
+					{
+						pathToSystem.Add (uiObjects.CreateConnectionLine(heroMovement.finalPath[i], heroMovement.finalPath[i + 1]));
 					}
 				}
 			}
+
+			if(hit.collider.gameObject.tag != "StarSystem")
+			{
+				DestroyUIPath();
+			}
+		}
+
+		if(currentTarget == null)
+		{
+			DestroyUIPath();
 		}
 
 		ShowHeroDetails();
 	}
 
+	private void DestroyUIPath()
+	{
+		if(pathToSystem.Count != 0)
+		{
+			for(int i = 0; i < pathToSystem.Count; ++i)
+			{
+				GameObject.Destroy(pathToSystem[i]);
+			}
+			
+			pathToSystem.Clear ();
+		}
+	}
+	
 	private void DeactivateSoldierButtons(int i)
 	{
 		NGUITools.SetActive(heroUIInterfaces[i].invade.gameObject, false);
@@ -117,114 +149,131 @@ public class HeroGUI : MasterScript
 		heroUIInterfaces[i].embargo.enabled = false;
 	}
 
+	private void ActivateHeroUI(int i, bool stateOfHero)
+	{
+		Debug.Log (stateOfHero);
+		NGUITools.SetActive (heroUIInterfaces[i].claim.transform.parent.gameObject, stateOfHero);
+		NGUITools.SetActive (heroUIInterfaces[i].embargo.transform.parent.gameObject, stateOfHero);
+		NGUITools.SetActive (heroUIInterfaces[i].strike.transform.parent.gameObject, stateOfHero);
+		NGUITools.SetActive (heroUIInterfaces[i].name.gameObject, stateOfHero);
+		NGUITools.SetActive (heroUIInterfaces[i].background, stateOfHero);
+	}
+	
+	private void DiplomatSwitchFunction(int i, bool enemyOwned)
+	{
+		NGUITools.SetActive(heroUIInterfaces[i].enterSystem.gameObject, true);
+		NGUITools.SetActive(heroUIInterfaces[i].promote.gameObject, true);
+		NGUITools.SetActive(heroUIInterfaces[i].embargo.gameObject, true);
+		if(enemyOwned == true)
+		{
+			heroUIInterfaces[i].enterSystem.enabled = true;
+			heroUIInterfaces[i].promote.enabled = true;
+			heroUIInterfaces[i].embargo.enabled = true;
+		}
+		else
+		{
+			heroUIInterfaces[i].enterSystem.enabled = false;
+			heroUIInterfaces[i].promote.enabled = false;
+			heroUIInterfaces[i].embargo.enabled = false;
+		}
+		DeactivateSoldierButtons(i);
+		DeactivateInfiltratorButtons(i);
+	}
+
+	private void SoldierSwitchFunction(int i, bool enemyOwned, bool unowned)
+	{
+		NGUITools.SetActive(heroUIInterfaces[i].invade.gameObject, true);
+		NGUITools.SetActive(heroUIInterfaces[i].guard.gameObject, true);
+		NGUITools.SetActive(heroUIInterfaces[i].claim.gameObject, true);
+		if(enemyOwned == true)
+		{
+			heroUIInterfaces[i].invade.enabled = true;
+		}
+		else
+		{
+			heroUIInterfaces[i].invade.enabled = false;
+		}
+		if(unowned != true)
+		{
+			heroUIInterfaces[i].guard.enabled = true;
+		}
+		else
+		{
+			heroUIInterfaces[i].guard.enabled = false;
+		}
+		if(unowned == true)
+		{
+			heroUIInterfaces[i].claim.enabled = true;
+		}
+		else
+		{
+			heroUIInterfaces[i].claim.enabled = false;
+		}
+		DeactivateInfiltratorButtons(i);
+		DeactivateDiplomatButtons(i);
+	}
+
+	private void InfiltratorSwitchFunction(int i, bool enemyOwned)
+	{
+		NGUITools.SetActive(heroUIInterfaces[i].spy.gameObject, true);
+		NGUITools.SetActive(heroUIInterfaces[i].strike.gameObject, true);
+		NGUITools.SetActive(heroUIInterfaces[i].otherSkill.gameObject, true);
+		if(enemyOwned == true)
+		{
+			heroUIInterfaces[i].spy.enabled = true;
+		}
+		else
+		{
+			heroUIInterfaces[i].spy.enabled = false;
+		}
+		heroUIInterfaces[i].strike.enabled = true;
+		heroUIInterfaces[i].otherSkill.enabled = true;
+		DeactivateSoldierButtons(i);
+		DeactivateDiplomatButtons(i);
+	}
+	
 	public void ShowHeroDetails()
 	{
-		for(int i = 0; i < 3; ++i)
+		for(int i = 0; i < 3; ++i) //For all possible heroes
 		{
-			NGUITools.SetActive(heroUIInterfaces[i].uiParent, false);
-
-			if(i < playerTurnScript.playerOwnedHeroes.Count)
+			if(i < playerTurnScript.playerOwnedHeroes.Count) //If the possible hero corresponds to an actual hero
 			{
-				//NGUITools.SetActive(heroUIInterfaces[i].uiParent, true); 
-				heroUIInterfaces[i].nameInterface.enabled = true;
-				heroScript = playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
-				heroUIInterfaces[i].armour.text = Math.Round(heroScript.currentHealth, 1) + "/" + Math.Round(heroScript.maxHealth, 1);
-				heroUIInterfaces[i].name.text = heroScript.heroType + " Dude/Ette";
+				ActivateHeroUI(i, true); //Activate the heroUI
+				heroScript = playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>(); //Get a reference to the hero script
+				heroUIInterfaces[i].armour.text = Math.Round(heroScript.currentHealth, 1) + "/" + Math.Round(heroScript.maxHealth, 1); //Write the current armour level to a text box
+				heroUIInterfaces[i].name.text = heroScript.heroType + " Dude/Ette"; //Write the name of the hero to a text box
 
-				bool enemyOwned = false;
-				bool unowned = false;
+				bool enemyOwned = false; //New bool to determine whether the system the hero is orbiting is currently owned by an enemy player
+				bool unowned = false; //New bool to determinte whether the system the hero is orbiting is unowned
 
-				if(systemListConstructor.systemList[heroScript.system].systemOwnedBy != heroScript.heroOwnedBy && systemListConstructor.systemList[heroScript.system].systemOwnedBy != null)
+				if(systemListConstructor.systemList[heroScript.system].systemOwnedBy != heroScript.heroOwnedBy && systemListConstructor.systemList[heroScript.system].systemOwnedBy != null) //If the system is owned by someone that is not this player
 				{
-					enemyOwned = true;
+					enemyOwned = true; //It is enemy owned
 				}
-				if(systemListConstructor.systemList[heroScript.system].systemOwnedBy == null)
+				if(systemListConstructor.systemList[heroScript.system].systemOwnedBy == null) //If it has no owner
 				{
-					unowned = true;
+					unowned = true; //It is unowned
 				}
 
-				switch(heroScript.heroType)
+				switch(heroScript.heroType) //Switch to activate the class specific UI components
 				{
 				case "Diplomat":
-					//NGUITools.SetActive(heroUIInterfaces[i].enterSystem.gameObject, true);
-					//NGUITools.SetActive(heroUIInterfaces[i].promote.gameObject, true);
-					//NGUITools.SetActive(heroUIInterfaces[i].embargo.gameObject, true);
-					if(enemyOwned == true)
-					{
-						heroUIInterfaces[i].enterSystem.enabled = true;
-						heroUIInterfaces[i].promote.enabled = true;
-						heroUIInterfaces[i].embargo.enabled = true;
-					}
-					else
-					{
-						heroUIInterfaces[i].enterSystem.enabled = false;
-						heroUIInterfaces[i].promote.enabled = false;
-						heroUIInterfaces[i].embargo.enabled = false;
-					}
-					//DeactivateSoldierButtons(i);
-					//DeactivateInfiltratorButtons(i);
+					DiplomatSwitchFunction(i, enemyOwned); //Diplomat takes the hero number and the enemy owned value
 					break;
 				case "Soldier":
-					//NGUITools.SetActive(heroUIInterfaces[i].invade.gameObject, true);
-					//NGUITools.SetActive(heroUIInterfaces[i].guard.gameObject, true);
-					//NGUITools.SetActive(heroUIInterfaces[i].claim.gameObject, true);
-					if(enemyOwned == true)
-					{
-						heroUIInterfaces[i].invade.enabled = true;
-					}
-					else
-					{
-						heroUIInterfaces[i].invade.enabled = false;
-					}
-					if(unowned != true)
-					{
-						heroUIInterfaces[i].guard.enabled = true;
-					}
-					else
-					{
-						heroUIInterfaces[i].guard.enabled = false;
-					}
-					if(unowned == true)
-					{
-						heroUIInterfaces[i].claim.enabled = true;
-					}
-					else
-					{
-						heroUIInterfaces[i].claim.enabled = false;
-					}
-					///DeactivateInfiltratorButtons(i);
-					//DeactivateDiplomatButtons(i);
+					SoldierSwitchFunction(i, enemyOwned, unowned); //Soldier takes hero number, enemy owned value and unowned value
 					break;
 				case "Infiltrator":
-					//NGUITools.SetActive(heroUIInterfaces[i].spy.gameObject, true);
-					//NGUITools.SetActive(heroUIInterfaces[i].strike.gameObject, true);
-					//NGUITools.SetActive(heroUIInterfaces[i].otherSkill.gameObject, true);
-					if(enemyOwned == true)
-					{
-						heroUIInterfaces[i].spy.enabled = true;
-					}
-					else
-					{
-						heroUIInterfaces[i].spy.enabled = false;
-					}
-					heroUIInterfaces[i].strike.enabled = true;
-					heroUIInterfaces[i].otherSkill.enabled = true;
-					//DeactivateSoldierButtons(i);
-					//DeactivateDiplomatButtons(i);
+					InfiltratorSwitchFunction(i, enemyOwned); //Infiltrator takes hero number and the enemy owned value
 					break;
 				default:
-					Debug.Log ("Invalid Hero");
+					Debug.Log ("Invalid Hero"); //If for some reason there is no hero write something to the console so I know there is an error
 					break;
 				}
+				continue; //Continue to the next possible hero
 			}
-			else if(i >= playerTurnScript.playerOwnedHeroes.Count);
-			{
-				Debug.Log (playerTurnScript.playerOwnedHeroes.Count);
-				heroUIInterfaces[i].name.text = "";
-				heroUIInterfaces[i].armour.text = "";
-				heroUIInterfaces[i].nameInterface.enabled = false;
-				NGUITools.SetActive(heroUIInterfaces[i].uiParent, false); 
-			}
+
+			ActivateHeroUI(i, false); //If the hero doesn't exist, disable the UI
 		}
 	}
 
@@ -274,7 +323,7 @@ public class HeroGUI : MasterScript
 
 	private class HeroUI
 	{
-		public GameObject uiParent;
+		public GameObject uiParent, background;
 		public UILabel name, armour;
 		public UIButton nameInterface, embargo, promote, enterSystem, otherSkill, spy, strike, claim, guard, invade;
 	}

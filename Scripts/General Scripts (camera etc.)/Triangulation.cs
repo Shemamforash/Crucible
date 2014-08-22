@@ -18,7 +18,7 @@ public class Triangulation : MasterScript
 	{
 		if(systemListConstructor.loaded == true && iterator == 0)
 		{
-			start = true;
+			//start = true;
 		}
 
 		if(start == true)

@@ -196,7 +196,7 @@ public class AIHeroBehaviour : MasterScript
 			heroMovement = player.playerOwnedHeroes[hero].GetComponent<HeroMovement>();
 			heroScript = player.playerOwnedHeroes[hero].GetComponent<HeroScriptParent>();
 			
-			heroMovement.FindPath(heroScript.heroLocation, systemListConstructor.systemList[targetSystem].systemObject);
+			heroMovement.FindPath(heroScript.heroLocation, systemListConstructor.systemList[targetSystem].systemObject, true);
 
 			heroScript.isBusy = true;
 

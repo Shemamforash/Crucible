@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public class HeroMovement : MasterScript 
 {
-	public bool heroIsMoving;
+	public bool heroIsMoving, allowMovement;
 	private int currentVertex;
 
 	private List<AStarNode> openList = new List<AStarNode> ();
 	private List<AStarNode> closedList = new List<AStarNode> ();
-	private List<GameObject> finalPath = new List<GameObject> ();
+	public List<GameObject> finalPath = new List<GameObject> ();
 	private GameObject start, target;
 
 	private Vector3 targetPosition = Vector3.zero, currentPosition;
@@ -21,7 +21,7 @@ public class HeroMovement : MasterScript
 
 	void Update()
 	{
-		if(target != null)
+		if(target != null && allowMovement == true)
 		{
 			heroIsMoving = true;
 			RefreshHeroLocation();
@@ -33,7 +33,7 @@ public class HeroMovement : MasterScript
 		}
 	}
 
-	public void FindPath(GameObject begin, GameObject end)
+	public void FindPath(GameObject begin, GameObject end, bool startMoving)
 	{
 		openList.Clear ();
 		closedList.Clear ();
@@ -41,6 +41,7 @@ public class HeroMovement : MasterScript
 
 		start = begin;
 		target = end;
+		allowMovement = startMoving;
 		
 		AStarNode node = new AStarNode ();
 		
@@ -197,6 +198,7 @@ public class HeroMovement : MasterScript
 		if(TestForProximity(currentPosition, HeroPositionAroundStar(target)) == true)
 		{
 			heroScript.heroLocation = target;
+			allowMovement = false;
 			target = null;
 		}
 	}
