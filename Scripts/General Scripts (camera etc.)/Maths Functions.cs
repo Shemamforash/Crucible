@@ -150,7 +150,7 @@ public static class MathsFunctions
 		float x = (lineB.y * lineA.z - lineA.y * lineB.z) / determinant;
 		float y = (lineA.x * lineB.z - lineB.x * lineA.z) / determinant;
 		
-		Vector2 intersection = new Vector3(x, y);
+		Vector2 intersection = new Vector2(x, y);
 		
 		return intersection;
 	}
@@ -181,9 +181,9 @@ public static class MathsFunctions
 
 	public static bool PointLiesOnLine(Vector3 pointAVec3, Vector3 pointBVec3, Vector3 intersectionVec3)
 	{	
-		if(intersectionVec3.x - 0.001f <= Mathf.Max(pointAVec3.x, pointBVec3.x) && intersectionVec3.x + 0.001f >= Mathf.Min (pointAVec3.x, pointBVec3.x))
+		if(intersectionVec3.x <= Mathf.Max(pointAVec3.x, pointBVec3.x) && intersectionVec3.x >= Mathf.Min (pointAVec3.x, pointBVec3.x))
 		{
-			if(intersectionVec3.y - 0.001f <= Mathf.Max(pointAVec3.y, pointBVec3.y) && intersectionVec3.y + 0.001f >= Mathf.Min (pointAVec3.y, pointBVec3.y))
+			if(intersectionVec3.y <= Mathf.Max(pointAVec3.y, pointBVec3.y) && intersectionVec3.y >= Mathf.Min (pointAVec3.y, pointBVec3.y))
 			{
 				return true;
 			}

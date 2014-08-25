@@ -69,22 +69,27 @@ public class HeroGUI : MasterScript
 				{
 					currentTarget = hit.collider.gameObject;
 					heroMovement = currentHero.GetComponent<HeroMovement> ();
-					heroMovement.FindPath(heroScript.heroLocation, hit.collider.gameObject, false);
-					
-					if(Input.GetMouseButtonDown (1))
+
+					if(heroMovement.allowMovement == false)
 					{
-						heroMovement.allowMovement = true;
-						if(heroScript.invasionObject != null)
+						heroMovement.FindPath(heroScript.heroLocation, hit.collider.gameObject, false);
+						
+						if(Input.GetMouseButtonDown (1))
 						{
-							Destroy (heroScript.invasionObject);
+							heroMovement.allowMovement = true;
+
+							if(heroScript.invasionObject != null)
+							{
+								Destroy (heroScript.invasionObject);
+							}
 						}
-					}
 
-					DestroyUIPath();
+						DestroyUIPath();
 
-					for(int i = 0; i < heroMovement.finalPath.Count - 1; ++i)
-					{
-						pathToSystem.Add (uiObjects.CreateConnectionLine(heroMovement.finalPath[i], heroMovement.finalPath[i + 1]));
+						for(int i = 0; i < heroMovement.finalPath.Count - 1; ++i)
+						{
+							pathToSystem.Add (uiObjects.CreateConnectionLine(heroMovement.finalPath[i], heroMovement.finalPath[i + 1]));
+						}
 					}
 				}
 			}
@@ -151,7 +156,6 @@ public class HeroGUI : MasterScript
 
 	private void ActivateHeroUI(int i, bool stateOfHero)
 	{
-		Debug.Log (stateOfHero);
 		NGUITools.SetActive (heroUIInterfaces[i].claim.transform.parent.gameObject, stateOfHero);
 		NGUITools.SetActive (heroUIInterfaces[i].embargo.transform.parent.gameObject, stateOfHero);
 		NGUITools.SetActive (heroUIInterfaces[i].strike.transform.parent.gameObject, stateOfHero);

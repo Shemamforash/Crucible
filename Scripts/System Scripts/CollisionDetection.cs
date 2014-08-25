@@ -95,7 +95,7 @@ public class CollisionDetection : MasterScript
 
 					if(tempDistance < distance)
 					{
-						if(mapConstructor.TestForIntersection(firmSystems[i].transform.position, unvisitedSystems[j].transform.position, false) == false)
+						if(mapConstructor.IsValidConnection(firmSystems[i].transform.position, unvisitedSystems[j].transform.position) == true)
 						{
 							distance = tempDistance;
 							sysToJoinA = i;
@@ -275,7 +275,7 @@ public class CollisionDetection : MasterScript
 						continue;
 					}*/
 					
-					if(mapConstructor.TestForIntersection(systemA.transform.position, systemListConstructor.systemList[j].systemObject.transform.position, false) == false) //If there is no intersection between this system and other system
+					if(mapConstructor.IsValidConnection(systemA.transform.position, systemListConstructor.systemList[j].systemObject.transform.position) == true) //If there is no intersection between this system and other system
 					{
 						float tempDistance = Vector3.Distance (systemA.transform.position, systemListConstructor.systemList[j].systemObject.transform.position);
 						
