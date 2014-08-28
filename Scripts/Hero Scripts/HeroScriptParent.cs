@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class HeroScriptParent : MasterScript 
+public class HeroScriptParent : MonoBehaviour 
 {
 	//This is the basic hero level, with general effects
 	public GameObject heroLocation, invasionObject;
@@ -13,16 +13,17 @@ public class HeroScriptParent : MasterScript
 	public float heroAge, classModifier, maxHealth, currentHealth, assaultDamage, auxiliaryDamage, invasionStrength, movementSpeed, defence;
 	public int aiInvadeTarget = -1, aiProtectTarget = -1;
 	public float healthMod = 1f, resourceMod = 1f, movementMod = 1f, cloakMod = 1f, assaultMod = 1f, cooldownMod = 1f, auxiliaryMod = 1f;
-
+	private HeroShip heroShip;
+	private HeroMovement heroMovement;
+	
 	void Start()
 	{
 		heroAge = Time.time;
 	
-		heroScript = gameObject.GetComponent<HeroScriptParent> ();
 		heroShip = gameObject.GetComponent<HeroShip> ();
 		heroMovement = gameObject.GetComponent<HeroMovement> ();
 
-		system = RefreshCurrentSystem (heroLocation);
+		system = MasterScript.RefreshCurrentSystem (heroLocation);
 
 		movementSpeed = 1;
 		currentHealth = 100;
@@ -30,7 +31,7 @@ public class HeroScriptParent : MasterScript
 
 	void Update()
 	{
-		system = RefreshCurrentSystem (heroLocation);
+		system = MasterScript.RefreshCurrentSystem (heroLocation);
 
 		if(heroMovement.heroIsMoving == false)
 		{
@@ -40,21 +41,21 @@ public class HeroScriptParent : MasterScript
 
 	public DiplomaticPosition FindDiplomaticConnection()
 	{
-		for(int i = 0; i < diplomacyScript.relationsList.Count; ++i)
+		for(int i = 0; i < MasterScript.diplomacyScript.relationsList.Count; ++i)
 		{
-			if(heroOwnedBy == diplomacyScript.relationsList[i].playerOne.playerRace)
+			if(heroOwnedBy == MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace)
 			{
-				if(systemListConstructor.systemList[system].systemOwnedBy == diplomacyScript.relationsList[i].playerTwo.playerRace)
+				if(MasterScript.systemListConstructor.systemList[system].systemOwnedBy == MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace)
 				{
-					return diplomacyScript.relationsList[i];
+					return MasterScript.diplomacyScript.relationsList[i];
 				}
 			}
 
-			if(heroOwnedBy == diplomacyScript.relationsList[i].playerTwo.playerRace)
+			if(heroOwnedBy == MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace)
 			{
-				if(systemListConstructor.systemList[system].systemOwnedBy == diplomacyScript.relationsList[i].playerOne.playerRace)
+				if(MasterScript.systemListConstructor.systemList[system].systemOwnedBy == MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace)
 				{
-					return diplomacyScript.relationsList[i];
+					return MasterScript.diplomacyScript.relationsList[i];
 				}
 			}
 		}
@@ -64,13 +65,13 @@ public class HeroScriptParent : MasterScript
 
 	private void AIHeroFunctions()
 	{
-		int i = RefreshCurrentSystem(heroLocation);
+		int i = MasterScript.RefreshCurrentSystem(heroLocation);
 
 		if(aiInvadeTarget != -1)
 		{
 			if(i == aiInvadeTarget && isInvading == false)
 			{
-				systemInvasion.StartSystemInvasion(i);
+				//TODO implement ai invasions
 			}
 		}
 	}
@@ -85,17 +86,12 @@ public class HeroScriptParent : MasterScript
 			AIHeroFunctions();
 		}
 
-		if(thisPlayer == playerTurnScript)
+		if(thisPlayer == MasterScript.playerTurnScript)
 		{
 			if(isInvading == true)
 			{
-				systemInvasion.hero = this;
-				systemDefence = systemListConstructor.systemList[system].systemObject.GetComponent<SystemDefence>();
+				MasterScript.systemInvasion.hero = this;
 
-				if(systemDefence.canEnter == false)
-				{
-					systemInvasion.ContinueInvasion(system);
-				}
 				if(currentHealth < 0f)
 				{
 					currentHealth = 0f;

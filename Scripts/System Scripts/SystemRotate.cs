@@ -3,9 +3,9 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class SystemRotate : MasterScript
+public class SystemRotate : MonoBehaviour
 {
-	public Vector3 galacticCentre = new Vector3(50f, 50f, 0f);
+	public Vector3 galacticCentre = new Vector3(60f, 60f, 0f);
 	public float radius, xPos, yPos, speed, rndSpd1, rndSpd2, rndSpd3;
 	public GameObject corona1, corona2, corona3, thisObject;
 
@@ -17,7 +17,7 @@ public class SystemRotate : MasterScript
 		{
 			string aStr = gameObject.name;
 			aStr = aStr.Remove(0, 12);
-			thisObject = systemListConstructor.systemList[Convert.ToInt32 (aStr)].systemObject;
+			thisObject = MasterScript.systemListConstructor.systemList[Convert.ToInt32 (aStr)].systemObject;
 		}
 
 		radius = Vector3.Distance (thisObject.transform.position, galacticCentre);
@@ -25,12 +25,13 @@ public class SystemRotate : MasterScript
 
 		if(gameObject.tag == "StarSystem")
 		{
-			corona1 = gameObject.transform.Find ("Point01").transform.Find ("corona1").gameObject;
+			corona1 = gameObject.transform.Find ("Rotating Objects").transform.Find("Point01").transform.Find ("corona1").gameObject;
 			rndSpd1 = UnityEngine.Random.Range (8f, 12f);
-			corona2 = gameObject.transform.Find ("Point01").transform.Find ("corona2").gameObject;
+			corona2 = gameObject.transform.Find ("Rotating Objects").transform.Find("Point01").transform.Find ("corona2").gameObject;
 			rndSpd2 = UnityEngine.Random.Range (8f, 12f);
-			corona3 = gameObject.transform.Find ("Point01").transform.Find ("corona03").gameObject;
+			corona3 = gameObject.transform.Find ("Rotating Objects").transform.Find("Point01").transform.Find ("corona03").gameObject;
 			rndSpd3 = UnityEngine.Random.Range (8f, 12f);
+			gameObject.transform.Find ("BorderCloudObject").renderer.sharedMaterial = MasterScript.systemListConstructor.sharedBorderMaterial;
 		}
 	}
 
@@ -44,9 +45,19 @@ public class SystemRotate : MasterScript
 			gameObject.transform.Rotate (Vector3.forward, Time.deltaTime * 5f);
 		}
 
-		if(systemListConstructor.loaded == true)
+		if(MasterScript.systemListConstructor.loaded == true)
 		{
-			UpdateRotation ();
+			if(gameObject.tag == "Galaxy")
+			{
+				Vector3 newRot = new Vector3 (0f, 0f, gameObject.transform.rotation.eulerAngles.z - speed);
+				Quaternion rot = new Quaternion();
+				rot.eulerAngles = newRot;
+				gameObject.transform.rotation = rot;
+			}
+			else
+			{
+				UpdateRotation ();
+			}
 		}
 	}
 

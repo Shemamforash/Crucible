@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TokenBehaviour : MasterScript
+public class TokenBehaviour : MonoBehaviour
 {
 	private List<GameObject> tokens = new List<GameObject>();
 	public bool followingMouse = false;
@@ -38,7 +38,7 @@ public class TokenBehaviour : MasterScript
 		
 		for(int i = 0; i < 6; ++i) //For all children of token container
 		{
-			if(invasionGUI.planetList[i].activeInHierarchy == true) //If it IS a token container
+			if(MasterScript.invasionGUI.planetList[i].activeInHierarchy == true) //If it IS a token container
 			{
 				foreach(Transform child in tokenContainers[i])
 				{
@@ -65,7 +65,7 @@ public class TokenBehaviour : MasterScript
 	{
 		Vector3 position = Camera.main.ScreenToViewportPoint (Input.mousePosition); //New position is mouse position in viewport coordinates
 		
-		position = systemPopup.uiCamera.ViewportToWorldPoint (position); //Use uicamera to convert viewport coordinates to world coordinates
+		position = MasterScript.systemPopup.uiCamera.ViewportToWorldPoint (position); //Use uicamera to convert viewport coordinates to world coordinates
 		
 		Vector3 newPosition = new Vector3(position.x, position.y, -37.0f); //Set position
 		
@@ -87,7 +87,7 @@ public class TokenBehaviour : MasterScript
 			for(int i = 0; i < tokens.Count; ++i)
 			{
 				TokenUI token = tokens[i].GetComponent<TokenUI>();
-				tokens[i].transform.position = token.originalPosition;
+				tokens[i].transform.position = token.tokenPositions[token.originalPosition].transform.position;
 				tokens[i].transform.parent = token.originalParent.transform;
 				tokens[i].GetComponent<UIButton>().isEnabled = true;
 			}

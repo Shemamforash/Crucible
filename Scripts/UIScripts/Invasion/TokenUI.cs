@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class TokenUI : MasterScript 
+public class TokenUI : MonoBehaviour 
 {
-	public Vector3 originalPosition;
+	public int originalPosition, originalHero;
 	public GameObject originalParent;
 	public GameObject hero;
-	public string selfName;
+	public List<GameObject> tokenPositions = new List<GameObject>();
 }

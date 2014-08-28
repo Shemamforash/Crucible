@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System;
 
-public class SystemScrollviews : MasterScript 
+public class SystemScrollviews : MonoBehaviour 
 {
 	public GameObject improvementMessageLabel, availableImprovements, buttonLabel, improvementParent, improvementsWindow, improvementDetails;
 	public int techTierToShow, selectedPlanet, selectedSystem, selectedSlot;
@@ -14,6 +14,7 @@ public class SystemScrollviews : MasterScript
 
 	public GameObject[] unbuiltImprovementList = new GameObject[10];
 	public GameObject[] improvementsList = new GameObject[8];
+	private ImprovementsBasic improvementsBasic;
 
 	void Start()
 	{		
@@ -40,41 +41,42 @@ public class SystemScrollviews : MasterScript
 
 	private void OpenImprovementsWindow()
 	{
-		NGUITools.SetActive (improvementsWindow, true);
-		NGUITools.SetActive (improvementDetails, false);
-		currentImprovement = null;
-	
-		bool reset = false;
-
-		for(int i = 0; i < tabs.Length; ++i)
+		if(MasterScript.systemListConstructor.systemList[selectedSystem].systemOwnedBy == MasterScript.playerTurnScript.playerRace)
 		{
-			if(tabs[i].GetComponent<UISprite>().spriteName == "Button Hover (Orange)")
+			NGUITools.SetActive (improvementsWindow, true);
+			NGUITools.SetActive (improvementDetails, false);
+			currentImprovement = null;
+		
+			bool reset = false;
+
+			for(int i = 0; i < tabs.Length; ++i)
 			{
-				UpdateImprovementsWindow (i);
-				reset = true;
-				break;
+				if(tabs[i].GetComponent<UISprite>().spriteName == "Button Hover (Orange)")
+				{
+					UpdateImprovementsWindow (i);
+					reset = true;
+					break;
+				}
+			}
+
+			if(reset == false)
+			{
+				tabs[0].GetComponent<UIButton>().enabled = false;
+				tabs[0].GetComponent<UISprite>().spriteName = "Button Hover (Orange)";
+				UpdateImprovementsWindow (0);
+			}
+
+			selectedSlot = -1;
+			
+			for(int i = 0; i < improvementsList.Length; ++i)
+			{
+				if(UIButton.current.gameObject == improvementsList[i])
+				{
+					selectedSlot = i;
+					break;
+				}
 			}
 		}
-
-		if(reset == false)
-		{
-			tabs[0].GetComponent<UIButton>().enabled = false;
-			tabs[0].GetComponent<UISprite>().spriteName = "Button Hover (Orange)";
-			UpdateImprovementsWindow (0);
-		}
-
-		selectedSlot = -1;
-		
-		for(int i = 0; i < improvementsList.Length; ++i)
-		{
-			if(UIButton.current.gameObject == improvementsList[i])
-			{
-				selectedSlot = i;
-				break;
-			}
-		}
-		
-		NGUITools.SetActive(improvementsWindow, true);
 	}
 
 	private void ShowDetails()
@@ -100,17 +102,17 @@ public class SystemScrollviews : MasterScript
 
 		improvementDetails.transform.localPosition = new Vector3 (tempPos.x + 265f, tempPos.y, tempPos.z); 
 
-		for(int i = 0; i < systemListConstructor.basicImprovementsList.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.basicImprovementsList.Count; ++i)
 		{
-			if(systemListConstructor.basicImprovementsList[i].name.ToUpper() == UIButton.current.transform.Find ("Label").GetComponent<UILabel>().text)
+			if(MasterScript.systemListConstructor.basicImprovementsList[i].name.ToUpper() == UIButton.current.transform.Find ("Label").GetComponent<UILabel>().text)
 			{
-				improvementLabel.text = systemListConstructor.basicImprovementsList[i].details;
+				improvementLabel.text = MasterScript.systemListConstructor.basicImprovementsList[i].details;
 
-				improvementPowerCost.text = systemListConstructor.basicImprovementsList[i].cost.ToString();
-				improvementWealthCost.text = (systemListConstructor.basicImprovementsList[i].cost / 25).ToString();
+				improvementPowerCost.text = MasterScript.systemListConstructor.basicImprovementsList[i].cost.ToString();
+				improvementWealthCost.text = (MasterScript.systemListConstructor.basicImprovementsList[i].cost / 25).ToString();
 
-				improvementPowerUpkeep.text = "-" + systemListConstructor.basicImprovementsList[i].powerUpkeep.ToString();
-				improvementWealthUpkeep.text = "-" + systemListConstructor.basicImprovementsList[i].wealthUpkeep.ToString();
+				improvementPowerUpkeep.text = "-" + MasterScript.systemListConstructor.basicImprovementsList[i].powerUpkeep.ToString();
+				improvementWealthUpkeep.text = "-" + MasterScript.systemListConstructor.basicImprovementsList[i].wealthUpkeep.ToString();
 			}
 		}
 
@@ -131,7 +133,7 @@ public class SystemScrollviews : MasterScript
 			if(improvementsBasic.listOfImprovements[i].improvementLevel == level)
 			{
 				if(improvementsBasic.listOfImprovements[i].improvementCategory == "Generic" || improvementsBasic.listOfImprovements[i].improvementCategory == "Defence" 
-				   || improvementsBasic.listOfImprovements[i].improvementCategory == playerTurnScript.playerRace)
+				   || improvementsBasic.listOfImprovements[i].improvementCategory == MasterScript.playerTurnScript.playerRace)
 				{
 					if(improvementsBasic.listOfImprovements[i].hasBeenBuilt == false)
 					{
@@ -155,13 +157,13 @@ public class SystemScrollviews : MasterScript
 	{
 		for(int i = 0; i < improvementsList.Length; ++i) //For all improvement slots
 		{
-			if(i < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots) //If is equal to or less than planets slots
+			if(i < MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots) //If is equal to or less than planets slots
 			{
 				NGUITools.SetActive(improvementsList[i], true); //Activate
 
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[i] != null) //If something built
+				if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[i] != null) //If something built
 				{
-					improvementsList[i].transform.Find ("Name").GetComponent<UILabel>().text = systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[i].ToUpper(); //Set text
+					improvementsList[i].transform.Find ("Name").GetComponent<UILabel>().text = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[i].ToUpper(); //Set text
 					improvementsList[i].GetComponent<UIButton>().enabled = false;
 					improvementsList[i].GetComponent<UISprite>().spriteName = "Button Normal";
 				}
@@ -250,19 +252,19 @@ public class SystemScrollviews : MasterScript
 	{
 		float upkeepWealth = 0, upkeepPower = 0;
 		
-		for(int i = 0; i < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt.Count; ++i)
 		{
-			for(int j = 0; j < systemListConstructor.basicImprovementsList.Count; ++j)
+			for(int j = 0; j < MasterScript.systemListConstructor.basicImprovementsList.Count; ++j)
 			{
 				if(improvementsBasic.listOfImprovements[j].hasBeenBuilt == false)
 				{
 					continue;
 				}
 				
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[i] == systemListConstructor.basicImprovementsList[j].name)
+				if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[i] == MasterScript.systemListConstructor.basicImprovementsList[j].name)
 				{
-					upkeepWealth += systemListConstructor.basicImprovementsList[j].wealthUpkeep;
-					upkeepPower += systemListConstructor.basicImprovementsList[j].powerUpkeep;
+					upkeepWealth += MasterScript.systemListConstructor.basicImprovementsList[j].wealthUpkeep;
+					upkeepPower += MasterScript.systemListConstructor.basicImprovementsList[j].powerUpkeep;
 					continue;
 				}
 			}
@@ -274,14 +276,14 @@ public class SystemScrollviews : MasterScript
 	
 	void Update()
 	{
-		if(systemGUI.selectedSystem != selectedSystem)
+		if(MasterScript.systemGUI.selectedSystem != selectedSystem)
 		{
 			NGUITools.SetActive(improvementsWindow, false);
-			selectedSystem = systemGUI.selectedSystem;
-			improvementsBasic = systemListConstructor.systemList [selectedSystem].systemObject.GetComponent<ImprovementsBasic> ();
+			selectedSystem = MasterScript.systemGUI.selectedSystem;
+			improvementsBasic = MasterScript.systemListConstructor.systemList [selectedSystem].systemObject.GetComponent<ImprovementsBasic> ();
 		}
 
-		if(cameraFunctionsScript.openMenu == true)
+		if(MasterScript.cameraFunctionsScript.openMenu == true)
 		{
 			if(selectedPlanet != -1)
 			{
@@ -304,16 +306,16 @@ public class SystemScrollviews : MasterScript
 
 	public void UpdateSystemEffects(int system, int planet) //TODO this needs to be planet specific
 	{
-		improvementsBasic = systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<ImprovementsBasic>();
+		improvementsBasic = MasterScript.systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<ImprovementsBasic>();
 
 		string temp = "";
 
-		float knoTemp = (systemListConstructor.systemList[system].sysKnowledgeModifier + systemListConstructor.systemList[system].planetsInSystem[planet].knowledgeModifier) - 1;
-		float powTemp = (systemListConstructor.systemList[system].sysPowerModifier + systemListConstructor.systemList[system].planetsInSystem[planet].powerModifier) - 1;
-		float growTemp = systemListConstructor.systemList[system].sysGrowthModifier + systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier;
-		float popTemp = systemListConstructor.systemList[system].sysMaxPopulationModifier + systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulationModifier;
-		float amberPenalty = systemListConstructor.systemList[system].sysAmberPenalty + systemListConstructor.systemList[system].planetsInSystem[planet].amberPenalty;
-		float amberProd = (systemListConstructor.systemList[system].sysAmberModifier + systemListConstructor.systemList[system].planetsInSystem[planet].amberModifier) - 1;
+		float knoTemp = (MasterScript.systemListConstructor.systemList[system].sysKnowledgeModifier + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].knowledgeModifier) - 1;
+		float powTemp = (MasterScript.systemListConstructor.systemList[system].sysPowerModifier + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].powerModifier) - 1;
+		float growTemp = MasterScript.systemListConstructor.systemList[system].sysGrowthModifier + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].growthModifier;
+		float popTemp = MasterScript.systemListConstructor.systemList[system].sysMaxPopulationModifier + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulationModifier;
+		float amberPenalty = MasterScript.systemListConstructor.systemList[system].sysAmberPenalty + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].amberPenalty;
+		float amberProd = (MasterScript.systemListConstructor.systemList[system].sysAmberModifier + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].amberModifier) - 1;
 
 		if(knoTemp != 0f)
 		{
@@ -352,16 +354,16 @@ public class SystemScrollviews : MasterScript
 			temp = temp + Math.Round(popTemp, 1) + "% Population from Improvements";
 		}
 
-		int standardSize = systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].baseImprovementSlots;
+		int standardSize = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].baseImprovementSlots;
 
-		if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots > standardSize)
+		if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots > standardSize)
 		{
 			if(temp != "")
 			{
 				temp = temp + "\n+";
 			}
 
-			temp = temp + (systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots - standardSize).ToString() + " Improvement Slots on Planet";
+			temp = temp + (MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots - standardSize).ToString() + " Improvement Slots on Planet";
 		}
 		if(amberPenalty != 1f)
 		{
@@ -435,20 +437,20 @@ public class SystemScrollviews : MasterScript
 	{
 		NGUITools.SetActive (improvementDetails, false);
 
-		improvementsBasic = systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<ImprovementsBasic>();
+		improvementsBasic = MasterScript.systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<ImprovementsBasic>();
 		
 		for(int i = 0; i < improvementsBasic.listOfImprovements.Count; ++i)
 		{
 			if(improvementsBasic.listOfImprovements[i].improvementName.ToUpper () == currentImprovement)
 			{
-				for(int j = 0; j < systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots; ++j)
+				for(int j = 0; j < MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].currentImprovementSlots; ++j)
 				{
-					if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[j] == null)
+					if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[j] == null)
 					{
 						if(improvementsBasic.ImproveSystem(i) == true)
 						{
-							improvementsBasic.ActiveTechnologies(selectedSystem, playerTurnScript);
-							systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[j] = improvementsBasic.listOfImprovements[i].improvementName;
+							improvementsBasic.ActiveTechnologies(selectedSystem, MasterScript.playerTurnScript);
+							MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].improvementsBuilt[j] = improvementsBasic.listOfImprovements[i].improvementName;
 							UpdateImprovementsWindow(improvementsBasic.listOfImprovements[i].improvementLevel);
 							UpdateBuiltImprovements();
 							currentImprovement = null;

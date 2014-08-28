@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TechTreeGUI : MasterScript
+public class TechTreeGUI : MonoBehaviour
 {
 	public GameObject techTree;
 	public List<TechLabels> techLabels = new List<TechLabels>();
@@ -100,7 +100,7 @@ public class TechTreeGUI : MasterScript
 					if(HeroTechTree.heroTechList[preTech].isActive == true && HeroTechTree.heroTechList[techNo].isActive == false)
 					{
 						techLabels[j].button.enabled = true;
-						techLabels[j].label.text = HeroTechTree.heroTechList[techNo].techName + " " + (HeroTechTree.heroTechList[techNo].knowledgeCost - playerTurnScript.researchCostModifier);
+						techLabels[j].label.text = HeroTechTree.heroTechList[techNo].techName + " " + (HeroTechTree.heroTechList[techNo].knowledgeCost - MasterScript.playerTurnScript.researchCostModifier);
 						techLabels[j].label.gameObject.GetComponent<UISprite>().spriteName = "Blank Text Box";
 						continue;
 					}

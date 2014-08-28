@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-public class SystemListConstructor : MasterScript 
+public class SystemListConstructor : MonoBehaviour 
 {
 	private AmbientStarRandomiser ambientStars;
 
@@ -25,10 +25,11 @@ public class SystemListConstructor : MasterScript
 	public float systemScale = 0.0f, sysDistMin;
 	public Transform systemContainer;
 	public bool loaded;
+	public Material sharedBorderMaterial;
 
-	private void Start()
+	private void Awake()
 	{
-
+		MasterScript.ScriptReferences();
 		mapSize = PlayerPrefs.GetInt ("Map Size");
 		PlanetRead ();
 		SystemRead ();
@@ -36,9 +37,9 @@ public class SystemListConstructor : MasterScript
 		SelectSystemsForMap ();
 		CheckSystem ();
 		CreateObjects ();
-		mapConstructor.DrawMinimumSpanningTree ();
+		MasterScript.mapConstructor.DrawMinimumSpanningTree ();
 
-		voronoiGenerator.CreateVoronoiCells ();
+		//voronoiGenerator.CreateVoronoiCells ();
 
 		ambientStars = GameObject.Find ("ScriptsContainer").GetComponent<AmbientStarRandomiser> ();
 		ambientStars.GenerateStars ();
@@ -47,14 +48,14 @@ public class SystemListConstructor : MasterScript
 
 		for(int i = 0; i < systemList.Count; ++i)
 		{
-			lineRenderScript = systemList[i].systemObject.GetComponent<LineRenderScript>();
+			LineRenderScript lineRenderScript = systemList[i].systemObject.GetComponent<LineRenderScript>();
 
 			lineRenderScript.StartUp();
 		}
 
 		//systemPopup.LoadOverlays ();
 
-		galaxyGUI.SelectRace(PlayerPrefs.GetString ("Player Race"));
+		MasterScript.galaxyGUI.SelectRace(PlayerPrefs.GetString ("Player Race"));
 		loaded = true;
 	}
 
@@ -74,7 +75,7 @@ public class SystemListConstructor : MasterScript
 	private void SelectSystemsForMap()
 	{
 		int randomInt = -1;
-		mapConstructor.distanceMax = (mapSize - 260) / -4f;
+		MasterScript.mapConstructor.distanceMax = (mapSize - 260) / -8f;
 
 		systemScale = (mapSize - 300.0f) / -320.0f;
 

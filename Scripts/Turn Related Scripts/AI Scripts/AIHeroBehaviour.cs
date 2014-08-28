@@ -1,46 +1,49 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AIHeroBehaviour : MasterScript 
+public class AIHeroBehaviour : MonoBehaviour 
 {
 	private TurnInfo player;
+	private SystemSIMData systemSIMData;
+	private SystemDefence systemDefence;
+	private HeroScriptParent heroScript;
 
 	public void HeroDecisionStart(TurnInfo thisPlayer)
 	{
 		player = thisPlayer;
 
-		for(int i = 0; i < diplomacyScript.relationsList.Count; ++i)
+		for(int i = 0; i < MasterScript.diplomacyScript.relationsList.Count; ++i)
 		{
-			if(diplomacyScript.relationsList[i].playerOne.playerRace == player.playerRace || diplomacyScript.relationsList[i].playerTwo.playerRace == player.playerRace)
+			if(MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace == player.playerRace || MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace == player.playerRace)
 			{
 				string enemyRace = null;
 
-				if(diplomacyScript.relationsList[i].playerTwo.playerRace == player.playerRace)
+				if(MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace == player.playerRace)
 				{
-					enemyRace = diplomacyScript.relationsList[i].playerOne.playerRace;
+					enemyRace = MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace;
 				}
-				if(diplomacyScript.relationsList[i].playerOne.playerRace == player.playerRace)
+				if(MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace == player.playerRace)
 				{
-					enemyRace = diplomacyScript.relationsList[i].playerTwo.playerRace;
+					enemyRace = MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace;
 				}
 
-				if(diplomacyScript.relationsList[i].diplomaticState == "War")
+				if(MasterScript.diplomacyScript.relationsList[i].diplomaticState == "War")
 				{
 					float protectSystemValue = 0f, invadeSystemValue = 0f;
 					int systemToProtect = -1, systemToInvade = -1;
 
-					for(int j = 0; j < systemListConstructor.systemList.Count; ++j)
+					for(int j = 0; j < MasterScript.systemListConstructor.systemList.Count; ++j)
 					{
-						systemDefence = systemListConstructor.systemList[j].systemObject.GetComponent<SystemDefence>();
-						systemSIMData = systemListConstructor.systemList[j].systemObject.GetComponent<SystemSIMData>();
+						systemDefence = MasterScript.systemListConstructor.systemList[j].systemObject.GetComponent<SystemDefence>();
+						systemSIMData = MasterScript.systemListConstructor.systemList[j].systemObject.GetComponent<SystemSIMData>();
 
-						if(systemListConstructor.systemList[j].systemOwnedBy == player.playerRace && systemDefence.underInvasion == true && systemSIMData.totalSystemSIM > protectSystemValue)
+						if(MasterScript.systemListConstructor.systemList[j].systemOwnedBy == player.playerRace && systemDefence.underInvasion == true && systemSIMData.totalSystemSIM > protectSystemValue)
 						{
 							protectSystemValue = systemSIMData.totalSystemSIM;
 							systemToProtect = j;
 						}
 
-						if(systemListConstructor.systemList[j].systemOwnedBy == enemyRace && systemDefence.underInvasion != true)
+						if(MasterScript.systemListConstructor.systemList[j].systemOwnedBy == enemyRace && systemDefence.underInvasion != true)
 						{
 							float tempSIM = systemSIMData.totalSystemSIM;
 							float tempDefence = systemDefence.maxSystemDefence;
@@ -65,8 +68,8 @@ public class AIHeroBehaviour : MasterScript
 					}
 					if(systemToProtect != -1 && systemToInvade != -1)
 					{
-						systemSIMData = systemListConstructor.systemList[systemToProtect].systemObject.GetComponent<SystemSIMData>();
-						systemDefence = systemListConstructor.systemList[systemToProtect].systemObject.GetComponent<SystemDefence>();
+						systemSIMData = MasterScript.systemListConstructor.systemList[systemToProtect].systemObject.GetComponent<SystemSIMData>();
+						systemDefence = MasterScript.systemListConstructor.systemList[systemToProtect].systemObject.GetComponent<SystemDefence>();
 
 						float tempSIM = systemSIMData.totalSystemSIM;
 						float tempDefence = systemDefence.maxSystemDefence;
@@ -91,11 +94,11 @@ public class AIHeroBehaviour : MasterScript
 		float dipMod = 0;
 		string type = null;
 
-		for(int i = 0; i < diplomacyScript.relationsList.Count; ++i)
+		for(int i = 0; i < MasterScript.diplomacyScript.relationsList.Count; ++i)
 		{
-			if(diplomacyScript.relationsList[i].playerOne.playerRace == player.playerRace || diplomacyScript.relationsList[i].playerTwo.playerRace == player.playerRace)
+			if(MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace == player.playerRace || MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace == player.playerRace)
 			{
-				switch(diplomacyScript.relationsList[i].diplomaticState)
+				switch(MasterScript.diplomacyScript.relationsList[i].diplomaticState)
 				{
 				case "War":
 					dipMod += 3;
@@ -110,7 +113,7 @@ public class AIHeroBehaviour : MasterScript
 			}
 		}
 
-		dipMod = dipMod / diplomacyScript.relationsList.Count;
+		dipMod = dipMod / MasterScript.diplomacyScript.relationsList.Count;
 
 		for(int i = 0; i < player.playerOwnedHeroes.Count; ++i)
 		{
@@ -193,10 +196,10 @@ public class AIHeroBehaviour : MasterScript
 
 		if(foundHero == true)
 		{
-			heroMovement = player.playerOwnedHeroes[hero].GetComponent<HeroMovement>();
+			HeroMovement heroMovement = player.playerOwnedHeroes[hero].GetComponent<HeroMovement>();
 			heroScript = player.playerOwnedHeroes[hero].GetComponent<HeroScriptParent>();
 			
-			heroMovement.FindPath(heroScript.heroLocation, systemListConstructor.systemList[targetSystem].systemObject, true);
+			heroMovement.FindPath(heroScript.heroLocation, MasterScript.systemListConstructor.systemList[targetSystem].systemObject, true);
 
 			heroScript.isBusy = true;
 

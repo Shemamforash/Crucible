@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class HeroGUI : MasterScript 
+public class HeroGUI : MonoBehaviour 
 {
 	public bool openHeroLevellingScreen;
 	public GameObject heroObject, merchantQuad, turnInfoBar, heroDetailsContainer, currentHero, currentTarget;
@@ -11,6 +11,9 @@ public class HeroGUI : MasterScript
 	private List<HeroUI> heroUIInterfaces = new List<HeroUI>();
 	private List<GameObject> pathToSystem = new List<GameObject>();
 	private RaycastHit hit;
+	private HeroScriptParent heroScript;
+	private HeroMovement heroMovement;
+	private SystemSIMData systemSIMData;
 
 	void Start()
 	{
@@ -53,10 +56,9 @@ public class HeroGUI : MasterScript
 				if(hit.collider.gameObject.tag == "Hero")
 				{
 					currentHero = hit.collider.gameObject;
-					heroShip = currentHero.GetComponent<HeroShip>();
 					heroScript = currentHero.GetComponent<HeroScriptParent>();
 
-					if(heroScript.heroOwnedBy != playerTurnScript.playerRace)
+					if(heroScript.heroOwnedBy != MasterScript.playerTurnScript.playerRace)
 					{
 						currentHero = null;
 					}
@@ -88,7 +90,7 @@ public class HeroGUI : MasterScript
 
 						for(int i = 0; i < heroMovement.finalPath.Count - 1; ++i)
 						{
-							pathToSystem.Add (uiObjects.CreateConnectionLine(heroMovement.finalPath[i], heroMovement.finalPath[i + 1]));
+							pathToSystem.Add (MasterScript.uiObjects.CreateConnectionLine(heroMovement.finalPath[i], heroMovement.finalPath[i + 1]));
 						}
 					}
 				}
@@ -240,21 +242,22 @@ public class HeroGUI : MasterScript
 	{
 		for(int i = 0; i < 3; ++i) //For all possible heroes
 		{
-			if(i < playerTurnScript.playerOwnedHeroes.Count) //If the possible hero corresponds to an actual hero
+			if(i < MasterScript.playerTurnScript.playerOwnedHeroes.Count) //If the possible hero corresponds to an actual hero
 			{
 				ActivateHeroUI(i, true); //Activate the heroUI
-				heroScript = playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>(); //Get a reference to the hero script
+				heroScript = MasterScript.playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>(); //Get a reference to the hero script
 				heroUIInterfaces[i].armour.text = Math.Round(heroScript.currentHealth, 1) + "/" + Math.Round(heroScript.maxHealth, 1); //Write the current armour level to a text box
 				heroUIInterfaces[i].name.text = heroScript.heroType + " Dude/Ette"; //Write the name of the hero to a text box
 
 				bool enemyOwned = false; //New bool to determine whether the system the hero is orbiting is currently owned by an enemy player
 				bool unowned = false; //New bool to determinte whether the system the hero is orbiting is unowned
 
-				if(systemListConstructor.systemList[heroScript.system].systemOwnedBy != heroScript.heroOwnedBy && systemListConstructor.systemList[heroScript.system].systemOwnedBy != null) //If the system is owned by someone that is not this player
+				if(MasterScript.systemListConstructor.systemList[heroScript.system].systemOwnedBy != heroScript.heroOwnedBy 
+				   && MasterScript.systemListConstructor.systemList[heroScript.system].systemOwnedBy != null) //If the system is owned by someone that is not this player
 				{
 					enemyOwned = true; //It is enemy owned
 				}
-				if(systemListConstructor.systemList[heroScript.system].systemOwnedBy == null) //If it has no owner
+				if(MasterScript.systemListConstructor.systemList[heroScript.system].systemOwnedBy == null) //If it has no owner
 				{
 					unowned = true; //It is unowned
 				}
@@ -279,20 +282,6 @@ public class HeroGUI : MasterScript
 
 			ActivateHeroUI(i, false); //If the hero doesn't exist, disable the UI
 		}
-	}
-
-	public void InvasionButtonClick()
-	{
-		for(int i = 0; i < 3; ++i)
-		{
-			if(heroUIInterfaces[i].nameInterface == UIButton.current.transform.parent)
-			{
-				heroScript = playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
-			}
-		}
-
-		systemInvasion.hero = heroScript;
-		systemInvasion.StartSystemInvasion(heroScript.system);
 	}
 
 	public void Embargo()
@@ -323,6 +312,24 @@ public class HeroGUI : MasterScript
 	{
 		systemSIMData = heroScript.heroLocation.GetComponent<SystemSIMData> ();
 		systemSIMData.protectedBy = heroScript.gameObject;
+	}
+
+	public void SpyOrEnterSystem()
+	{
+		heroScript = currentHero.GetComponent<HeroScriptParent> ();
+		MasterScript.cameraFunctionsScript.CloseAllWindows();
+		MasterScript.cameraFunctionsScript.selectedSystem = heroScript.heroLocation;
+		MasterScript.cameraFunctionsScript.selectedSystemNumber = MasterScript.RefreshCurrentSystem(heroScript.heroLocation);
+
+		if(heroScript.heroType == "Infiltrator" || heroScript.heroType == "Diplomat")
+		{
+			MasterScript.cameraFunctionsScript.openMenu = true;
+		}
+		if(heroScript.heroType == "Soldier")
+		{
+			MasterScript.invasionGUI.openInvasionMenu = true; //Open the invasion window through script
+			MasterScript.invasionGUI.OpenPlanetInvasionScreen();
+		}
 	}
 
 	private class HeroUI

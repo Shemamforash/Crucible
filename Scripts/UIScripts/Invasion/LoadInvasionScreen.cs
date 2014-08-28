@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class LoadInvasionScreen : MasterScript 
+public class LoadInvasionScreen : MonoBehaviour 
 {
 	private TokenManagement management;
 
@@ -13,9 +13,9 @@ public class LoadInvasionScreen : MasterScript
 
 	public int CheckForExistingInvasion(int system)
 	{
-		for(int i = 0; i < systemInvasion.currentInvasions.Count; ++i)
+		for(int i = 0; i < MasterScript.systemInvasion.currentInvasions.Count; ++i)
 		{
-			if(systemInvasion.currentInvasions[i].system == systemListConstructor.systemList[system].systemObject)
+			if(MasterScript.systemInvasion.currentInvasions[i].system == MasterScript.systemListConstructor.systemList[system].systemObject)
 			{
 				return i;
 			}
@@ -28,15 +28,15 @@ public class LoadInvasionScreen : MasterScript
 		for(int i = 0; i < tokenList.Count; ++i)
 		{
 			GameObject newToken = NGUITools.AddChild(management.token, tokenList[i].currentParent);
-			newToken.transform.position = tokenList[i].currentPosition;
 			TokenUI tokenScript = newToken.GetComponent<TokenUI>();
 
 			tokenScript.hero = tokenList[i].heroOwner;
+			tokenScript.tokenPositions = tokenList[i].tokenPositions;
+			tokenScript.originalHero = tokenList[i].originalHero;
 			tokenScript.originalParent = tokenList[i].originalParent;
-			tokenScript.originalPosition = tokenList[i].originalPosition;
 			tokenScript.name = tokenList[i].name;
 
-			Debug.Log (newToken.transform.position + " | " + tokenScript.originalPosition);
+			newToken.transform.position = tokenScript.tokenPositions[tokenList[i].originalPosition].transform.position;
 
 			management.AssignTokenButton(newToken.GetComponent<UIButton>(), type);
 
@@ -46,11 +46,11 @@ public class LoadInvasionScreen : MasterScript
 
 	public void ReloadInvasionScreen(int loc)
 	{
-		for(int i = 0; i < systemInvasion.currentInvasions[loc].tokenAllocation.Count; ++i)
+		for(int i = 0; i < MasterScript.systemInvasion.currentInvasions[loc].tokenAllocation.Count; ++i)
 		{
-			PositionTokens (systemInvasion.currentInvasions[loc].tokenAllocation[i].assaultTokenAllocation, i, "Assault");
-			PositionTokens (systemInvasion.currentInvasions[loc].tokenAllocation[i].auxiliaryTokenAllocation, i, "Auxiliary");
-			PositionTokens (systemInvasion.currentInvasions[loc].tokenAllocation[i].defenceTokenAllocation, i, "Defence");
+			PositionTokens (MasterScript.systemInvasion.currentInvasions[loc].tokenAllocation[i].assaultTokenAllocation, i, "Assault");
+			PositionTokens (MasterScript.systemInvasion.currentInvasions[loc].tokenAllocation[i].auxiliaryTokenAllocation, i, "Auxiliary");
+			PositionTokens (MasterScript.systemInvasion.currentInvasions[loc].tokenAllocation[i].defenceTokenAllocation, i, "Defence");
 		}
 	}
 }

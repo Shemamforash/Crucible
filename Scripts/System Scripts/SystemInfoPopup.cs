@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class SystemInfoPopup : MasterScript 
+public class SystemInfoPopup : MonoBehaviour 
 {
 	public string[] systemSize = new string[6]{"Inner Ring 1", "Inner Ring 2", "Inner Ring 3", "Inner Ring 4", "Inner Ring 5", "Inner Ring 6"};
 	public GameObject overlayObject;
@@ -11,11 +11,11 @@ public class SystemInfoPopup : MasterScript
 	private List<OverlayObject> overlayObjectList = new List<OverlayObject> ();
 	public Camera mainCamera, uiCamera;
 	private bool allfade;
-	private float timer = 0f, cameraZPrev = 1000f;
+	private SystemSIMData systemSIMData;
 
 	public void LoadOverlays () 
 	{
-		for(int i = 0; i < systemListConstructor.systemList.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i)
 		{
 			OverlayObject tempObj = new OverlayObject();
 
@@ -26,8 +26,8 @@ public class SystemInfoPopup : MasterScript
 			tempObj.planets = tempObj.container.transform.Find ("Planets Colonised").GetComponent<UISprite>();
 			tempObj.overlayOuter = tempObj.container.transform.Find ("Overlay Outer").transform;
 
-			tempObj.name.text = systemListConstructor.systemList[i].systemName.ToUpper();
-			tempObj.planets.spriteName = systemSize[systemListConstructor.systemList[i].systemSize - 1];
+			tempObj.name.text = MasterScript.systemListConstructor.systemList[i].systemName.ToUpper();
+			tempObj.planets.spriteName = systemSize[MasterScript.systemListConstructor.systemList[i].systemSize - 1];
 			tempObj.rotSpeed = UnityEngine.Random.Range (2f, 6f);
 
 			int rnd = UnityEngine.Random.Range(0,2);
@@ -45,13 +45,11 @@ public class SystemInfoPopup : MasterScript
 
 			overlayObjectList.Add(tempObj);
 		}
-
-		cameraZPrev = mainCamera.transform.position.z;
 	}
 
 	private void UpdatePosition(int i)
 	{
-		Vector3 position = mainCamera.WorldToViewportPoint (systemListConstructor.systemList[i].systemObject.transform.position);
+		Vector3 position = mainCamera.WorldToViewportPoint (MasterScript.systemListConstructor.systemList[i].systemObject.transform.position);
 		
 		position = uiCamera.ViewportToWorldPoint (position);
 		
@@ -59,7 +57,7 @@ public class SystemInfoPopup : MasterScript
 		
 		overlayObjectList[i].container.transform.position = newPosition;
 
-		float tempScale = systemListConstructor.systemScale;
+		float tempScale = MasterScript.systemListConstructor.systemScale;
 
 		if(tempScale < 0f)
 		{
@@ -77,29 +75,29 @@ public class SystemInfoPopup : MasterScript
 
 	private void UpdateVariables(int i)
 	{
-		systemSIMData = systemListConstructor.systemList [i].systemObject.GetComponent<SystemSIMData> ();
+		systemSIMData = MasterScript.systemListConstructor.systemList [i].systemObject.GetComponent<SystemSIMData> ();
 
 		overlayObjectList [i].power.text = Math.Round(systemSIMData.totalSystemPower, 1).ToString ();
 		overlayObjectList [i].knowledge.text = Math.Round(systemSIMData.totalSystemKnowledge, 1).ToString();
 
 		float colonisedPlanets = 0;
 		
-		for(int j = 0; j < systemListConstructor.systemList[i].systemSize; ++j)
+		for(int j = 0; j < MasterScript.systemListConstructor.systemList[i].systemSize; ++j)
 		{
-			if(systemListConstructor.systemList[i].planetsInSystem[j].planetColonised == true)
+			if(MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].planetColonised == true)
 			{
 				++colonisedPlanets;
 			}
 		}
 
-		overlayObjectList[i].planets.fillAmount = (1f/systemListConstructor.systemList[i].systemSize) * colonisedPlanets;
+		overlayObjectList[i].planets.fillAmount = (1f/MasterScript.systemListConstructor.systemList[i].systemSize) * colonisedPlanets;
 	}
 
 	private void UpdateTerritories()
 	{
-		for(int i = 0; i < voronoiGenerator.voronoiCells.Count; ++i) //For all cells
+		for(int i = 0; i < MasterScript.voronoiGenerator.voronoiCells.Count; ++i) //For all cells
 		{
-			Color tempColor = voronoiGenerator.voronoiCells[i].renderer.material.color; //Cache the colour
+			Color tempColor = MasterScript.voronoiGenerator.voronoiCells[i].renderer.material.color; //Cache the colour
 			
 			float distanceBasedA = 0f;
 
@@ -119,7 +117,7 @@ public class SystemInfoPopup : MasterScript
 
 			tempColor.a = distanceBasedA; //Change the colour
 			
-			voronoiGenerator.voronoiCells[i].renderer.material.color = tempColor; //Set the new colour
+			MasterScript.voronoiGenerator.voronoiCells[i].renderer.material.color = tempColor; //Set the new colour
 		}
 	}
 	
@@ -127,13 +125,11 @@ public class SystemInfoPopup : MasterScript
 	{
 		UpdateTerritories ();
 
-		cameraZPrev = mainCamera.transform.position.z;
-		
 		if(mainCamera.transform.position.z > -65f)
 		{
 			for(int i = 0; i < overlayObjectList.Count; ++i)
 			{
-				if(systemListConstructor.systemList[i].systemOwnedBy == playerTurnScript.playerRace)
+				if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == MasterScript.playerTurnScript.playerRace)
 				{
 					if(overlayObjectList[i].fade == false)
 					{

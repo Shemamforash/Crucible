@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class DiplomacyControlScript : MasterScript 
+public class DiplomacyControlScript : MonoBehaviour 
 {
 	public string tempState;
 	private float tempValue;
@@ -17,20 +17,20 @@ public class DiplomacyControlScript : MasterScript
 
 	public void SetUpRelationsList() //Use to generate list of all diplomatic relationships between players
 	{
-		for(int i = 0; i < turnInfoScript.allPlayers.Count; ++i)
+		for(int i = 0; i < MasterScript.turnInfoScript.allPlayers.Count; ++i)
 		{
 			DiplomaticPosition relation = new DiplomaticPosition(); //Create new relation for AI and connect to players
 
-			relation.playerOne = turnInfoScript.allPlayers[i];
-			relation.playerTwo = playerTurnScript;
+			relation.playerOne = MasterScript.turnInfoScript.allPlayers[i];
+			relation.playerTwo = MasterScript.playerTurnScript;
 			relation.stateCounter = 49;
 			relation.firstContact = false;
 
 			relationsList.Add (relation);
 
-			for(int j = 0; j < turnInfoScript.allPlayers.Count; ++j) //This ensures that all players are connected, and that no multiple connections exist
+			for(int j = 0; j < MasterScript.turnInfoScript.allPlayers.Count; ++j) //This ensures that all players are connected, and that no multiple connections exist
 			{
-				if(turnInfoScript.allPlayers[i].playerRace == turnInfoScript.allPlayers[j].playerRace)
+				if(MasterScript.turnInfoScript.allPlayers[i].playerRace == MasterScript.turnInfoScript.allPlayers[j].playerRace)
 				{
 					continue;
 				}
@@ -39,12 +39,12 @@ public class DiplomacyControlScript : MasterScript
 
 				for(int k = 0; k < relationsList.Count; ++k)
 				{
-					if(relationsList[k].playerOne.playerRace == turnInfoScript.allPlayers[i].playerRace && relationsList[k].playerTwo.playerRace == turnInfoScript.allPlayers[j].playerRace)
+					if(relationsList[k].playerOne.playerRace == MasterScript.turnInfoScript.allPlayers[i].playerRace && relationsList[k].playerTwo.playerRace == MasterScript.turnInfoScript.allPlayers[j].playerRace)
 					{
 						skip = true;
 						break;
 					}
-					if(relationsList[k].playerTwo.playerRace == turnInfoScript.allPlayers[i].playerRace && relationsList[k].playerOne.playerRace == turnInfoScript.allPlayers[j].playerRace)
+					if(relationsList[k].playerTwo.playerRace == MasterScript.turnInfoScript.allPlayers[i].playerRace && relationsList[k].playerOne.playerRace == MasterScript.turnInfoScript.allPlayers[j].playerRace)
 					{
 						skip = true;
 						break;
@@ -55,8 +55,8 @@ public class DiplomacyControlScript : MasterScript
 				{
 					DiplomaticPosition relationTwo = new DiplomaticPosition(); //Connect AI players
 
-					relationTwo.playerOne = turnInfoScript.allPlayers[i];
-					relationTwo.playerTwo = turnInfoScript.allPlayers[j];
+					relationTwo.playerOne = MasterScript.turnInfoScript.allPlayers[i];
+					relationTwo.playerTwo = MasterScript.turnInfoScript.allPlayers[j];
 					relationTwo.stateCounter = 49;
 					relationTwo.firstContact = false;
 					

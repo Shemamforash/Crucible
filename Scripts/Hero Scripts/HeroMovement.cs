@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class HeroMovement : MasterScript 
+public class HeroMovement : MonoBehaviour 
 {
 	public bool heroIsMoving, allowMovement;
 	private int currentVertex;
@@ -11,6 +11,7 @@ public class HeroMovement : MasterScript
 	private List<AStarNode> closedList = new List<AStarNode> ();
 	public List<GameObject> finalPath = new List<GameObject> ();
 	private GameObject start, target;
+	private HeroScriptParent heroScript;
 
 	private Vector3 targetPosition = Vector3.zero, currentPosition;
 
@@ -79,15 +80,15 @@ public class HeroMovement : MasterScript
 
 	private void GetNearestNode(int curNode)
 	{
-		int sys = RefreshCurrentSystem (closedList [curNode].system); //Current system is the last node on the closed list
+		int sys = MasterScript.RefreshCurrentSystem (closedList [curNode].system); //Current system is the last node on the closed list
 		
-		for(int i = 0; i < systemListConstructor.systemList[sys].permanentConnections.Count; ++i) //For all permanent connections
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[sys].permanentConnections.Count; ++i) //For all permanent connections
 		{
 			bool skip = false;
 			
 			for(int j = 0; j < closedList.Count; ++j) //If system is already on the closed list, continue
 			{
-				if(systemListConstructor.systemList[sys].permanentConnections[i] == closedList[j].system)
+				if(MasterScript.systemListConstructor.systemList[sys].permanentConnections[i] == closedList[j].system)
 				{
 					skip = true;
 				}
@@ -97,7 +98,7 @@ public class HeroMovement : MasterScript
 			{
 				AStarNode node = new AStarNode (); //New node
 				
-				node.system = systemListConstructor.systemList[sys].permanentConnections[i]; //Node system is connected to this system
+				node.system = MasterScript.systemListConstructor.systemList[sys].permanentConnections[i]; //Node system is connected to this system
 
 				float tempG = 0f, tempH = 0f;
 				int replaceNode = -1;
@@ -172,19 +173,16 @@ public class HeroMovement : MasterScript
 
 			if(TestForProximity(currentPosition, targetPosition) == true) //If current hero position is equal to the next system on route
 			{	
-				systemSIMData = finalPath[currentVertex].GetComponent<SystemSIMData>();
-				systemDefence = finalPath[currentVertex].GetComponent<SystemDefence>();
+				SystemDefence systemDefence = finalPath[currentVertex].GetComponent<SystemDefence>();
 
 				systemDefence.underInvasion = false;
 				systemDefence.regenerateTimer = 3;
 				heroScript.isInvading = false;
-				systemListConstructor.systemList[currentVertex].enemyHero = null;
+				MasterScript.systemListConstructor.systemList[currentVertex].enemyHero = null;
 
 				++currentVertex; //Update current system
 				
 				heroScript.heroLocation = finalPath[currentVertex]; //Set herolocation to current system
-
-				heroShip = gameObject.GetComponent<HeroShip>();
 
 				targetPosition = Vector3.zero;
 			}

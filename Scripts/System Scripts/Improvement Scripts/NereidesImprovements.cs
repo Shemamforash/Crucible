@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NereidesImprovements : MasterScript 
+public class NereidesImprovements : MonoBehaviour 
 {
 	private ImprovementsBasic improvements;
 	private bool checkValue;
 	private TurnInfo player;
+	private SystemSIMData systemSIMData;
 	
 	public void TechSwitch(int tech, int planet, ImprovementsBasic tempImprov, TurnInfo thisPlayer, bool check)
 	{
 		improvements = tempImprov;
 
-		systemSIMData = systemListConstructor.systemList [improvements.system].systemObject.GetComponent<SystemSIMData> ();
+		systemSIMData = MasterScript.systemListConstructor.systemList [improvements.system].systemObject.GetComponent<SystemSIMData> ();
 
 		checkValue = check;
 		player = thisPlayer;
@@ -85,11 +86,11 @@ public class NereidesImprovements : MasterScript
 
 	private void TN1I1()
 	{
-		improvements.improvementCostReduction += racialTraitScript.elationStacks.Count;
+		improvements.improvementCostReduction += MasterScript.racialTraitScript.elationStacks.Count;
 
 		if(checkValue == false)
 		{
-			improvements.listOfImprovements[40].improvementMessage = ("-" + racialTraitScript.elationStacks.Count + " Power Cost for Improvements");
+			improvements.listOfImprovements[40].improvementMessage = ("-" + MasterScript.racialTraitScript.elationStacks.Count + " Power Cost for Improvements");
 		}
 	}
 
@@ -97,11 +98,11 @@ public class NereidesImprovements : MasterScript
 	{
 		if(checkValue == false)
 		{
-			if(racialTraitScript.stacksGeneratedSinceLastUpdate != 0)
+			if(MasterScript.racialTraitScript.stacksGeneratedSinceLastUpdate != 0)
 			{
-				for(int j = 0; j < racialTraitScript.stacksGeneratedSinceLastUpdate; ++j)
+				for(int j = 0; j < MasterScript.racialTraitScript.stacksGeneratedSinceLastUpdate; ++j)
 				{
-					for(int i = 0; i < systemListConstructor.systemList[improvements.system].systemSize; ++i)
+					for(int i = 0; i < MasterScript.systemListConstructor.systemList[improvements.system].systemSize; ++i)
 					{
 						systemSIMData.CheckForSecondaryResourceIncrease(i, player);
 					}
@@ -116,9 +117,9 @@ public class NereidesImprovements : MasterScript
 	{
 		if(checkValue == false)
 		{
-			if(racialTraitScript.stacksDissolvedSinceLastUpdate != 0)
+			if(MasterScript.racialTraitScript.stacksDissolvedSinceLastUpdate != 0)
 			{
-				for(int j = 0; j < racialTraitScript.stacksDissolvedSinceLastUpdate; ++j)
+				for(int j = 0; j < MasterScript.racialTraitScript.stacksDissolvedSinceLastUpdate; ++j)
 				{
 					int rnd = Random.Range(0, 9);
 
@@ -135,7 +136,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN1I4()
 	{
-		improvements.tempCount = 0.001f * racialTraitScript.elationStacks.Count;
+		improvements.tempCount = 0.001f * MasterScript.racialTraitScript.elationStacks.Count;
 		improvements.knowledgePercentBonus += improvements.tempCount;
 
 		if(checkValue == false)
@@ -185,9 +186,9 @@ public class NereidesImprovements : MasterScript
 					StackOfElation newStack = new StackOfElation();
 					newStack.creationTime = Time.time;
 					newStack.maxAge = 60f;
-					racialTraitScript.elationStacks.Add (newStack);
-					++racialTraitScript.stacksGeneratedSinceLastUpdate;
-					++racialTraitScript.stackWealthBonus;
+					MasterScript.racialTraitScript.elationStacks.Add (newStack);
+					++MasterScript.racialTraitScript.stacksGeneratedSinceLastUpdate;
+					++MasterScript.racialTraitScript.stackWealthBonus;
 				}
 			}
 			
@@ -197,7 +198,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN2I4(int planet)
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
 		{
 			improvements.improvementSlotsBonus += 1;
 		}
@@ -226,7 +227,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN3I2(int planet)
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
 		{
 			improvements.powerPercentBonus += 0.5f;
 		}
@@ -241,9 +242,9 @@ public class NereidesImprovements : MasterScript
 	{
 		float temp = 0.3f;
 
-		for(int i = 0; i < systemListConstructor.systemList[improvements.system].planetsInSystem[planet].currentImprovementSlots; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].currentImprovementSlots; ++i)
 		{
-			if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt[i] == "")
+			if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt[i] == "")
 			{
 				temp = 0.1f;
 				break;
@@ -260,7 +261,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN3I4(int planet)
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
 		{
 			improvements.knowledgeTechModifier += 1f;
 		}
@@ -280,10 +281,10 @@ public class NereidesImprovements : MasterScript
 	{
 		if(checkValue == false)
 		{
-			improvements.wealthBonus += racialTraitScript.stackWealthBonus;
-			--racialTraitScript.stackWealthBonus;
+			improvements.wealthBonus += MasterScript.racialTraitScript.stackWealthBonus;
+			--MasterScript.racialTraitScript.stackWealthBonus;
 			
-			improvements.listOfImprovements[55].improvementMessage = ("+" + racialTraitScript.stackWealthBonus + " Bonus Wealth from Stack Generation");
+			improvements.listOfImprovements[55].improvementMessage = ("+" + MasterScript.racialTraitScript.stackWealthBonus + " Bonus Wealth from Stack Generation");
 		}
 	}
 
@@ -297,7 +298,7 @@ public class NereidesImprovements : MasterScript
 			temp = 0.0015f;
 		}
 
-		improvements.tempCount = temp * racialTraitScript.elationStacks.Count;
+		improvements.tempCount = temp * MasterScript.racialTraitScript.elationStacks.Count;
 
 		improvements.growthModifier += improvements.tempCount;
 
@@ -309,7 +310,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN4I3(int planet)
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
 		{
 			improvements.resourceYieldBonus += 2.0f;
 		}
@@ -322,7 +323,7 @@ public class NereidesImprovements : MasterScript
 
 	private void TN4I4()
 	{
-		systemDefence = systemListConstructor.systemList[improvements.system].systemObject.GetComponent<SystemDefence>();
+		SystemDefence systemDefence = MasterScript.systemListConstructor.systemList[improvements.system].systemObject.GetComponent<SystemDefence>();
 
 		if(systemDefence.underInvasion == true)
 		{

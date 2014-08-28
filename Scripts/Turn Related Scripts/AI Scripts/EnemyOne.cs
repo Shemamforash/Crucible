@@ -11,24 +11,24 @@ public class EnemyOne : AIBasicParent
 
 		PickRace ();
 
-		turnInfoScript.systemsInPlay++;
+		MasterScript.turnInfoScript.systemsInPlay++;
 
 		GameObject home = GameObject.Find (homeSystem);
 
-		for(int i = 0; i < systemListConstructor.systemList.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i)
 		{
-			if(systemListConstructor.systemList[i].systemObject == home)
+			if(MasterScript.systemListConstructor.systemList[i].systemObject == home)
 			{
-				systemListConstructor.systemList[i].systemOwnedBy = playerRace;
+				MasterScript.systemListConstructor.systemList[i].systemOwnedBy = playerRace;
 
 				//voronoiGenerator.voronoiCells[i].renderer.material = materialInUse; //TODO
 				//voronoiGenerator.voronoiCells[i].renderer.material.shader = Shader.Find("Transparent/Diffuse");
 
-				for(int j = 0; j < systemListConstructor.systemList[i].systemSize; ++j)
+				for(int j = 0; j < MasterScript.systemListConstructor.systemList[i].systemSize; ++j)
 				{
-					if(systemListConstructor.systemList[i].planetsInSystem[j].planetType == homePlanetType)
+					if(MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].planetType == homePlanetType)
 					{
-						systemListConstructor.systemList[i].planetsInSystem[j].planetColonised = true;
+						MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].planetColonised = true;
 						break;
 					}
 				}

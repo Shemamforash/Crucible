@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ToolTip : MasterScript
+public class ToolTip : MonoBehaviour
 {	
 	public GameObject tooltip;
 	public UIWidget tooltipWidget;
@@ -35,9 +35,9 @@ public class ToolTip : MasterScript
 		
 		Vector3 position = new Vector3(Input.mousePosition.x + xDif, Input.mousePosition.y + yDif, 0.0f); //TODO
 		
-		position = systemPopup.mainCamera.ScreenToViewportPoint(position);
+		position = MasterScript.systemPopup.mainCamera.ScreenToViewportPoint(position);
 		
-		position = systemPopup.uiCamera.ViewportToWorldPoint (position);
+		position = MasterScript.systemPopup.uiCamera.ViewportToWorldPoint (position);
 		
 		tooltip.transform.position = new Vector3(position.x, position.y, tooltip.transform.position.z);
 	}
@@ -52,11 +52,11 @@ public class ToolTip : MasterScript
 
 				if(UICamera.hoveredObject.tag == "Improvement" || UICamera.hoveredObject.tag == "Improvement Slot")
 				{
-					for(int i = 0; i < systemListConstructor.basicImprovementsList.Count; ++i)
+					for(int i = 0; i < MasterScript.systemListConstructor.basicImprovementsList.Count; ++i)
 					{
-						if(UICamera.hoveredObject.gameObject.name == systemListConstructor.basicImprovementsList[i].name)
+						if(UICamera.hoveredObject.gameObject.name == MasterScript.systemListConstructor.basicImprovementsList[i].name)
 						{
-							tooltipText = systemListConstructor.basicImprovementsList[i].details;
+							tooltipText = MasterScript.systemListConstructor.basicImprovementsList[i].details;
 						}
 					}
 				}

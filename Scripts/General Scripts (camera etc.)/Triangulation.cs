@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 
-public class Triangulation : MasterScript 
+public class Triangulation : MonoBehaviour 
 {
 	public List<Triangle> triangles = new List<Triangle> ();
 	private List<Triangle> tempTri = new List<Triangle>();
@@ -16,7 +16,7 @@ public class Triangulation : MasterScript
 
 	public void Update()
 	{
-		if(systemListConstructor.loaded == true && iterator == 0)
+		if(MasterScript.systemListConstructor.loaded == true && iterator == 0)
 		{
 			//start = true;
 		}
@@ -76,9 +76,9 @@ public class Triangulation : MasterScript
 	{
 		for(int i = 0; i < triangles.Count; ++i)
 		{
-			voronoiGenerator.DrawDebugLine(triangles[i].points[0].transform.position, triangles[i].points[1].transform.position, turnInfoScript.selkiesMaterial);
-			voronoiGenerator.DrawDebugLine(triangles[i].points[1].transform.position, triangles[i].points[2].transform.position, turnInfoScript.selkiesMaterial);
-			voronoiGenerator.DrawDebugLine(triangles[i].points[2].transform.position, triangles[i].points[0].transform.position, turnInfoScript.selkiesMaterial);
+			MasterScript.voronoiGenerator.DrawDebugLine(triangles[i].points[0].transform.position, triangles[i].points[1].transform.position, MasterScript.turnInfoScript.selkiesMaterial);
+			MasterScript.voronoiGenerator.DrawDebugLine(triangles[i].points[1].transform.position, triangles[i].points[2].transform.position, MasterScript.turnInfoScript.selkiesMaterial);
+			MasterScript.voronoiGenerator.DrawDebugLine(triangles[i].points[2].transform.position, triangles[i].points[0].transform.position, MasterScript.turnInfoScript.selkiesMaterial);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class Triangulation : MasterScript
 
 		while(isDelaunay == false) //While it isn't delaunay
 		{
-			isDelaunay = voronoiGenerator.TriangulationToDelaunay (); //Make it delaunay, if the method returns true, the triangulation is delaunay and the while loop will stop
+			isDelaunay = MasterScript.voronoiGenerator.TriangulationToDelaunay (); //Make it delaunay, if the method returns true, the triangulation is delaunay and the while loop will stop
 		}
 
 		CheckForNonDelaunayTriangles (); //Debugging method outputs the number of non-delaunay triangles to the log. This has not output any bad values for some time.
@@ -121,17 +121,17 @@ public class Triangulation : MasterScript
 	
 	private void CacheNearestStars() //Used to add the star systems to a list of points and sort them NO ISSUES HERE
 	{
-		for(int i = 0; i < systemListConstructor.systemList.Count; ++i) //Add all systems to a list of unvisited nodes
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i) //Add all systems to a list of unvisited nodes
 		{
-			unvisitedStars.Add (systemListConstructor.systemList[i].systemObject);
+			unvisitedStars.Add (MasterScript.systemListConstructor.systemList[i].systemObject);
 		}
 
 		float theta = 0f; //Set a variable to represent angle
 
 		while(theta < 360f) //While the angle is less than 360 degrees
 		{
-			float xPos = 50f + 70f * Mathf.Cos (theta * Mathf.Deg2Rad); //Get the xposition of a point 60 units from the centre of the map at the desired angle from 0 degrees.
-			float yPos = 50f + 70f * Mathf.Sin (theta * Mathf.Deg2Rad); //Get the yposition
+			float xPos = 60f + 70f * Mathf.Cos (theta * Mathf.Deg2Rad); //Get the xposition of a point 60 units from the centre of the map at the desired angle from 0 degrees.
+			float yPos = 60f + 70f * Mathf.Sin (theta * Mathf.Deg2Rad); //Get the yposition
 
 			Vector3 newPos = new Vector3 (xPos, yPos, 0f); //Create a new vector3 for this position
 			
@@ -142,7 +142,7 @@ public class Triangulation : MasterScript
 			theta += 15f; //Move onto the next point on the circle
 		}
 		
-		Vector3 centre = new Vector3 (50f, 50f, 0f); //Create centre point at middle of map
+		Vector3 centre = new Vector3 (60f, 60f, 0f); //Create centre point at middle of map
 		
 		for(int j = unvisitedStars.Count; j > 0; --j) //For all unvisited stars
 		{
@@ -317,20 +317,6 @@ public class Triangulation : MasterScript
 			}
 		}
 
-		for(int i = 0; i < numberofnondelaunay.Count; ++i)
-		{
-			for(int j = 0; j < 3; ++j)
-			{
-				int a = j;
-				int b = j + 1;
-
-				if(j + 1 == 3)
-				{
-					b = 0;
-				}
-			}
-		}
-
 		Debug.Log(numberofnondelaunay.Count + " | " + triangles.Count);
 	}
 
@@ -360,8 +346,8 @@ public class Triangulation : MasterScript
 			
 			for(int k = 1; k < j; ++k) //While k is less than j (anything above current j value is sorted)
 			{
-				float angleK = MathsFunctions.RotationOfLine(new Vector3(50f, 50f, 0f), externalPoints[k].transform.position); //Get the angle the current external point makes with the centre
-				float angleKMinus1 = MathsFunctions.RotationOfLine(new Vector3(50f, 50f, 0f), externalPoints[k - 1].transform.position); //Get the angle the previous point makes with the centre
+				float angleK = MathsFunctions.RotationOfLine(new Vector3(60f, 60f, 0f), externalPoints[k].transform.position); //Get the angle the current external point makes with the centre
+				float angleKMinus1 = MathsFunctions.RotationOfLine(new Vector3(60f, 60f, 0f), externalPoints[k - 1].transform.position); //Get the angle the previous point makes with the centre
 
 				if(angleK < angleKMinus1) //Sort smallest to largest 
 				{

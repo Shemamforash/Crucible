@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class SystemSIMData : MasterScript
+public class SystemSIMData : MonoBehaviour
 {
 	[HideInInspector]
 	public int improvementNumber, antiStealthPower, thisSystem;
@@ -24,16 +24,18 @@ public class SystemSIMData : MasterScript
 	public float planetKnowledgeModifier, planetPowerModifier;
 	public float systemKnowledgeModifier, systemPowerModifier, systemgrowthModifier;
 	private TurnInfo thisPlayer;
+	private SystemDefence systemDefence;
+	private ImprovementsBasic improvementsBasic;
+	private SystemSIMData systemSIMData;
 
 	void Start()
 	{
 		systemDefence = gameObject.GetComponent<SystemDefence> ();
-		lineRenderScript = gameObject.GetComponent<LineRenderScript>();
 		improvementsBasic = gameObject.GetComponent<ImprovementsBasic>();
 
-		thisSystem = RefreshCurrentSystem (gameObject);
+		thisSystem = MasterScript.RefreshCurrentSystem (gameObject);
 
-		for(int i = 0; i < systemListConstructor.systemList[thisSystem].systemSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[thisSystem].systemSize; ++i)
 		{
 			PlanetUIInfo planetInfo = new PlanetUIInfo();
 
@@ -51,11 +53,11 @@ public class SystemSIMData : MasterScript
 
 	private void CheckSecRecBonus(int system)
 	{
-		for(int i = 0; i < systemListConstructor.systemList[system].systemSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].systemSize; ++i)
 		{
-			if(systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType != null)
+			if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType != null)
 			{
-				switch(systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType)
+				switch(MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType)
 				{
 				case "ANTIMATTER":
 					break;
@@ -77,13 +79,13 @@ public class SystemSIMData : MasterScript
 
 	public void CheckForSecondaryResourceIncrease(int planet, TurnInfo player)
 	{
-		if(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType != null)
+		if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType != null)
 		{
 			int rnd = UnityEngine.Random.Range (0, 100);
 
 			if(rnd < 4 * improvementsBasic.resourceYieldBonus)
 			{
-				switch(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType)
+				switch(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].rareResourceType)
 				{
 				case "ANTIMATTER":
 					++player.antimatter;
@@ -117,9 +119,9 @@ public class SystemSIMData : MasterScript
 		CalculateSystemModifierValues();
 		int planetsColonised = 0;
 
-		for(int j = 0; j < systemListConstructor.systemList[thisSystem].systemSize; ++j)
+		for(int j = 0; j < MasterScript.systemListConstructor.systemList[thisSystem].systemSize; ++j)
 		{
-			if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetColonised == true)
+			if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetColonised == true)
 			{
 				++planetsColonised;
 
@@ -130,13 +132,13 @@ public class SystemSIMData : MasterScript
 			}
 		}
 
-		totalSystemWealth = player.raceWealth * planetsColonised * turnInfoScript.expansionPenaltyModifier;
-		totalSystemKnowledge = (tempTotalSci + knowledgeUnitBonus)  * turnInfoScript.expansionPenaltyModifier;
-		totalSystemPower = (tempTotalInd + powerUnitBonus) * turnInfoScript.expansionPenaltyModifier;
+		totalSystemWealth = player.raceWealth * planetsColonised * MasterScript.turnInfoScript.expansionPenaltyModifier;
+		totalSystemKnowledge = (tempTotalSci + knowledgeUnitBonus)  * MasterScript.turnInfoScript.expansionPenaltyModifier;
+		totalSystemPower = (tempTotalInd + powerUnitBonus) * MasterScript.turnInfoScript.expansionPenaltyModifier;
 
 		if(thisPlayer.playerRace == "Selkies")
 		{
-			racialTraitScript.IncreaseAmber(thisSystem);
+			MasterScript.racialTraitScript.IncreaseAmber(thisSystem);
 		}
 
 		IncreasePopulation ();
@@ -149,9 +151,12 @@ public class SystemSIMData : MasterScript
 
 	private void CalculateSystemModifierValues()
 	{
-		systemKnowledgeModifier =  systemListConstructor.systemList[thisSystem].sysKnowledgeModifier * systemListConstructor.systemList[thisSystem].sysAmberPenalty * EmbargoPenalty() * PromoteBonus() * flResourceModifier;
-		systemPowerModifier =  systemListConstructor.systemList[thisSystem].sysPowerModifier * systemListConstructor.systemList[thisSystem].sysAmberPenalty * racialTraitScript.NereidesPowerModifer (thisPlayer) * EmbargoPenalty () * PromoteBonus () * flResourceModifier;
-		systemgrowthModifier = systemListConstructor.systemList[thisSystem].sysGrowthModifier * systemListConstructor.systemList[thisSystem].sysAmberPenalty * flgrowthModifier;
+		systemKnowledgeModifier =  MasterScript.systemListConstructor.systemList[thisSystem].sysKnowledgeModifier 
+			* MasterScript.systemListConstructor.systemList[thisSystem].sysAmberPenalty * EmbargoPenalty() * PromoteBonus() * flResourceModifier;
+		systemPowerModifier =  MasterScript.systemListConstructor.systemList[thisSystem].sysPowerModifier 
+			* MasterScript.systemListConstructor.systemList[thisSystem].sysAmberPenalty * MasterScript.racialTraitScript.NereidesPowerModifer (thisPlayer) * EmbargoPenalty () * PromoteBonus () * flResourceModifier;
+		systemgrowthModifier = MasterScript.systemListConstructor.systemList[thisSystem].sysGrowthModifier 
+			* MasterScript.systemListConstructor.systemList[thisSystem].sysAmberPenalty * flgrowthModifier;
 	}
 
 	public float CheckPlanetValues(int planet, string resource)
@@ -160,20 +165,20 @@ public class SystemSIMData : MasterScript
 		
 		float tempSci = 0, tempInd = 0;
 		
-		improvementNumber = systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetImprovementLevel;
+		improvementNumber = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetImprovementLevel;
 		
-		systemFunctions.CheckImprovement(thisSystem, planet);
+		MasterScript.systemFunctions.CheckImprovement(thisSystem, planet);
 		
-		tempSci = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetKnowledge * (systemKnowledgeModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier)
-				* turnInfoScript.expansionPenaltyModifier * planetKnowledgeModifier;
-		tempInd = systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetPower * (systemKnowledgeModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier)
-				* turnInfoScript.expansionPenaltyModifier * planetPowerModifier;
+		tempSci = MasterScript.systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetKnowledge * 
+			(systemKnowledgeModifier + MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier) * MasterScript.turnInfoScript.expansionPenaltyModifier * planetKnowledgeModifier;
+		tempInd = MasterScript.systemListConstructor.systemList [thisSystem].planetsInSystem [planet].planetPower * 
+			(systemKnowledgeModifier + MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].knowledgeModifier) * MasterScript.turnInfoScript.expansionPenaltyModifier * planetPowerModifier;
 		
-		if(systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetColonised == true)
+		if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetColonised == true)
 		{
 			string sOut = Math.Round(tempSci, 1).ToString();
 			string iOut = Math.Round (tempInd,1).ToString();
-			string curPop = Math.Round (systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation, 1).ToString () + "%";
+			string curPop = Math.Round (MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation, 1).ToString () + "%";
 
 			allPlanetsInfo[planet].generalInfo = improvementLevel;
 			allPlanetsInfo[planet].knowledgeOutput = sOut;
@@ -196,42 +201,42 @@ public class SystemSIMData : MasterScript
 	{
 		systemDefence.CheckStatusEffects(planet);
 		
-		baseResourceBonus = systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation / 6.666f;
+		baseResourceBonus = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[planet].planetPopulation / 6.666f;
 		planetKnowledgeModifier = (thisPlayer.raceKnowledge + secRecKnowledgeMod) * baseResourceBonus * knowledgeBuffModifier;
 		planetPowerModifier = (thisPlayer.racePower + secRecPowerMod) * baseResourceBonus * powerBuffModifier;
 	}	
 
 	public void IncreasePopulation() //Used to increase the population of planets by their growth rate
 	{
-		for(int j = 0; j < systemListConstructor.systemList[thisSystem].systemSize; ++j) //For all planets in system
+		for(int j = 0; j < MasterScript.systemListConstructor.systemList[thisSystem].systemSize; ++j) //For all planets in system
 		{
-			if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetColonised == true) //If it has been colonised
+			if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetColonised == true) //If it has been colonised
 			{
 				if(systemDefence.underInvasion == false) //If system is not being invaded allow growth
 				{
-					improvementNumber = systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetImprovementLevel; //Get the planets current improvement number
+					improvementNumber = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetImprovementLevel; //Get the planets current improvement number
 					
-					systemFunctions.CheckImprovement(thisSystem, j); //Check the planets max ownership level
+					MasterScript.systemFunctions.CheckImprovement(thisSystem, j); //Check the planets max ownership level
 
-					float maxPopPlanet = systemListConstructor.systemList[thisSystem].sysMaxPopulationModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulationModifier
-						+ systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulation;
+					float maxPopPlanet = MasterScript.systemListConstructor.systemList[thisSystem].sysMaxPopulationModifier + MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulationModifier
+						+ MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].maxPopulation;
 
 					maxPopPlanet = Mathf.RoundToInt(maxPopPlanet);
 
-					populationToAdd = (0.1f + systemgrowthModifier + systemListConstructor.systemList[thisSystem].planetsInSystem[j].growthModifier) * secRecPopulationMod; //Growth is the standard growth rate for the planets in the system multiplied by secondary resource modifiers
+					populationToAdd = (0.1f + systemgrowthModifier + MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].growthModifier) * secRecPopulationMod; //Growth is the standard growth rate for the planets in the system multiplied by secondary resource modifiers
 
-					if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation < 0) //If population is less than 0, the planet must be reset
+					if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation < 0) //If population is less than 0, the planet must be reset
 					{
-						systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation = 0;
-						WipePlanetInfo(thisSystem, j);
+						MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation = 0;
+						MasterScript.WipePlanetInfo(thisSystem, j);
 						continue;
 					}
 
-					systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation += populationToAdd; //Add the growth to the population
+					MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation += populationToAdd; //Add the growth to the population
 
-					if(systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation >= maxPopPlanet) //If the current population is greater than the maximum allowed population
+					if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation >= maxPopPlanet) //If the current population is greater than the maximum allowed population
 					{
-						systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation = maxPopPlanet; //Set the current population to equal max
+						MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[j].planetPopulation = maxPopPlanet; //Set the current population to equal max
 						continue;
 					}
 				}
@@ -247,13 +252,13 @@ public class SystemSIMData : MasterScript
 
 		int noSystems = 0;
 
-		for(int i = 0; i < systemListConstructor.systemList[thisSystem].permanentConnections.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections.Count; ++i)
 		{
-			int neighbour = RefreshCurrentSystem(systemListConstructor.systemList[thisSystem].permanentConnections[i]);
+			int neighbour = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections[i]);
 
-			if(systemListConstructor.systemList[neighbour].systemOwnedBy != null && systemListConstructor.systemList[neighbour].systemOwnedBy != thisPlayer.playerRace)
+			if(MasterScript.systemListConstructor.systemList[neighbour].systemOwnedBy != null && MasterScript.systemListConstructor.systemList[neighbour].systemOwnedBy != thisPlayer.playerRace)
 			{
-				DiplomaticPosition temp = diplomacyScript.ReturnDiplomaticRelation(systemListConstructor.systemList[thisSystem].systemOwnedBy, systemListConstructor.systemList[neighbour].systemOwnedBy);
+				DiplomaticPosition temp = MasterScript.diplomacyScript.ReturnDiplomaticRelation(MasterScript.systemListConstructor.systemList[thisSystem].systemOwnedBy, MasterScript.systemListConstructor.systemList[neighbour].systemOwnedBy);
 
 				flResourceModifier += temp.resourceModifier;
 				flgrowthModifier += temp.growthModifier;
@@ -276,15 +281,15 @@ public class SystemSIMData : MasterScript
 
 		if(promotedBy == null)
 		{
-			for(int i = 0; i < systemListConstructor.systemList[thisSystem].permanentConnections.Count; ++i)
+			for(int i = 0; i < MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections.Count; ++i)
 			{
-				int j = RefreshCurrentSystem(systemListConstructor.systemList[thisSystem].permanentConnections[i]);
+				int j = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections[i]);
 
-				systemSIMData = systemListConstructor.systemList[j].systemObject.GetComponent<SystemSIMData>();
+				systemSIMData = MasterScript.systemListConstructor.systemList[j].systemObject.GetComponent<SystemSIMData>();
 
 				if(systemSIMData.promotedBy != null)
 				{
-					if(systemListConstructor.systemList[j].systemOwnedBy == thisPlayer.playerRace)
+					if(MasterScript.systemListConstructor.systemList[j].systemOwnedBy == thisPlayer.playerRace)
 					{
 						totalAdjacencyBonus += 0.05f;
 					}
@@ -304,7 +309,7 @@ public class SystemSIMData : MasterScript
 				promotedBy = null;
 			}
 
-			DiplomaticPosition temp = diplomacyScript.ReturnDiplomaticRelation (thisPlayer.playerRace, promotedBy);
+			DiplomaticPosition temp = MasterScript.diplomacyScript.ReturnDiplomaticRelation (thisPlayer.playerRace, promotedBy);
 
 			++temp.stateCounter;
 
@@ -318,7 +323,7 @@ public class SystemSIMData : MasterScript
 	{
 		if(embargoedBy != null)
 		{
-			DiplomaticPosition temp = diplomacyScript.ReturnDiplomaticRelation (thisPlayer.playerRace, embargoedBy);
+			DiplomaticPosition temp = MasterScript.diplomacyScript.ReturnDiplomaticRelation (thisPlayer.playerRace, embargoedBy);
 
 			--temp.stateCounter;
 
@@ -337,26 +342,26 @@ public class SystemSIMData : MasterScript
 
 	public void UpdatePlanetPowerArray()
 	{
-		for(int i = 0; i < systemListConstructor.systemList[thisSystem].systemSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[thisSystem].systemSize; ++i)
 		{
 			PlanetPower planet = new PlanetPower();
 
 			planet.system = gameObject;
 
-			improvementNumber = systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetImprovementLevel;
+			improvementNumber = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetImprovementLevel;
 			
-			systemFunctions.CheckImprovement(thisSystem, i);
+			MasterScript.systemFunctions.CheckImprovement(thisSystem, i);
 
-			float tempSIM = (systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetKnowledge + systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetPower)
-							* systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetPopulation / 66.6666f;
+			float tempSIM = (MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetKnowledge + MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetPower)
+							* MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetPopulation / 66.6666f;
 
 			planet.simOutput = tempSIM;
 
 			planet.planetPosition = i;
 				
-			turnInfoScript.mostPowerfulPlanets.Add (planet);
+			MasterScript.turnInfoScript.mostPowerfulPlanets.Add (planet);
 
-			++turnInfoScript.savedIterator;
+			++MasterScript.turnInfoScript.savedIterator;
 		}
 	}
 }

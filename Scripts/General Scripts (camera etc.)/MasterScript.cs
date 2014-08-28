@@ -1,72 +1,70 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MasterScript : MonoBehaviour
+public static class MasterScript
 {
 	[HideInInspector]
-	public MasterScript masterScript;
+	public static SystemListConstructor systemListConstructor;
 	[HideInInspector]
-	public SystemListConstructor systemListConstructor;
+	public static MapConstructor mapConstructor;
 	[HideInInspector]
-	public MapConstructor mapConstructor;
-	[HideInInspector]
-	public AmbientStarRandomiser ambientStarRandomiser;
+	public static AmbientStarRandomiser ambientStarRandomiser;
 
 	[HideInInspector]
-	public SystemSIMData systemSIMData;
+	public static SystemSIMData systemSIMData;
 	[HideInInspector]
-	public CameraFunctions cameraFunctionsScript;
+	public static CameraFunctions cameraFunctionsScript;
 	[HideInInspector]
-	public LineRenderScript lineRenderScript;
+	public static LineRenderScript lineRenderScript;
 	[HideInInspector]
-	public SystemDefence systemDefence;
+	public static SystemDefence systemDefence;
 
 	[HideInInspector]
-	public TurnInfo turnInfoScript;
+	public static TurnInfo turnInfoScript;
 	[HideInInspector]
-	public PlayerTurn playerTurnScript;
+	public static PlayerTurn playerTurnScript;
 	[HideInInspector]
-	public AIBasicParent baseAIScript;
+	public static AIBasicParent baseAIScript;
 	[HideInInspector]
-	public WinConditions winConditions;
+	public static WinConditions winConditions;
 	[HideInInspector]
-	public SystemFunctions systemFunctions;
+	public static SystemFunctions systemFunctions;
 	[HideInInspector]
-	public SystemInvasions systemInvasion;
+	public static SystemInvasions systemInvasion;
 	
 	[HideInInspector]
-	public ImprovementsBasic improvementsBasic;
+	public static ImprovementsBasic improvementsBasic;
 	[HideInInspector]
-	public HeroScriptParent heroScript;
+	public static HeroScriptParent heroScript;
 	[HideInInspector]
-	public HeroMovement heroMovement;
+	public static HeroMovement heroMovement;
 	[HideInInspector]
-	public HeroShip heroShip;
+	public static HeroShip heroShip;
 	[HideInInspector]
-	public DiplomacyControlScript diplomacyScript;
+	public static DiplomacyControlScript diplomacyScript;
 	[HideInInspector]
-	public RacialTraits racialTraitScript;
+	public static RacialTraits racialTraitScript;
 	[HideInInspector]
-	public UIObjects uiObjects;
+	public static UIObjects uiObjects;
 	[HideInInspector]
-	public SystemInfoPopup systemPopup;
+	public static SystemInfoPopup systemPopup;
 
 	[HideInInspector]
-	public SystemGUI systemGUI;
+	public static SystemGUI systemGUI;
 	[HideInInspector]
-	public HeroGUI heroGUI;
+	public static HeroGUI heroGUI;
 	[HideInInspector]
-	public GalaxyGUI galaxyGUI;
+	public static GalaxyGUI galaxyGUI;
 	[HideInInspector]
-	public InvasionGUI invasionGUI;
+	public static InvasionGUI invasionGUI;
 	[HideInInspector]
-	public VoronoiGeneratorAndDelaunay voronoiGenerator;
+	public static VoronoiGeneratorAndDelaunay voronoiGenerator;
 	[HideInInspector]
-	public Triangulation triangulation;
+	public static Triangulation triangulation;
 	[HideInInspector]
-	public HeroResourceImprovement heroResource;
+	public static HeroResourceImprovement heroResource;
 
-	private void Awake() //Assigns script references
+	public static void ScriptReferences() //Assigns script references
 	{
 		systemListConstructor = GameObject.FindGameObjectWithTag("ScriptContainer").GetComponent<SystemListConstructor>();
 		cameraFunctionsScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFunctions>();
@@ -90,7 +88,7 @@ public class MasterScript : MonoBehaviour
 		triangulation = GameObject.FindGameObjectWithTag ("GUIContainer").GetComponent<Triangulation> ();
 	}
 
-	public int RefreshCurrentSystem(GameObject thisSystem) //Returns the systemList enumerator of a system gameobject
+	public static int RefreshCurrentSystem(GameObject thisSystem) //Returns the systemList enumerator of a system gameobject
 	{
 		for(int i = 0; i < systemListConstructor.systemList.Count; ++i)
 		{
@@ -103,7 +101,7 @@ public class MasterScript : MonoBehaviour
 		return 0;
 	}
 
-	public void WipePlanetInfo(int system, int planet) //Used to reset planets to default
+	public static void WipePlanetInfo(int system, int planet) //Used to reset planets to default
 	{
 		systemListConstructor.systemList [system].planetsInSystem [planet].planetColonised = false;
 		systemListConstructor.systemList [system].planetsInSystem [planet].expansionPenaltyTimer = 0f;

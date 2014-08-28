@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class WinConditions : MasterScript 
+public class WinConditions : MonoBehaviour 
 {
 	private bool hasWon;
 	private string winCondition, winPlayer;
@@ -12,7 +12,7 @@ public class WinConditions : MasterScript
 
 	void Start()
 	{
-		expansionPercentage = (int)(systemListConstructor.mapSize * 0.75);
+		expansionPercentage = (int)(MasterScript.systemListConstructor.mapSize * 0.75);
 	}
 
 	public void CheckWin(TurnInfo thisPlayer)
@@ -41,11 +41,11 @@ public class WinConditions : MasterScript
 				continue;
 			}
 
-			for(int i = 0; i < systemListConstructor.mapSize; ++i)
+			for(int i = 0; i < MasterScript.systemListConstructor.mapSize; ++i)
 			{
-				if(systemListConstructor.systemList[i].systemName == homeSystems[j])
+				if(MasterScript.systemListConstructor.systemList[i].systemName == homeSystems[j])
 				{
-					if(systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
+					if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
 					{
 						hasWon = true;
 					}
@@ -68,9 +68,9 @@ public class WinConditions : MasterScript
 	{
 		int ownedSystems = 0;
 
-		for(int i = 0; i < systemListConstructor.mapSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.mapSize; ++i)
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
 			{
 				++ownedSystems;
 			}
@@ -93,11 +93,11 @@ public class WinConditions : MasterScript
 		float knowledgeRate = 0;
 		float powerRate = 0;
 
-		for(int i = 0; i < systemListConstructor.mapSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.mapSize; ++i)
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
 			{
-				systemSIMData = systemListConstructor.systemList[i].systemObject.GetComponent<SystemSIMData>();
+				SystemSIMData systemSIMData = MasterScript.systemListConstructor.systemList[i].systemObject.GetComponent<SystemSIMData>();
 
 				knowledgeRate += systemSIMData.totalSystemKnowledge;
 				powerRate += systemSIMData.totalSystemPower;

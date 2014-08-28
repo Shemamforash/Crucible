@@ -2,22 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class HeroShip : MasterScript
+public class HeroShip : MonoBehaviour
 {
 	public bool canEmbargo, hasStealth = false, canPromote, canViewSystem;
 	private int system, gridChildren, tempChildren;
 	private List<TradeRoute> allTradeRoutes = new List<TradeRoute>();
+	private HeroScriptParent heroScript;
+	private SystemSIMData systemSIMData;
 
 	void Start()
 	{
 		heroScript = gameObject.GetComponent<HeroScriptParent> ();
-		heroMovement = gameObject.GetComponent<HeroMovement> ();
 	}
 
 	public void ShipAbilities(TurnInfo thisPlayer)
 	{
 		heroScript = gameObject.GetComponent<HeroScriptParent> ();
-		system = RefreshCurrentSystem(heroScript.heroLocation);
+		system = MasterScript.RefreshCurrentSystem(heroScript.heroLocation);
 
 		ShipFunctions.UpdateShips ();
 		heroScript.assaultDamage = ShipFunctions.primaryWeaponPower * heroScript.assaultMod;
@@ -26,7 +27,7 @@ public class HeroShip : MasterScript
 
 		if(heroScript.heroType == "Diplomat")
 		{
-			heroScript.auxiliaryDamage = ShipFunctions.dropshipPower * heroScript.auxiliaryDamage;
+			heroScript.auxiliaryDamage = ShipFunctions.dropshipPower * heroScript.auxiliaryMod;
 
 			DiplomatFunctions((ShipFunctions.logisticsRating + 10), thisPlayer);
 
@@ -39,9 +40,9 @@ public class HeroShip : MasterScript
 
 			canViewSystem = true;
 
-			systemSIMData = systemListConstructor.systemList[system].systemObject.GetComponent<SystemSIMData>();
+			systemSIMData = MasterScript.systemListConstructor.systemList[system].systemObject.GetComponent<SystemSIMData>();
 
-			if(systemListConstructor.systemList[system].systemOwnedBy != thisPlayer.playerRace)
+			if(MasterScript.systemListConstructor.systemList[system].systemOwnedBy != thisPlayer.playerRace)
 			{
 				if(ShipFunctions.stealthValue >= systemSIMData.antiStealthPower)
 				{
@@ -77,25 +78,24 @@ public class HeroShip : MasterScript
 		int chosenEnemySystem = -1, chosenPlayerSystem = -1;
 		string tempOwner = null;
 
-		for(int i = 0; i < systemListConstructor.systemList.Count; ++i) //For all systems
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i) //For all systems
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy == null) //If system is not owned ignore it
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == null) //If system is not owned ignore it
 			{
 				continue;
 			}
-			if(systemListConstructor.systemList[i].systemOwnedBy == thisPlayer.playerRace) //If system is owned by the player
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == thisPlayer.playerRace) //If system is owned by the player
 			{
-				for(int j = 0; j < systemListConstructor.systemList[i].permanentConnections.Count; ++j) //For all systems connected to this system
+				for(int j = 0; j < MasterScript.systemListConstructor.systemList[i].permanentConnections.Count; ++j) //For all systems connected to this system
 				{
-					int sys = RefreshCurrentSystem(systemListConstructor.systemList[i].permanentConnections[j]);
+					int sys = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[i].permanentConnections[j]);
 
-					if(systemListConstructor.systemList[sys].systemOwnedBy == null || systemListConstructor.systemList[sys].systemOwnedBy == thisPlayer.playerRace) //If the system is owned by this player or not at all ignore it
+					if(MasterScript.systemListConstructor.systemList[sys].systemOwnedBy == null || MasterScript.systemListConstructor.systemList[sys].systemOwnedBy == thisPlayer.playerRace) //If the system is owned by this player or not at all ignore it
 					{
 						continue;
 					}
 
-					GameObject playerSystem = systemListConstructor.systemList[i].systemObject; //Get references to player and enemy system
-					GameObject enemySystem = systemListConstructor.systemList[sys].systemObject;
+					GameObject enemySystem = MasterScript.systemListConstructor.systemList[sys].systemObject;
 
 					bool routeExists = false; //Say the proposed route between these systems does not exist
 
@@ -120,7 +120,7 @@ public class HeroShip : MasterScript
 
 							chosenEnemySystem = sys;
 							chosenPlayerSystem = i;
-							tempOwner = systemListConstructor.systemList[sys].systemOwnedBy;
+							tempOwner = MasterScript.systemListConstructor.systemList[sys].systemOwnedBy;
 						}
 					}
 				}
@@ -133,14 +133,14 @@ public class HeroShip : MasterScript
 			
 			route.playerSystem = chosenPlayerSystem;
 			route.enemySystem = chosenEnemySystem;
-			route.connectorObject = uiObjects.CreateConnectionLine(systemListConstructor.systemList[route.playerSystem].systemObject, systemListConstructor.systemList[route.enemySystem].systemObject);
+			route.connectorObject = MasterScript.uiObjects.CreateConnectionLine(MasterScript.systemListConstructor.systemList[route.playerSystem].systemObject, MasterScript.systemListConstructor.systemList[route.enemySystem].systemObject);
 			route.enemySystemOwner = tempOwner;
 
-			for(int i = 0; i < turnInfoScript.allPlayers.Count; ++i)
+			for(int i = 0; i < MasterScript.turnInfoScript.allPlayers.Count; ++i)
 			{
-				if(turnInfoScript.allPlayers[i].playerRace == tempOwner)
+				if(MasterScript.turnInfoScript.allPlayers[i].playerRace == tempOwner)
 				{
-					route.enemyPlayer = turnInfoScript.allPlayers[i];
+					route.enemyPlayer = MasterScript.turnInfoScript.allPlayers[i];
 				}
 			}
 
@@ -156,11 +156,11 @@ public class HeroShip : MasterScript
 			int enemySystem = allTradeRoutes[i].enemySystem;
 			bool invalidRoute = false;
 			
-			if(systemListConstructor.systemList[playerSystem].systemOwnedBy != thisPlayer.playerRace) //If this system is not owned by this player
+			if(MasterScript.systemListConstructor.systemList[playerSystem].systemOwnedBy != thisPlayer.playerRace) //If this system is not owned by this player
 			{
 				invalidRoute = true; //This trade route is invalidated
 			}
-			if(systemListConstructor.systemList[enemySystem].systemOwnedBy != allTradeRoutes[i].enemySystemOwner) //Or the enemy system has changed owned
+			if(MasterScript.systemListConstructor.systemList[enemySystem].systemOwnedBy != allTradeRoutes[i].enemySystemOwner) //Or the enemy system has changed owned
 			{
 				invalidRoute = true; //This trade route is invalidated
 			}
@@ -179,8 +179,8 @@ public class HeroShip : MasterScript
 			int pSys = allTradeRoutes[i].playerSystem;
 			int eSys = allTradeRoutes[i].enemySystem;
 			
-			SystemSIMData playerSystemData = systemListConstructor.systemList[pSys].systemObject.GetComponent<SystemSIMData>();
-			SystemSIMData enemySystemData = systemListConstructor.systemList[eSys].systemObject.GetComponent<SystemSIMData>();
+			SystemSIMData playerSystemData = MasterScript.systemListConstructor.systemList[pSys].systemObject.GetComponent<SystemSIMData>();
+			SystemSIMData enemySystemData = MasterScript.systemListConstructor.systemList[eSys].systemObject.GetComponent<SystemSIMData>();
 			
 			float playerPowerTransfer = playerSystemData.totalSystemPower / 2;
 			float playerKnowledgeTransfer = playerSystemData.totalSystemKnowledge / 2;

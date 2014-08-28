@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HumanImprovements : MasterScript 
+public class HumanImprovements : MonoBehaviour 
 {
 	private ImprovementsBasic improvements;
 	private bool checkValue;
 	private TurnInfo player;
+	private SystemSIMData systemSIMData;
 
 	public void TechSwitch(int tech, int planet, ImprovementsBasic tempImprov, TurnInfo thisPlayer, bool check)
 	{
-		systemSIMData = systemListConstructor.systemList [tempImprov.system].systemObject.GetComponent<SystemSIMData> ();
+		systemSIMData = MasterScript.systemListConstructor.systemList [tempImprov.system].systemObject.GetComponent<SystemSIMData> ();
 
 		improvements = tempImprov;
 		checkValue = check;
@@ -84,7 +85,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH1I1(int planet) //Earth's Bounty
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
 			improvements.growthModifier += 0.3f;
 		}
@@ -112,11 +113,11 @@ public class HumanImprovements : MasterScript
 
 	private void TH1I3(int planet) //Summer's Song
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
 		{
 			improvements.powerPercentBonus += 0.5f;
 		}
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
 		{
 			improvements.powerPercentBonus -= 0.5f;
 		}
@@ -129,7 +130,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH1I4() //Nurute
 	{
-		improvements.tempCount = 0.02f * racialTraitScript.ambitionCounter;
+		improvements.tempCount = 0.02f * MasterScript.racialTraitScript.ambitionCounter;
 
 		improvements.expansionPenaltyModifier -= improvements.tempCount;
 
@@ -146,7 +147,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH2I1(int planet) //Skyward
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == player.homePlanetCategory)
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == player.homePlanetCategory)
 		{
 			improvements.maxPopulationBonus += 40f;
 		}
@@ -163,7 +164,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH2I2(int planet) //Deep Source
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType == "")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType == "")
 		{
 			int rnd = Random.Range(0, 2);
 
@@ -174,16 +175,16 @@ public class HumanImprovements : MasterScript
 				switch(rnd)
 				{
 				case 0:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "ANTIMATTER";
+					MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "ANTIMATTER";
 					break;
 				case 1:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "LIQUID HYDROGEN";
+					MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "LIQUID HYDROGEN";
 					break;
 				case 2:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "BLUE CARBON";
+					MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "BLUE CARBON";
 					break;
 				case 3:
-					systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "RADIOISOTOPES";
+					MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].rareResourceType = "RADIOISOTOPES";
 					break;
 				default:
 					break;
@@ -199,11 +200,11 @@ public class HumanImprovements : MasterScript
 
 	private void TH2I3(int planet) //Winter's Dirge
 	{		
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Hot")
 		{
 			improvements.knowledgePercentBonus -= 0.5f;
 		}
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Cold")
 		{
 			improvements.knowledgePercentBonus += 0.5f;
 		}
@@ -219,7 +220,7 @@ public class HumanImprovements : MasterScript
 		if(checkValue == false)
 		{
 			improvements.wealthBonus -= systemSIMData.totalSystemWealth * 0.3f;
-			racialTraitScript.ambitionCounter += systemSIMData.totalSystemWealth * 0.3f;
+			MasterScript.racialTraitScript.ambitionCounter += systemSIMData.totalSystemWealth * 0.3f;
 			improvements.listOfImprovements[20].improvementMessage = (systemSIMData.totalSystemWealth * 0.3f + " Wealth converted to " + systemSIMData.totalSystemWealth * 0.3f + " Ambition");
 		}
 	}
@@ -235,18 +236,18 @@ public class HumanImprovements : MasterScript
 
 		if(checkValue == false)
 		{
-			racialTraitScript.ambitionCounter -= 1;
+			MasterScript.racialTraitScript.ambitionCounter -= 1;
 			improvements.listOfImprovements[22].improvementMessage = "+1 Improvement Slot on planets, -1 Ambition upkeep on each slot";
 		}
 	}
 
 	private void TH3I2(int planet) //Autumn's Air
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Giant")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Giant")
 		{
 			improvements.growthModifier -= 0.5f;
 		}
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
 			improvements.growthModifier += 0.5f;
 		}
@@ -259,7 +260,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH3I3(int planet) //Orbital
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
 			improvements.maxPopulationBonus += 50f;
 		}
@@ -276,11 +277,11 @@ public class HumanImprovements : MasterScript
 
 	private void TH3I4() //Waters of Life
 	{
-		for(int i = 0; i < systemListConstructor.systemList[improvements.system].systemSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[improvements.system].systemSize; ++i)
 		{
-			if(systemListConstructor.systemList[improvements.system].planetsInSystem[i].planetCategory == "Terran")
+			if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[i].planetCategory == "Terran")
 			{
-				racialTraitScript.ambitionCounter += 2f;
+				MasterScript.racialTraitScript.ambitionCounter += 2f;
 			}
 		}
 
@@ -297,7 +298,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH4I1() //Insight
 	{
-		improvements.tempCount = 0.0001f * racialTraitScript.ambitionCounter;
+		improvements.tempCount = 0.0001f * MasterScript.racialTraitScript.ambitionCounter;
 		improvements.researchCostReduction -= improvements.tempCount;
 
 		if(checkValue == false)
@@ -308,7 +309,7 @@ public class HumanImprovements : MasterScript
 
 	private void TH4I2(int planet) //Spring's Serenade
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetCategory == "Terran")
 		{
 			improvements.upkeepModifier -= 0.5f;
 			improvements.wealthBonus += 1;
@@ -331,14 +332,14 @@ public class HumanImprovements : MasterScript
 
 	private void TH4I4() //Opulence
 	{
-		if(racialTraitScript.ambitionCounter >= 75)
+		if(MasterScript.racialTraitScript.ambitionCounter >= 75)
 		{
 			improvements.knowledgePercentBonus += 0.25f;
 			improvements.powerPercentBonus += 0.25f;
 			improvements.upkeepModifier -= 0.5f;
 			improvements.tempCount = 0.25f;
 		}
-		if(racialTraitScript.ambitionCounter <= 25)
+		if(MasterScript.racialTraitScript.ambitionCounter <= 25)
 		{
 			improvements.knowledgePercentBonus -= 0.25f;
 			improvements.powerPercentBonus -= 0.25f;

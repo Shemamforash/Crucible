@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GenericImprovements : MasterScript
+public class GenericImprovements : MonoBehaviour
 {
 	private ImprovementsBasic improvements;
 	private bool checkValue;
@@ -9,6 +9,7 @@ public class GenericImprovements : MasterScript
 	private HumanImprovements humanImprovements;
 	private NereidesImprovements nereidesImprovements;
 	private SelkiesImprovements selkiesImprovements;
+	private SystemSIMData systemSIMData;
 
 	public void Start()
 	{
@@ -21,7 +22,7 @@ public class GenericImprovements : MasterScript
 	{
 		improvements = tempImprov;
 
-		systemSIMData = systemListConstructor.systemList [tempImprov.system].systemObject.GetComponent<SystemSIMData> ();
+		systemSIMData = MasterScript.systemListConstructor.systemList [tempImprov.system].systemObject.GetComponent<SystemSIMData> ();
 
 		checkValue = check;
 		thisPlayer = player;
@@ -106,11 +107,11 @@ public class GenericImprovements : MasterScript
 
 	private void T1I2() //Fertile Link
 	{
-		for(int i = 0; i < systemListConstructor.systemList[improvements.system].permanentConnections.Count; ++i) //For all connections
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[improvements.system].permanentConnections.Count; ++i) //For all connections
 		{
-			int k = RefreshCurrentSystem(systemListConstructor.systemList[improvements.system].permanentConnections[i]);
+			int k = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[improvements.system].permanentConnections[i]);
 			
-			if(systemListConstructor.systemList[k].systemOwnedBy == thisPlayer.playerRace) //If connected system is allied
+			if(MasterScript.systemListConstructor.systemList[k].systemOwnedBy == thisPlayer.playerRace) //If connected system is allied
 			{
 				improvements.powerPercentBonus += 0.075f; //Increase counter by 7.5%
 				improvements.tempCount += 0.075f;
@@ -137,20 +138,20 @@ public class GenericImprovements : MasterScript
 	{
 		for(int i = 0; i < systemSIMData.secondaryResourceGeneratedSinceLastUpdate; ++i)
 		{
-			for(int j = 0; j < systemListConstructor.systemList[improvements.system].systemSize; ++j)
+			for(int j = 0; j < MasterScript.systemListConstructor.systemList[improvements.system].systemSize; ++j)
 			{
-				if(systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower > systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
+				if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower > MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
 				{
-					thisPlayer.power += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower;
+					thisPlayer.power += MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower;
 				}
-				if(systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower < systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
+				if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower < MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
 				{
-					thisPlayer.knowledge += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge;
+					thisPlayer.knowledge += MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge;
 				}
-				if(systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower == systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
+				if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower == MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge)
 				{
-					thisPlayer.power += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower / 2f;
-					thisPlayer.knowledge += systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge / 2f;
+					thisPlayer.power += MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetPower / 2f;
+					thisPlayer.knowledge += MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[j].planetKnowledge / 2f;
 				}
 			}
 		}
@@ -175,7 +176,7 @@ public class GenericImprovements : MasterScript
 
 	private void T2I3(int planet) //Isolation
 	{
-		float temp = (systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetImprovementLevel + 1) * 10f;
+		float temp = (MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetImprovementLevel + 1) * 10f;
 
 		improvements.maxPopulationBonus += temp;
 
@@ -189,9 +190,9 @@ public class GenericImprovements : MasterScript
 	{
 		improvements.tempCount = 0f;
 
-		for(int i = 0; i < systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt.Count; ++i)
 		{
-			if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt[i] == "")
+			if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].improvementsBuilt[i] == "")
 			{
 				improvements.knowledgePercentBonus += 0.05f;
 			}
@@ -205,9 +206,7 @@ public class GenericImprovements : MasterScript
 
 	private void T3I2(int planet) //Nostalgia
 	{
-		bool allPlanetsColonised  = true;
-
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetType == thisPlayer.homePlanetType)
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetType == thisPlayer.homePlanetType)
 		{
 			improvements.powerPercentBonus += 1f;
 			improvements.knowledgePercentBonus += 1f;
@@ -256,9 +255,9 @@ public class GenericImprovements : MasterScript
 	{
 		int currentPlanets = 0;
 
-		for(int i = 0; i < systemListConstructor.mapSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.mapSize; ++i)
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy == null || systemListConstructor.systemList[i].systemOwnedBy == thisPlayer.playerRace)
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == null || MasterScript.systemListConstructor.systemList[i].systemOwnedBy == thisPlayer.playerRace)
 			{
 				continue;
 			}

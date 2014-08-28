@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AmbientStarRandomiser : MasterScript 
+public class AmbientStarRandomiser : MonoBehaviour 
 {
 	public int totalStars, pointIterator = 0;
 	public float maxGenerateDistance, blueRand, redRand, greenRand;
@@ -44,16 +44,16 @@ public class AmbientStarRandomiser : MasterScript
 			startup = true;
 		}
 
-		int ambientStarsPerSystem = totalStars / systemListConstructor.systemList.Count;
+		int ambientStarsPerSystem = totalStars / MasterScript.systemListConstructor.systemList.Count;
 
-		for(int i = 0; i < systemListConstructor.systemList.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i)
 		{
 			AmbientStar tempObj = new AmbientStar();
 
 			for(int j = 0; j < ambientStarsPerSystem; ++j)
 			{
-				float systemX = systemListConstructor.systemList[i].systemObject.transform.position.x;
-				float systemY = systemListConstructor.systemList[i].systemObject.transform.position.y;
+				float systemX = MasterScript.systemListConstructor.systemList[i].systemObject.transform.position.x;
+				float systemY = MasterScript.systemListConstructor.systemList[i].systemObject.transform.position.y;
 
 				float xDis = Random.Range(systemX - maxGenerateDistance, systemX + maxGenerateDistance);
 				float yDis = Random.Range(systemY - maxGenerateDistance, systemY + maxGenerateDistance);

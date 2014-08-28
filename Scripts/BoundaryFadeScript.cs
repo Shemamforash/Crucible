@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BoundaryFadeScript : MasterScript 
+public class BoundaryFadeScript : MonoBehaviour 
 {
 	private Color reference, start, end;
 	private bool fade, initialised, lerp;
@@ -10,6 +10,7 @@ public class BoundaryFadeScript : MasterScript
 	void Start()
 	{
 		reference = gameObject.renderer.material.color;
+		Debug.Log (gameObject.name);
 	}
 
 	void Update () 
@@ -20,7 +21,7 @@ public class BoundaryFadeScript : MasterScript
 			t += Time.deltaTime / 0.25f;
 		}
 
-		if(systemPopup.mainCamera.transform.position.z > -65f && fade == false)
+		if(MasterScript.systemPopup.mainCamera.transform.position.z > -65f && fade == false)
 		{
 			if(lerp == false)
 			{
@@ -44,7 +45,7 @@ public class BoundaryFadeScript : MasterScript
 			}
 		}
 
-		if(systemPopup.mainCamera.transform.position.z <= -65f && fade == true)
+		if(MasterScript.systemPopup.mainCamera.transform.position.z <= -65f && fade == true)
 		{
 			if(lerp == false)
 			{

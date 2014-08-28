@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class RacialTraits : MasterScript 
+public class RacialTraits : MonoBehaviour 
 {
 	public float ambitionCounter, ambitiongrowthModifier, amber;
 	public int stacksGeneratedSinceLastUpdate, stacksDissolvedSinceLastUpdate, stackWealthBonus;
@@ -17,10 +17,10 @@ public class RacialTraits : MasterScript
 
 	public void Purge() //Nereides function to produce elation
 	{
-		while(playerTurnScript.knowledge >= 100 && playerTurnScript.power >= 100)
+		while(MasterScript.playerTurnScript.knowledge >= 100 && MasterScript.playerTurnScript.power >= 100)
 		{
-			playerTurnScript.knowledge -= 100;
-			playerTurnScript.power -= 100;
+			MasterScript.playerTurnScript.knowledge -= 100;
+			MasterScript.playerTurnScript.power -= 100;
 			StackOfElation newStack = new StackOfElation();
 			newStack.creationTime = Time.time;
 			newStack.maxAge = 60f;
@@ -46,11 +46,11 @@ public class RacialTraits : MasterScript
 		{
 			if(player.systemsColonisedThisTurn > 0f)
 			{
-				ambitionCounter += player.systemsColonisedThisTurn * 4f * (60 / systemListConstructor.mapSize);
+				ambitionCounter += player.systemsColonisedThisTurn * 4f * (60 / MasterScript.systemListConstructor.mapSize);
 			}
 			if(player.planetsColonisedThisTurn > 0f)
 			{
-				ambitionCounter += (player.planetsColonisedThisTurn - player.systemsColonisedThisTurn) * 2f * (60 / systemListConstructor.mapSize);
+				ambitionCounter += (player.planetsColonisedThisTurn - player.systemsColonisedThisTurn) * 2f * (60 / MasterScript.systemListConstructor.mapSize);
 			}
 			if(player.systemsColonisedThisTurn == 0 && player.planetsColonisedThisTurn == 0)
 			{
@@ -84,8 +84,8 @@ public class RacialTraits : MasterScript
 	
 	public void IncreaseAmber (int system)
 	{
-		systemSIMData = systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
-		improvementsBasic = systemListConstructor.systemList [system].systemObject.GetComponent<ImprovementsBasic> ();
+		SystemSIMData systemSIMData = MasterScript.systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
+		ImprovementsBasic improvementsBasic = MasterScript.systemListConstructor.systemList [system].systemObject.GetComponent<ImprovementsBasic> ();
 		
 		systemSIMData.totalSystemAmber = 0f;
 		
@@ -98,9 +98,9 @@ public class RacialTraits : MasterScript
 				tempMod = 0.15f;
 			}
 			
-			for(int i = 0; i < systemListConstructor.systemList[system].systemSize; ++i)
+			for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].systemSize; ++i)
 			{
-				string tempString = systemListConstructor.systemList[system].planetsInSystem[i].planetType;
+				string tempString = MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].planetType;
 				
 				if(tempString == "Molten" || tempString == "Chasm" || tempString == "Waste")
 				{
@@ -115,22 +115,22 @@ public class RacialTraits : MasterScript
 		
 		systemSIMData.totalSystemAmber += improvementsBasic.amberPointBonus;
 		
-		racialTraitScript.amber += systemSIMData.totalSystemAmber;
+		MasterScript.racialTraitScript.amber += systemSIMData.totalSystemAmber;
 	}
 	
 	void Update()
 	{
-		if(playerTurnScript.playerRace == "Humans")
+		if(MasterScript.playerTurnScript.playerRace == "Humans")
 		{
 			racialLabel.text = ("Ambition: " + ((int)ambitionCounter).ToString());
 		}
 		
-		if(playerTurnScript.playerRace == "Nereides")
+		if(MasterScript.playerTurnScript.playerRace == "Nereides")
 		{
 			racialLabel.text = elationStacks.Count + " stacks";
 		}
 		
-		if(playerTurnScript.playerRace == "Selkies")
+		if(MasterScript.playerTurnScript.playerRace == "Selkies")
 		{
 			racialLabel.text = Math.Round(amber, 2) + " Amber";
 		}

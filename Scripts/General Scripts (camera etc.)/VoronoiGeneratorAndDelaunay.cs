@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class VoronoiGeneratorAndDelaunay : MasterScript 
+public class VoronoiGeneratorAndDelaunay : MonoBehaviour 
 {
 	public Transform boundaryContainer;
 	public Material humansMat, selkiesMat, nereidesMat;
@@ -19,7 +19,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 
 	public bool CheckIsDelaunay(Triangle triOne, Triangle triTwo)
 	{
-		List<GameObject> sharedSides = triangulation.CheckIfSharesSide(triOne, triTwo); //Find if triangles share a side (this actually returns the 2 shared and 2 unshared vertices)
+		List<GameObject> sharedSides = MasterScript.triangulation.CheckIfSharesSide(triOne, triTwo); //Find if triangles share a side (this actually returns the 2 shared and 2 unshared vertices)
 
 		if(sharedSides.Count == 4) //If 4 vertices are shared
 		{
@@ -44,8 +44,8 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 
 			if(angleAlpha + angleBeta > 180f) //If the polygon is convex, and the two angles combine to be greater than 180 degrees, the triangles are non delaunay, so we flip them
 			{				      
-				int triPosOne = triangulation.triangles.IndexOf(triOne); //Find the position of the two triangles in the triangles list
-				int triPosTwo = triangulation.triangles.IndexOf(triTwo);
+				int triPosOne = MasterScript.triangulation.triangles.IndexOf(triOne); //Find the position of the two triangles in the triangles list
+				int triPosTwo = MasterScript.triangulation.triangles.IndexOf(triTwo);
 
 				triOne.points[0] = unsharedPointA; //Reassign the vertices of tri one to make the previously unshared vertices the shared vertices. One of the previously shared vertices is now the unshared vertex.
 				triOne.points[1] = unsharedPointB;
@@ -53,7 +53,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 				triOne.lines[0] = MathsFunctions.ABCLineEquation (triOne.points[0].transform.position, triOne.points[1].transform.position); //Get the line equations for all the sides
 				triOne.lines[1] = MathsFunctions.ABCLineEquation (triOne.points[1].transform.position, triOne.points[2].transform.position);
 				triOne.lines[2] = MathsFunctions.ABCLineEquation (triOne.points[2].transform.position, triOne.points[0].transform.position);
-				triangulation.triangles[triPosOne] = triOne; //Replace the original triangle with this new, flipped triangle
+				MasterScript.triangulation.triangles[triPosOne] = triOne; //Replace the original triangle with this new, flipped triangle
 
 				triTwo.points[0] = unsharedPointA; //Do the same for tri two
 				triTwo.points[1] = unsharedPointB;
@@ -61,7 +61,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 				triTwo.lines[0] = MathsFunctions.ABCLineEquation (triTwo.points[0].transform.position, triTwo.points[1].transform.position);
 				triTwo.lines[1] = MathsFunctions.ABCLineEquation (triTwo.points[1].transform.position, triTwo.points[2].transform.position);
 				triTwo.lines[2] = MathsFunctions.ABCLineEquation (triTwo.points[2].transform.position, triTwo.points[0].transform.position);
-				triangulation.triangles[triPosTwo] = triTwo;
+				MasterScript.triangulation.triangles[triPosTwo] = triTwo;
 
 				++flips; //Increase the number of flips that have been made this pass.
 
@@ -109,16 +109,16 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 	{
 		flips = 0; //Say no flips have been made
 
-		for(int i = 0; i < triangulation.triangles.Count; ++i) //For all triangles
+		for(int i = 0; i < MasterScript.triangulation.triangles.Count; ++i) //For all triangles
 		{
-			for(int j = 0; j < triangulation.triangles.Count; ++j) //For all other triangles
+			for(int j = 0; j < MasterScript.triangulation.triangles.Count; ++j) //For all other triangles
 			{
 				if(i == j)
 				{
 					continue;
 				}
 		
-				if(CheckIsDelaunay(triangulation.triangles[i], triangulation.triangles[j]) == false) //Check that the triangle is delaunay (must obviously be connected but this is tested in the CheckIsDelaunay method)
+				if(CheckIsDelaunay(MasterScript.triangulation.triangles[i], MasterScript.triangulation.triangles[j]) == false) //Check that the triangle is delaunay (must obviously be connected but this is tested in the CheckIsDelaunay method)
 				{
 					return false; //If it wasn't delaunay then we return false
 				}
@@ -135,21 +135,21 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 	
 	public void CreateVoronoiCells() //This appears to be fine
 	{			
-		triangulation.SimpleTriangulation ();
+		MasterScript.triangulation.SimpleTriangulation ();
 
-		for(int j = 0; j < systemListConstructor.systemList.Count; ++j) //For all systems
+		for(int j = 0; j < MasterScript.systemListConstructor.systemList.Count; ++j) //For all systems
 		{
 			VoronoiCellVertices newCell = new VoronoiCellVertices(); //Create new voronoi cell
 
-			Vector3 voronoiCentre = systemListConstructor.systemList[j].systemObject.transform.position; //Centre of voronoi cell is the current system location
+			Vector3 voronoiCentre = MasterScript.systemListConstructor.systemList[j].systemObject.transform.position; //Centre of voronoi cell is the current system location
 
-			for(int i = 0; i < triangulation.triangles.Count; ++i) //For all triangles
+			for(int i = 0; i < MasterScript.triangulation.triangles.Count; ++i) //For all triangles
 			{
-				if(triangulation.triangles[i].points.Contains(systemListConstructor.systemList[j].systemObject)) //If the triangle has the current system as one of it's vertices
+				if(MasterScript.triangulation.triangles[i].points.Contains(MasterScript.systemListConstructor.systemList[j].systemObject)) //If the triangle has the current system as one of it's vertices
 				{
-					Vector3 systemA = triangulation.triangles[i].points[0].transform.position; //System A equals this system
-					Vector3 systemB = triangulation.triangles[i].points[1].transform.position; //System B is another point in the triangle
-					Vector3 systemC = triangulation.triangles[i].points[2].transform.position; //System C is the final point in the triangle
+					Vector3 systemA = MasterScript.triangulation.triangles[i].points[0].transform.position; //System A equals this system
+					Vector3 systemB = MasterScript.triangulation.triangles[i].points[1].transform.position; //System B is another point in the triangle
+					Vector3 systemC = MasterScript.triangulation.triangles[i].points[2].transform.position; //System C is the final point in the triangle
 
 					Vector3 lineAB = MathsFunctions.PerpendicularLineEquation(systemA, systemB); //Get the line equations of the line perpendicular to the midpoint between two points
 					Vector3 lineBC = MathsFunctions.PerpendicularLineEquation(systemB, systemC);
@@ -248,8 +248,8 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 
 			for(int j = 0; j < vertices.Count; ++j) //For all the vertices
 			{
-				float x = vertices[j].x - systemListConstructor.systemList[i].systemObject.transform.position.x; //Set the x relative to the centre (used to be prevent the vertices being offset from the gameobject centre)
-				float y = vertices[j].y - systemListConstructor.systemList[i].systemObject.transform.position.y; //Do the same for the y
+				float x = vertices[j].x - MasterScript.systemListConstructor.systemList[i].systemObject.transform.position.x; //Set the x relative to the centre (used to be prevent the vertices being offset from the gameobject centre)
+				float y = vertices[j].y - MasterScript.systemListConstructor.systemList[i].systemObject.transform.position.y; //Do the same for the y
 				Vector3 newPos = new Vector3(x, y, 0f);
 				vertices[j] = newPos;
 			}
@@ -304,7 +304,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 			newMesh.mesh.RecalculateBounds();
 			newMesh.mesh.Optimize();
 
-			newCell.renderer.material = turnInfoScript.emptyMaterial;
+			newCell.renderer.material = MasterScript.turnInfoScript.emptyMaterial;
 			newCell.renderer.material.shader = Shader.Find("Transparent/Diffuse");
 			Color newColour = newCell.renderer.material.color;
 			newColour = new Color(newColour.r, newColour.g, newColour.b, 0f);
@@ -312,7 +312,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 			newCell.AddComponent<SystemRotate>();
 			newCell.name = "Voronoi Cell" + i.ToString();
 			newCell.tag = "VoronoiCell";
-			newCell.transform.position = new Vector3(systemListConstructor.systemList[i].systemObject.transform.position.x, systemListConstructor.systemList[i].systemObject.transform.position.y, 0f);
+			newCell.transform.position = new Vector3(MasterScript.systemListConstructor.systemList[i].systemObject.transform.position.x, MasterScript.systemListConstructor.systemList[i].systemObject.transform.position.y, 0f);
 			newCell.transform.parent = voronoiCellContainer.transform;
 
 			//voronoiCells.Add (newCell);
@@ -333,7 +333,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 		
 		midPoint = new Vector3 (midPoint.x, midPoint.y, -2.0f); //Create vector from midpoint
 		
-		lineRenderScript = systemListConstructor.systemList[0].systemObject.GetComponent<LineRenderScript>();
+		LineRenderScript lineRenderScript = MasterScript.systemListConstructor.systemList[0].systemObject.GetComponent<LineRenderScript>();
 		
 		GameObject line = (GameObject)Instantiate(lineRenderScript.line, midPoint, rotation);
 
@@ -341,7 +341,7 @@ public class VoronoiGeneratorAndDelaunay : MasterScript
 
 		float width = 0.20f;
 
-		if(mat == turnInfoScript.humansMaterial || mat == turnInfoScript.selkiesMaterial)
+		if(mat == MasterScript.turnInfoScript.humansMaterial || mat == MasterScript.turnInfoScript.selkiesMaterial)
 		{
 			width = 0.1f;
 		}

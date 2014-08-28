@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class TurnInfo : MasterScript
+public class TurnInfo : MonoBehaviour
 {
 	[HideInInspector]
 	public int planetsColonisedThisTurn, systemsColonisedThisTurn, savedIterator, researchCostModifier = 0, antimatter, blueCarbon, radioisotopes, liquidH2;
@@ -23,10 +23,18 @@ public class TurnInfo : MasterScript
 
 	public void StartGame()
 	{
-		if(turnInfoScript.startSteps == false && playerTurnScript.playerRace != null)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i)
+		{
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == MasterScript.playerTurnScript.playerRace)
+			{
+				Debug.Log ("skbdakbdj");
+			}
+		}
+
+		if(MasterScript.turnInfoScript.startSteps == false && MasterScript.playerTurnScript.playerRace != null)
 		{
 			InvokeRepeating("EndTurnFunction", 0.0001f, 0.5f);
-			turnInfoScript.startSteps = true;
+			MasterScript.turnInfoScript.startSteps = true;
 		}
 	}
 
@@ -34,16 +42,16 @@ public class TurnInfo : MasterScript
 	{
 		mostPowerfulPlanets.Clear ();
 
-		turnInfoScript.savedIterator = 0;
+		MasterScript.turnInfoScript.savedIterator = 0;
 
-		for(int i = 0; i < systemListConstructor.mapSize; i++)
+		for(int i = 0; i < MasterScript.systemListConstructor.mapSize; i++)
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy == null)
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == null)
 			{
 				continue;
 			}
 
-			systemSIMData = systemListConstructor.systemList[i].systemObject.GetComponent<SystemSIMData>();
+			SystemSIMData systemSIMData = MasterScript.systemListConstructor.systemList[i].systemObject.GetComponent<SystemSIMData>();
 			
 			systemSIMData.UpdatePlanetPowerArray();
 		}
@@ -74,7 +82,7 @@ public class TurnInfo : MasterScript
 
 	public void PickRace() //Start of turn function. Race choice dictates starting planet and inherent bonuses as well as racial technologies.
 	{
-		float gameSpeedModifer = 30f / systemListConstructor.mapSize;
+		float gameSpeedModifer = 30f / MasterScript.systemListConstructor.mapSize;
 
 		if(playerRace == "Humans")
 		{
@@ -84,7 +92,7 @@ public class TurnInfo : MasterScript
 			homeSystem = "Midgard";
 			homePlanetType = "Ocean";
 			homePlanetCategory = "Terran";
-			materialInUse = turnInfoScript.humansMaterial;
+			materialInUse = MasterScript.turnInfoScript.humansMaterial;
 		}
 		if(playerRace == "Selkies")
 		{
@@ -94,7 +102,7 @@ public class TurnInfo : MasterScript
 			homeSystem = "Samael";
 			homePlanetType = "Prairie";
 			homePlanetCategory = "Hot";
-			materialInUse = turnInfoScript.selkiesMaterial;
+			materialInUse = MasterScript.turnInfoScript.selkiesMaterial;
 		}
 		if(playerRace == "Nereides")
 		{
@@ -104,24 +112,24 @@ public class TurnInfo : MasterScript
 			homeSystem = "Nephthys";
 			homePlanetType = "Boreal";
 			homePlanetCategory = "Cold";
-			materialInUse = turnInfoScript.nereidesMaterial;
+			materialInUse = MasterScript.turnInfoScript.nereidesMaterial;
 		}
 	}
 
 	public void EndTurnFunction()
 	{
-		if(playerTurnScript.playerRace != null)
+		if(MasterScript.playerTurnScript.playerRace != null)
 		{
-			diplomacyScript.DiplomaticStateEffects();
-			turnInfoScript.turn += 1.0f;
-			turnInfoScript.TurnEnd (playerTurnScript);
-			winConditions.CheckWin(playerTurnScript);
-			systemInvasion.UpdateInvasions();
+			MasterScript.diplomacyScript.DiplomaticStateEffects();
+			MasterScript.turnInfoScript.turn += 1.0f;
+			MasterScript.turnInfoScript.TurnEnd (MasterScript.playerTurnScript);
+			MasterScript.winConditions.CheckWin(MasterScript.playerTurnScript);
+			MasterScript.systemInvasion.UpdateInvasions();
 
 			for(int i = 0; i < allPlayers.Count; ++i)
 			{
 				allPlayers[i].Expand(allPlayers[i]);
-				winConditions.CheckWin(allPlayers[i]);
+				MasterScript.winConditions.CheckWin(allPlayers[i]);
 			}
 		}
 	}
@@ -130,17 +138,17 @@ public class TurnInfo : MasterScript
 	{
 		expansionPenaltyModifier = 1f;
 
-		for(int i = 0; i < systemListConstructor.mapSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.mapSize; ++i)
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy == player.playerRace)
 			{
-				for(int j = 0; j < systemListConstructor.systemList[i].planetsInSystem.Count; ++j)
+				for(int j = 0; j < MasterScript.systemListConstructor.systemList[i].planetsInSystem.Count; ++j)
 				{
-					if(systemListConstructor.systemList[i].planetsInSystem[j].planetColonised == true && systemListConstructor.systemList[i].planetsInSystem[j].expansionPenaltyTimer != 0f)
+					if(MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].planetColonised == true && MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].expansionPenaltyTimer != 0f)
 					{
-						if(systemListConstructor.systemList[i].planetsInSystem[j].expansionPenaltyTimer + 30f < Time.time)
+						if(MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].expansionPenaltyTimer + 30f < Time.time)
 						{
-							systemListConstructor.systemList[i].planetsInSystem[j].expansionPenaltyTimer = 0f;
+							MasterScript.systemListConstructor.systemList[i].planetsInSystem[j].expansionPenaltyTimer = 0f;
 							continue;
 						}
 
@@ -155,33 +163,33 @@ public class TurnInfo : MasterScript
 	{		
 		selectedPlayer.researchCostModifier = 0;
 
-		diplomacyScript.DiplomaticStateEffects ();
+		MasterScript.diplomacyScript.DiplomaticStateEffects ();
 
 		CalculateExpansionModifier (selectedPlayer);
 
-		for(int i = 0; i < systemListConstructor.mapSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.mapSize; ++i)
 		{
-			if(systemListConstructor.systemList[i].systemOwnedBy != selectedPlayer.playerRace)
+			if(MasterScript.systemListConstructor.systemList[i].systemOwnedBy != selectedPlayer.playerRace)
 			{
 				continue;
 			}
 
-			systemSIMData = systemListConstructor.systemList[i].systemObject.GetComponent<SystemSIMData>();
-			improvementsBasic = systemListConstructor.systemList[i].systemObject.GetComponent<ImprovementsBasic>();
-			systemDefence = systemListConstructor.systemList[i].systemObject.GetComponent<SystemDefence>();
+			SystemSIMData systemSIMData = MasterScript.systemListConstructor.systemList[i].systemObject.GetComponent<SystemSIMData>();
+			ImprovementsBasic improvementsBasic = MasterScript.systemListConstructor.systemList[i].systemObject.GetComponent<ImprovementsBasic>();
+			SystemDefence systemDefence = MasterScript.systemListConstructor.systemList[i].systemObject.GetComponent<SystemDefence>();
 
 			systemDefence.CalculateSystemDefence();
 
 			improvementsBasic.ActiveTechnologies(i, selectedPlayer);
 			systemSIMData.SystemSIMCounter(selectedPlayer);
-			systemFunctions.CheckUnlockedTier(improvementsBasic, i);
+			MasterScript.systemFunctions.CheckUnlockedTier(improvementsBasic, i);
 
 			selectedPlayer.knowledge += systemSIMData.totalSystemKnowledge;
 			selectedPlayer.power += systemSIMData.totalSystemPower;
 
 			if(selectedPlayer.playerRace == "Selkies")
 			{
-				racialTraitScript.amber += systemSIMData.totalSystemAmber;
+				MasterScript.racialTraitScript.amber += systemSIMData.totalSystemAmber;
 			}
 
 			selectedPlayer.researchCostModifier += improvementsBasic.researchCost;
@@ -189,13 +197,13 @@ public class TurnInfo : MasterScript
 
 		for(int j = 0; j < selectedPlayer.playerOwnedHeroes.Count; ++j)
 		{				
-			heroScript = selectedPlayer.playerOwnedHeroes[j].GetComponent<HeroScriptParent>();
+			HeroScriptParent heroScript = selectedPlayer.playerOwnedHeroes[j].GetComponent<HeroScriptParent>();
 			heroScript.HeroEndTurnFunctions(selectedPlayer);
 		}
 		
-		racialTraitScript.RacialBonus (selectedPlayer);
+		MasterScript.racialTraitScript.RacialBonus (selectedPlayer);
 
-		turnInfoScript.SortSystemPower();
+		MasterScript.turnInfoScript.SortSystemPower();
 
 		if(selectedPlayer.wealth > 10000.0f)
 		{
@@ -213,7 +221,7 @@ public class TurnInfo : MasterScript
 		float tempFloat;
 		int tempInt;
 
-		for(int i = turnInfoScript.mostPowerfulPlanets.Count - 1; i >= 0; --i)
+		for(int i = MasterScript.turnInfoScript.mostPowerfulPlanets.Count - 1; i >= 0; --i)
 		{
 			bool swaps = false;
 
@@ -248,10 +256,10 @@ public class TurnInfo : MasterScript
 	{
 		if(player.wealth >= 50 && player.playerOwnedHeroes.Count < 7)
 		{
-			int i = RefreshCurrentSystem(GameObject.Find(player.homeSystem));
+			int i = MasterScript.RefreshCurrentSystem(GameObject.Find(player.homeSystem));
 			
-			GameObject instantiatedHero = (GameObject)Instantiate (heroGUI.heroObject, systemListConstructor.systemList[i].systemObject.transform.position, 
-			                                                       systemListConstructor.systemList[i].systemObject.transform.rotation);
+			GameObject instantiatedHero = (GameObject)Instantiate (MasterScript.heroGUI.heroObject, MasterScript.systemListConstructor.systemList[i].systemObject.transform.position, 
+			                                                       MasterScript.systemListConstructor.systemList[i].systemObject.transform.rotation);
 			
 			instantiatedHero.name = "Basic Hero_" + heroCounter;
 			
@@ -259,7 +267,7 @@ public class TurnInfo : MasterScript
 			
 			tempHero.heroType = heroType;
 			
-			tempHero.heroLocation = systemListConstructor.systemList[i].systemObject;
+			tempHero.heroLocation = MasterScript.systemListConstructor.systemList[i].systemObject;
 			
 			tempHero.heroOwnedBy = player.playerRace;
 			

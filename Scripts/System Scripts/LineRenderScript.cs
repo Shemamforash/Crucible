@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class LineRenderScript : MasterScript 
+public class LineRenderScript : MonoBehaviour 
 {
 	[HideInInspector]
 	public List<ConnectorLine> connectorLines = new List<ConnectorLine>();
@@ -20,34 +20,40 @@ public class LineRenderScript : MasterScript
 	public void StartUp()
 	{	
 		connectorLineContainer = GameObject.Find ("Connector Lines Container").transform;
-		systemSIMData = gameObject.GetComponent<SystemSIMData>();
-		thisSystem = RefreshCurrentSystem (gameObject);
+		thisSystem = MasterScript.RefreshCurrentSystem (gameObject);
 
 		CreateLines ();
 	}
 
 	void Update()
 	{
-		if(systemListConstructor.systemList[thisSystem].systemOwnedBy == playerTurnScript.playerRace)
+		if(MasterScript.systemListConstructor.systemList[thisSystem].systemOwnedBy == MasterScript.playerTurnScript.playerRace)
 		{
 			ViewNearbySystems();
 		}
 
-		for(int i = 0; i < connectorLines.Count; ++i)
+		CreateLines();
+
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections.Count; ++i)
 		{
-			UpdateLine(systemListConstructor.systemList[thisSystem].permanentConnections[i], i);
+			UpdateLine(MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections[i], i);
 		}
 	}
 
 	private void CreateLines()
 	{
-		for(int i = 0; i < systemListConstructor.systemList[thisSystem].permanentConnections.Count; ++i)
+		while(connectorLines.Count > MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections.Count)
 		{
-			CreateNewLine(i);
+			Destroy (connectorLines[connectorLines.Count - 1].thisLine);
+			connectorLines.RemoveAt(connectorLines.Count - 1);
+		}
+		while(connectorLines.Count < MasterScript.systemListConstructor.systemList[thisSystem].permanentConnections.Count)
+		{
+			CreateNewLine();
 		}
 	}
 
-	public void CreateNewLine(int system)
+	public void CreateNewLine()
 	{
 		ConnectorLine newLine = new ConnectorLine ();
 		
@@ -100,7 +106,7 @@ public class LineRenderScript : MasterScript
 		SetPosition (target, i);
 		SetRotation (target, i);
 		
-		connectorLines[i].thisLine.gameObject.renderer.material = SetRaceLineColour();
+		connectorLines[i].thisLine.renderer.sharedMaterial = SetRaceLineColour();
 
 		Vector3 start = gameObject.transform.position;
 		Vector3 end = target.transform.position;
@@ -108,36 +114,33 @@ public class LineRenderScript : MasterScript
 		float distance = Vector3.Distance (start, end);
 		distance = distance - 4f;
 
-		connectorLines [i].thisLine.transform.localScale = new Vector3 (0.14f, distance, 0.0f);
+		connectorLines [i].thisLine.transform.localScale = new Vector3 (0.5f, 2f, 0.5f);//0.14f, distance, 0.0f);
 	}
 
 	public Material SetRaceLineColour()
 	{
-		if(systemListConstructor.systemList[thisSystem].systemOwnedBy == "Humans")
+		switch(MasterScript.systemListConstructor.systemList[thisSystem].systemOwnedBy) 
 		{
-			return turnInfoScript.humansLineMaterial;
+		case "Humans":
+			return MasterScript.turnInfoScript.humansLineMaterial;
+		case "Selkies":	
+			return MasterScript.turnInfoScript.selkiesLineMaterial;
+		case "Nereides":
+			return MasterScript.turnInfoScript.nereidesLineMaterial;
+		default:
+			return MasterScript.turnInfoScript.unownedLineMaterial;
 		}
-		if(systemListConstructor.systemList[thisSystem].systemOwnedBy == "Selkies")
-		{
-			return turnInfoScript.selkiesLineMaterial;
-		}
-		if(systemListConstructor.systemList[thisSystem].systemOwnedBy == "Nereides")
-		{
-			return turnInfoScript.nereidesLineMaterial;
-		}
-
-		return turnInfoScript.unownedLineMaterial;
 	}
 
 	private void ViewNearbySystems()
 	{
-		int system = RefreshCurrentSystem (gameObject);
+		int system = MasterScript.RefreshCurrentSystem (gameObject);
 
-		for(int i = 0; i < systemListConstructor.systemList[system].permanentConnections.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].permanentConnections.Count; ++i)
 		{
-			int tempSystem = RefreshCurrentSystem(systemListConstructor.systemList[system].permanentConnections[i]);
+			int tempSystem = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[system].permanentConnections[i]);
 
-			if(systemListConstructor.systemList[tempSystem].systemOwnedBy == null)
+			if(MasterScript.systemListConstructor.systemList[tempSystem].systemOwnedBy == null)
 			{
 				//systemListConstructor.systemList[system].permanentConnections[i].renderer.material = opaqueMaterial;
 			}

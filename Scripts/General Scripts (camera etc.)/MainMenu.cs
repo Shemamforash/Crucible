@@ -120,6 +120,9 @@ public class MainMenu : MonoBehaviour
 			case "Massive (90 Systems)":
 				PlayerPrefs.SetInt ("Map Size", 90);
 				break;
+			case "Max Star Debug (180 Systems)":
+				PlayerPrefs.SetInt ("Map Size", 180);
+				break;
 			default:
 				break;
 			}

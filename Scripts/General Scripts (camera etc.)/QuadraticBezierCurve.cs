@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class QuadraticBezierCurve : MasterScript
+public class QuadraticBezierCurve : MonoBehaviour
 {
 	public bool moving = false;
 	public int target, currentVertex = 0;
@@ -12,15 +12,15 @@ public class QuadraticBezierCurve : MasterScript
 
 	void Start()
 	{
-		rotate = systemListConstructor.systemList [target].systemObject.GetComponent<SystemRotate> ();
+		rotate = MasterScript.systemListConstructor.systemList [target].systemObject.GetComponent<SystemRotate> ();
 	}
 
 	private void AdjustPathValues()
 	{
 		double angle = -rotate.speed * Mathf.Deg2Rad;
 		
-		float xPos = (float)(Math.Cos(angle) * (pathToFollow[currentVertex].x - 50f) - Math.Sin(angle) * (pathToFollow[currentVertex].y - 50f) + 50f);
-		float yPos = (float)(Math.Sin(angle) * (pathToFollow[currentVertex].x - 50f) + Math.Cos(angle) * (pathToFollow[currentVertex].y - 50f) + 50f);
+		float xPos = (float)(Math.Cos(angle) * (pathToFollow[currentVertex].x - 60f) - Math.Sin(angle) * (pathToFollow[currentVertex].y - 60f) + 60f);
+		float yPos = (float)(Math.Sin(angle) * (pathToFollow[currentVertex].x - 60f) + Math.Cos(angle) * (pathToFollow[currentVertex].y - 60f) + 60f);
 		
 		pathToFollow[currentVertex] = new Vector3 (xPos, yPos, 0f);
 	}
@@ -58,8 +58,8 @@ public class QuadraticBezierCurve : MasterScript
 				
 				if(j + 1 == pathToFollow.Count && reachedPoint == true) //If it has reached final point
 				{
-					systemDefence = systemListConstructor.systemList[target].systemObject.GetComponent<SystemDefence>(); //Get reference to target system
-					systemDefence.TakeDamage(500f, 0f, -1); //Force system to take damage
+					MasterScript.systemDefence = MasterScript.systemListConstructor.systemList[target].systemObject.GetComponent<SystemDefence>(); //Get reference to target system
+					MasterScript.systemDefence.TakeDamage(500f, 0f, -1); //Force system to take damage
 					GameObject.Destroy (gameObject); //Destroy gameobject
 				}
 				else if(j + 1 != pathToFollow.Count && reachedPoint == true) //If it has not reached final point but has reached a point

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class HeroResourceImprovement : MasterScript 
+public class HeroResourceImprovement : MonoBehaviour 
 {
 	public GameObject improvementScreen;
 	private List<Stat> statObject = new List<Stat>();
@@ -13,6 +13,7 @@ public class HeroResourceImprovement : MasterScript
 	private string[] diplomatStats = new string[4]{"Armour", "Resource Bonus", "Movement Speed", "Collateral Damage"};
 	private float[] diplomatStatVal = new float[4]{1.0f, 0.5f, 2.5f, -2.0f};
 	private bool initialised = false;
+	private HeroScriptParent heroScript;
 
 	public void LoadObjects()
 	{
@@ -47,40 +48,40 @@ public class HeroResourceImprovement : MasterScript
 
 		if(improvementScreen.activeInHierarchy == true)
 		{
-			heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent> ();
+			heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ();
 
-			if(playerTurnScript.blueCarbon > 0)
+			if(MasterScript.playerTurnScript.blueCarbon > 0)
 			{
 				statObject[0].button.enabled = true;
 			}
-			if(playerTurnScript.blueCarbon == 0)
+			if(MasterScript.playerTurnScript.blueCarbon == 0)
 			{
 				statObject[0].button.enabled = false;
 			}
 
-			if(playerTurnScript.radioisotopes > 0)
+			if(MasterScript.playerTurnScript.radioisotopes > 0)
 			{
 				statObject[1].button.enabled = true;
 			}
-			if(playerTurnScript.radioisotopes == 0)
+			if(MasterScript.playerTurnScript.radioisotopes == 0)
 			{
 				statObject[1].button.enabled = false;
 			}
 
-			if(playerTurnScript.antimatter > 0)
+			if(MasterScript.playerTurnScript.antimatter > 0)
 			{
 				statObject[2].button.enabled = true;
 			}
-			if(playerTurnScript.antimatter == 0)
+			if(MasterScript.playerTurnScript.antimatter == 0)
 			{
 				statObject[2].button.enabled = false;
 			}
 
-			if(playerTurnScript.liquidH2 > 0)
+			if(MasterScript.playerTurnScript.liquidH2 > 0)
 			{
 				statObject[3].button.enabled = true;
 			}
-			if(playerTurnScript.liquidH2 == 0)
+			if(MasterScript.playerTurnScript.liquidH2 == 0)
 			{
 				statObject[3].button.enabled = false;
 			}
@@ -89,7 +90,7 @@ public class HeroResourceImprovement : MasterScript
 
 	private void SetLabels(string[] arr, float[] floatArr)
 	{
-		heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent> ();
+		heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ();
 
 		for(int i = 0; i < 4; ++i)
 		{
@@ -125,7 +126,7 @@ public class HeroResourceImprovement : MasterScript
 
 	public void SpendResources()
 	{
-		heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent> ();
+		heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ();
 
 		for(int i = 0; i < 4; ++i)
 		{
@@ -134,7 +135,7 @@ public class HeroResourceImprovement : MasterScript
 				switch(i)
 				{
 				case 0:
-					--playerTurnScript.blueCarbon;
+					--MasterScript.playerTurnScript.blueCarbon;
 					++heroScript.blueCSpent;
 
 					if(heroScript.heroType == "Infiltrator")
@@ -152,7 +153,7 @@ public class HeroResourceImprovement : MasterScript
 
 					break;
 				case 1:
-					--playerTurnScript.radioisotopes;
+					--MasterScript.playerTurnScript.radioisotopes;
 					++heroScript.radioSpent;
 
 					if(heroScript.heroType == "Infiltrator")
@@ -170,7 +171,7 @@ public class HeroResourceImprovement : MasterScript
 
 					break;
 				case 2:
-					--playerTurnScript.antimatter;
+					--MasterScript.playerTurnScript.antimatter;
 					++heroScript.antiSpent;
 
 					if(heroScript.heroType == "Infiltrator")
@@ -188,7 +189,7 @@ public class HeroResourceImprovement : MasterScript
 
 					break;
 				case 3:
-					--playerTurnScript.liquidH2;
+					--MasterScript.playerTurnScript.liquidH2;
 					++heroScript.lH2Spent;
 
 					if(heroScript.heroType == "Infiltrator")
@@ -221,7 +222,7 @@ public class HeroResourceImprovement : MasterScript
 			LoadObjects ();
 		}
 
-		heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent> ();
+		heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ();
 
 		switch(heroScript.heroType)
 		{

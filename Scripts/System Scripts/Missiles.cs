@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Missiles : MasterScript 
+public class Missiles : MonoBehaviour 
 {
 	public GameObject invasionButton, invasionLine, currentPointer = null, currentLine, missilePrefab;
 	private Vector3 anchorPoint, currentPoint;
@@ -67,7 +67,7 @@ public class Missiles : MasterScript
 			{
 				Vector3 colliderCentre = hit.collider.gameObject.transform.position; //Set collider object centre as vector3
 
-				if(colliderCentre == systemListConstructor.systemList[target].systemObject.transform.position) //If the collision centre is equal to the targets position
+				if(colliderCentre == MasterScript.systemListConstructor.systemList[target].systemObject.transform.position) //If the collision centre is equal to the targets position
 				{
 					return Vector2.zero; //Return the collider centre (we have reached the target)
 				}
@@ -75,16 +75,16 @@ public class Missiles : MasterScript
 				float m = (colliderCentre.y - start.y) / (colliderCentre.x - start.x); //Get gradient from collider to start
 				m = -1 / m; //Get inverse reciprocal of the gradient
 				float c = colliderCentre.y - (m * colliderCentre.x); //Find y intercept
-				float xIntersectOne = colliderCentre.x + systemListConstructor.systemScale * 4.0f / Mathf.Sqrt(1 + m * m); //Find first x intersection of boundary of collider with line
+				float xIntersectOne = colliderCentre.x + MasterScript.systemListConstructor.systemScale * 4.0f / Mathf.Sqrt(1 + m * m); //Find first x intersection of boundary of collider with line
 				float yIntersectOne = m * xIntersectOne + c; //And the corresponding y, these lie on the same line so share the same y intercept
-				float xIntersectTwo = colliderCentre.x - systemListConstructor.systemScale * 4.0f / Mathf.Sqrt(1 + m * m); //Find second x intersection of boundary of collider with line
+				float xIntersectTwo = colliderCentre.x - MasterScript.systemListConstructor.systemScale * 4.0f / Mathf.Sqrt(1 + m * m); //Find second x intersection of boundary of collider with line
 				float yIntersectTwo = m * xIntersectTwo + c; //Corresponding y
 
 				Vector3 pointA = new Vector3(xIntersectOne, yIntersectOne, 0.0f); //Create point to represent first intersection
 				Vector3 pointB = new Vector3(xIntersectTwo, yIntersectTwo, 0.0f); //And the second
 
-				GameObject.Instantiate(systemInvasion.invasionQuad, pointA, Quaternion.identity); //This instantiates gameobjects to check the position of the intersections- these work okay
-				GameObject.Instantiate(systemInvasion.invasionQuad, pointB, Quaternion.identity);
+				GameObject.Instantiate(MasterScript.systemInvasion.invasionQuad, pointA, Quaternion.identity); //This instantiates gameobjects to check the position of the intersections- these work okay
+				GameObject.Instantiate(MasterScript.systemInvasion.invasionQuad, pointB, Quaternion.identity);
 
 				float A2 = pointB.y - pointA.y; //Find equation of line between the two points DOES THIS WORK?
 				float B2 = pointA.x - pointB.x;
@@ -97,7 +97,7 @@ public class Missiles : MasterScript
 				
 				Vector3 intersection = new Vector3(x, y, 0f);
 
-				GameObject.Instantiate(systemInvasion.invasionQuad, intersection, Quaternion.identity);
+				GameObject.Instantiate(MasterScript.systemInvasion.invasionQuad, intersection, Quaternion.identity);
 
 				float distanceOne = Vector3.Distance(pointA, intersection);
 				float distanceTwo = Vector3.Distance(pointB, intersection);
@@ -122,7 +122,7 @@ public class Missiles : MasterScript
 		{
 			tempPath.Clear ();
 
-			GameObject missile = (GameObject)GameObject.Instantiate(missilePrefab, systemListConstructor.systemList[system].systemObject.transform.position, Quaternion.identity);
+			GameObject missile = (GameObject)GameObject.Instantiate(missilePrefab, MasterScript.systemListConstructor.systemList[system].systemObject.transform.position, Quaternion.identity);
 
 			curveBuilder = missile.GetComponent<QuadraticBezierCurve>();
 			curveBuilder.target = target;
@@ -135,11 +135,11 @@ public class Missiles : MasterScript
 			
 			while(pathfinding == true)
 			{
-				tempPos = FindTrajectoryIntersections(tempPos, systemListConstructor.systemList[target].systemObject.transform.position);
+				tempPos = FindTrajectoryIntersections(tempPos, MasterScript.systemListConstructor.systemList[target].systemObject.transform.position);
 				
 				if(tempPos == Vector2.zero)
 				{
-					tempPath.Add(systemListConstructor.systemList[curveBuilder.target].systemObject.transform.position);
+					tempPath.Add(MasterScript.systemListConstructor.systemList[curveBuilder.target].systemObject.transform.position);
 					pathfinding = false;
 					break;
 				}
@@ -163,7 +163,7 @@ public class Missiles : MasterScript
 	{
 		if(Input.GetKeyDown("i") && system != -1) //If i pressed and system selected
 		{
-			if(systemListConstructor.systemList[system].systemOwnedBy == playerTurnScript.playerRace) //Make sure system is owned by player
+			if(MasterScript.systemListConstructor.systemList[system].systemOwnedBy == MasterScript.playerTurnScript.playerRace) //Make sure system is owned by player
 			{
 				bool ignore = false;
 				
@@ -176,7 +176,7 @@ public class Missiles : MasterScript
 				
 				if(currentPointer == null && ignore == false) //Set anchor points
 				{
-					anchorPoint = systemListConstructor.systemList[system].systemObject.transform.position;
+					anchorPoint = MasterScript.systemListConstructor.systemList[system].systemObject.transform.position;
 					currentPointer = (GameObject)GameObject.Instantiate(invasionButton, anchorPoint, Quaternion.identity);
 					currentLine = (GameObject)GameObject.Instantiate(invasionLine, anchorPoint, Quaternion.identity);
 				}
@@ -185,7 +185,7 @@ public class Missiles : MasterScript
 		
 		if(currentPointer != null) //If pointer is active
 		{
-			anchorPoint = systemListConstructor.systemList[system].systemObject.transform.position; //Update anchor
+			anchorPoint = MasterScript.systemListConstructor.systemList[system].systemObject.transform.position; //Update anchor
 			Ray temp = Camera.main.ScreenPointToRay(Input.mousePosition);
 			float angle = Vector3.Angle (Vector3.forward, temp.direction);
 			float hyp = Camera.main.transform.position.z / (Mathf.Cos(angle * Mathf.Deg2Rad));
@@ -193,9 +193,9 @@ public class Missiles : MasterScript
 			currentPoint = new Vector3(currentPoint.x, currentPoint.y, 0f); //Update current point position
 			bool foundNearbySystem = false;
 			
-			for(int i = 0; i < systemListConstructor.systemList.Count; ++i) //Check if point is near a system
+			for(int i = 0; i < MasterScript.systemListConstructor.systemList.Count; ++i) //Check if point is near a system
 			{
-				Vector3 sysPos = systemListConstructor.systemList[i].systemObject.transform.position;
+				Vector3 sysPos = MasterScript.systemListConstructor.systemList[i].systemObject.transform.position;
 				
 				if(currentPoint.x < sysPos.x + 3f && currentPoint.x > sysPos.x - 3f)
 				{
@@ -222,9 +222,9 @@ public class Missiles : MasterScript
 
 	private void Update () 
 	{
-		if(cameraFunctionsScript.selectedSystemNumber != -1)
+		if(MasterScript.cameraFunctionsScript.selectedSystemNumber != -1)
 		{
-			system = cameraFunctionsScript.selectedSystemNumber;
+			system = MasterScript.cameraFunctionsScript.selectedSystemNumber;
 
 			UpdateInvadeLine ();
 			LaunchMissile();

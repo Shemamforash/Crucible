@@ -1,45 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SystemFunctions : MasterScript
+public class SystemFunctions : MonoBehaviour
 {
+	private SystemSIMData systemSIMData;
+
 	public void CheckImprovement(int system, int planet) //Contains data on the quality of planets and the bonuses they receive
 	{
-		systemSIMData = systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
+		systemSIMData = MasterScript.systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
 		
 		if(systemSIMData.improvementNumber == 0)
 		{
 			systemSIMData.improvementLevel = "Poor";
-			systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 25;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 25;
 			systemSIMData.canImprove = true;
-			systemSIMData.improvementCost = systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue / 3;
+			systemSIMData.improvementCost = MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue / 3;
 		}
 		if(systemSIMData.improvementNumber == 1)
 		{
 			systemSIMData.improvementLevel = "Normal";
-			systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 50;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 50;
 			systemSIMData.canImprove = true;
-			systemSIMData.improvementCost = (systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue * 2) / 3;
+			systemSIMData.improvementCost = (MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue * 2) / 3;
 		}
 		if(systemSIMData.improvementNumber == 2)
 		{
 			systemSIMData.improvementLevel = "Good";
-			systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 75;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 75;
 			systemSIMData.canImprove = true;
-			systemSIMData.improvementCost = systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue + (systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue / 3);
+			systemSIMData.improvementCost = MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue + (MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].wealthValue / 3);
 		}
 		if(systemSIMData.improvementNumber == 3)
 		{
 			systemSIMData.improvementLevel = "Superb";
-			systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 100;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].maxPopulation = 100;
 			systemSIMData.canImprove = false;
 		}
 	}
 
 	public float PowerCost(int level, int system, int planet)
 	{
-		float temp = systemListConstructor.systemList [system].planetsInSystem [planet].planetPower + 
-			systemListConstructor.systemList [system].planetsInSystem [planet].planetKnowledge;
+		float temp = MasterScript.systemListConstructor.systemList [system].planetsInSystem [planet].planetPower + 
+			MasterScript.systemListConstructor.systemList [system].planetsInSystem [planet].planetKnowledge;
 		
 		switch(level)
 		{
@@ -57,7 +59,7 @@ public class SystemFunctions : MasterScript
 	
 	public void CheckUnlockedTier(ImprovementsBasic improvements, int system)
 	{
-		systemSIMData = systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
+		systemSIMData = MasterScript.systemListConstructor.systemList [system].systemObject.GetComponent<SystemSIMData> ();
 		
 		systemSIMData.totalSystemSIM += systemSIMData.totalSystemKnowledge + systemSIMData.totalSystemPower;
 		

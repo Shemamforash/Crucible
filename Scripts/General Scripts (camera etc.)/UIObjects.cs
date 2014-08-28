@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIObjects : MasterScript 
+public class UIObjects : MonoBehaviour 
 {
 	public GameObject CreateConnectionLine(GameObject playerSys, GameObject enemySys)
 	{
@@ -26,7 +26,7 @@ public class UIObjects : MasterScript
 		
 		directQuat.eulerAngles = rotation;
 		
-		GameObject line = (GameObject)Instantiate (heroGUI.merchantQuad, midPoint, directQuat);
+		GameObject line = (GameObject)Instantiate (MasterScript.heroGUI.merchantQuad, midPoint, directQuat);
 		
 		line.transform.localScale = scale;
 		

@@ -1,29 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SystemDefence : MasterScript 
+public class SystemDefence : MonoBehaviour 
 {
 	public int system, regenerateTimer;
 	public float maxSystemDefence, defenceRegenerator;
-	public bool underInvasion, canEnter, regenerated = true;
+	public bool underInvasion, regenerated = true;
+	private SystemSIMData systemSIMData;
 
 	void Start () 
 	{
 		systemSIMData = gameObject.GetComponent<SystemSIMData> ();
 		CalculateSystemDefence ();
-		system = RefreshCurrentSystem (gameObject);
+		system = MasterScript.RefreshCurrentSystem (gameObject);
 	}
 
 	public void TakeDamage(float assaultDamage, float auxiliaryDamage, int planet)
 	{
 		if(planet == -1)
 		{
-			systemListConstructor.systemList[system].systemDefence -= assaultDamage;
+			MasterScript.systemListConstructor.systemList[system].systemDefence -= assaultDamage;
 		}
 		else
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence -= assaultDamage;
-			systemListConstructor.systemList[system].planetsInSystem[planet].planetPopulation -= auxiliaryDamage;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence -= assaultDamage;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetPopulation -= auxiliaryDamage;
 		}
 	}
 
@@ -31,13 +32,13 @@ public class SystemDefence : MasterScript
 	{
 		maxSystemDefence = 0f;
 
-		for(int i = 0; i < systemListConstructor.systemList[system].systemSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].systemSize; ++i)
 		{
-			maxSystemDefence += systemListConstructor.systemList[system].planetsInSystem[i].planetImprovementLevel + 1 * 50f;
+			maxSystemDefence += MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].planetImprovementLevel + 1 * 50f;
 		}
 
-		maxSystemDefence = (maxSystemDefence / systemListConstructor.systemList [system].systemSize) * 20f;
-		systemListConstructor.systemList [system].systemOffence = (int)(maxSystemDefence / 2f);
+		maxSystemDefence = (maxSystemDefence / MasterScript.systemListConstructor.systemList [system].systemSize) * 20f;
+		MasterScript.systemListConstructor.systemList [system].systemOffence = (int)(maxSystemDefence / 2f);
 
 		defenceRegenerator = maxSystemDefence / 5f;
 
@@ -48,18 +49,18 @@ public class SystemDefence : MasterScript
 				--regenerateTimer;
 			}
 
-			for(int i = 0; i < systemListConstructor.systemList[system].systemSize; ++i)
+			for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].systemSize; ++i)
 			{
 				CalculatePlanetDefence(i);
 			}
 
-			if(regenerateTimer <= 0 && systemListConstructor.systemList [system].systemDefence != maxSystemDefence)
+			if(regenerateTimer <= 0 && MasterScript.systemListConstructor.systemList [system].systemDefence != maxSystemDefence)
 			{
 				regenerateTimer = 0;
 
-				systemListConstructor.systemList [system].systemDefence += (int)defenceRegenerator;
+				MasterScript.systemListConstructor.systemList [system].systemDefence += (int)defenceRegenerator;
 
-				if(systemListConstructor.systemList [system].systemDefence >= maxSystemDefence)
+				if(MasterScript.systemListConstructor.systemList [system].systemDefence >= maxSystemDefence)
 				{
 					regenerated = true;
 				}
@@ -71,26 +72,26 @@ public class SystemDefence : MasterScript
 			
 			if(regenerated == true)
 			{
-				systemListConstructor.systemList [system].systemDefence = (int)maxSystemDefence;
+				MasterScript.systemListConstructor.systemList [system].systemDefence = (int)maxSystemDefence;
 			}
 		}
 	}
 
 	public void CalculatePlanetDefence(int planet)
 	{
-		float maxPlanetDefence = ((systemListConstructor.systemList[system].planetsInSystem[planet].planetImprovementLevel) * (systemListConstructor.systemList[system].planetsInSystem[planet].planetImprovementLevel) * 20) + 50f;
-		systemListConstructor.systemList [system].planetsInSystem[planet].planetOffence = maxPlanetDefence;
+		float maxPlanetDefence = ((MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetImprovementLevel) * (MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetImprovementLevel) * 20) + 50f;
+		MasterScript.systemListConstructor.systemList [system].planetsInSystem[planet].planetOffence = maxPlanetDefence;
 
-		systemListConstructor.systemList[system].planetsInSystem[planet].defenceRegeneration = defenceRegenerator/10f;
-		systemListConstructor.systemList [system].planetsInSystem [planet].planetMaxDefence = maxPlanetDefence;
+		MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].defenceRegeneration = defenceRegenerator/10f;
+		MasterScript.systemListConstructor.systemList [system].planetsInSystem [planet].planetMaxDefence = maxPlanetDefence;
 
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].planetColonised == true && systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence != maxPlanetDefence)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetColonised == true && MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence != maxPlanetDefence)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence += defenceRegenerator/10f;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence += defenceRegenerator/10f;
 
-			if(systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence > maxPlanetDefence)
+			if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence > maxPlanetDefence)
 			{
-				systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence = maxPlanetDefence;
+				MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].planetCurrentDefence = maxPlanetDefence;
 			}
 		}
 	}
@@ -100,15 +101,15 @@ public class SystemDefence : MasterScript
 		systemSIMData.knowledgeBuffModifier = 1.0f;
 		systemSIMData.powerBuffModifier = 1.0f;
 
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].chillActive == true)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillActive == true)
 		{
 			Chill (0, planet);
 		}
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].virusActive == true)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].virusActive == true)
 		{
 			Virus (planet);
 		}
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].poisonActive == true)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].poisonActive == true)
 		{
 			Poison(planet);
 		}
@@ -116,12 +117,12 @@ public class SystemDefence : MasterScript
 
 	private void Virus(int planet)
 	{
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].virusTimer == 0.0f)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].virusTimer == 0.0f)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].virusTimer = Time.time;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].virusTimer = Time.time;
 		}
 
-		float timeDifference = Time.time - systemListConstructor.systemList[system].planetsInSystem[planet].virusTimer;
+		float timeDifference = Time.time - MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].virusTimer;
 
 		if(timeDifference > 600f)
 		{
@@ -135,15 +136,15 @@ public class SystemDefence : MasterScript
 		systemSIMData.knowledgeBuffModifier = systemSIMData.knowledgeBuffModifier * sinDifference; // y = sin((x-300)/191) + 1
 		systemSIMData.powerBuffModifier = systemSIMData.powerBuffModifier * sinDifference;
 
-		for(int i = 0; i < systemListConstructor.systemList[system].permanentConnections.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].permanentConnections.Count; ++i)
 		{
-			int j = RefreshCurrentSystem(systemListConstructor.systemList[system].permanentConnections[i]);
+			int j = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[system].permanentConnections[i]);
 
 			bool skipSystem = false;
 
-			for(int k = 0; k < systemListConstructor.systemList[j].systemSize; ++k)
+			for(int k = 0; k < MasterScript.systemListConstructor.systemList[j].systemSize; ++k)
 			{
-				if(systemListConstructor.systemList[system].planetsInSystem[k].virusActive == true)
+				if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[k].virusActive == true)
 				{
 					skipSystem = true;
 					break;
@@ -152,16 +153,16 @@ public class SystemDefence : MasterScript
 
 			if(skipSystem == false)
 			{
-				for(int k = 0; k < systemListConstructor.systemList[j].systemSize; ++k)
+				for(int k = 0; k < MasterScript.systemListConstructor.systemList[j].systemSize; ++k)
 				{
-					if(systemListConstructor.systemList[system].planetsInSystem[k].virusActive == false)
+					if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[k].virusActive == false)
 					{
-						float ratio = Mathf.Max(systemListConstructor.systemList[system].planetsInSystem[k].planetCurrentDefence, maxSystemDefence) / 
-										Mathf.Min (systemListConstructor.systemList[system].planetsInSystem[k].planetCurrentDefence, maxSystemDefence);
+						float ratio = Mathf.Max(MasterScript.systemListConstructor.systemList[system].planetsInSystem[k].planetCurrentDefence, maxSystemDefence) / 
+										Mathf.Min (MasterScript.systemListConstructor.systemList[system].planetsInSystem[k].planetCurrentDefence, maxSystemDefence);
 
 						if(ratio * 2 < sinDifference)
 						{
-							systemListConstructor.systemList[system].planetsInSystem[k].virusActive = true;
+							MasterScript.systemListConstructor.systemList[system].planetsInSystem[k].virusActive = true;
 							continue;
 						}
 					}
@@ -174,44 +175,44 @@ public class SystemDefence : MasterScript
 	{
 		if(newLength != 0.0f)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].chillLength = systemListConstructor.systemList[system].planetsInSystem[planet].chillLength + newLength;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillLength = MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillLength + newLength;
 		}
 
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer == 0.0f && systemListConstructor.systemList[system].planetsInSystem[planet].chillLength != 0.0f)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer == 0.0f && MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillLength != 0.0f)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer = Time.time;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer = Time.time;
 		}
 
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer + systemListConstructor.systemList[system].planetsInSystem[planet].chillLength >= Time.time)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillLength >= Time.time)
 		{
 			systemSIMData.knowledgeBuffModifier = systemSIMData.knowledgeBuffModifier * 0.5f;
 			systemSIMData.powerBuffModifier = systemSIMData.powerBuffModifier * 0.5f;
 		}
 
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer + systemListConstructor.systemList[system].planetsInSystem[planet].chillLength < Time.time)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer + MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillLength < Time.time)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].chillLength = 0.0f;
-			systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer = 0.0f;
-			systemListConstructor.systemList[system].planetsInSystem[planet].chillActive = false;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillLength = 0.0f;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillTimer = 0.0f;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].chillActive = false;
 		}
 	}
 
 	private void Poison(int planet)
 	{
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer == 0.0f)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer == 0.0f)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer = Time.time;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer = Time.time;
 		}
 
-		if(systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer + 2.0f < Time.time)
+		if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer + 2.0f < Time.time)
 		{
-			systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer = systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer + 2.0f;
+			MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer = MasterScript.systemListConstructor.systemList[system].planetsInSystem[planet].poisonTimer + 2.0f;
 
-			for(int i = 0; i < systemListConstructor.systemList[system].systemSize; ++i)
+			for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].systemSize; ++i)
 			{
-				float population = systemListConstructor.systemList[system].planetsInSystem[i].planetPopulation;
+				float population = MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].planetPopulation;
 
-				systemListConstructor.systemList[system].planetsInSystem[i].planetPopulation -= (population / 40f) + 0.5f;
+				MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].planetPopulation -= (population / 40f) + 0.5f;
 			}
 		}
 	}

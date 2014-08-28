@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SelkiesImprovements : MasterScript 
+public class SelkiesImprovements : MonoBehaviour 
 {
 	private ImprovementsBasic improvements;
 	private bool checkValue;
 	private TurnInfo player;
+	private SystemSIMData systemSIMData;
 	
 	public void TechSwitch(int tech, int planet, ImprovementsBasic tempImprov, TurnInfo thisPlayer, bool check)
 	{
-		systemSIMData = systemListConstructor.systemList[improvements.system].systemObject.GetComponent<SystemSIMData>();
+		systemSIMData = MasterScript.systemListConstructor.systemList[improvements.system].systemObject.GetComponent<SystemSIMData>();
 
 		improvements = tempImprov;
 		checkValue = check;
@@ -97,7 +98,7 @@ public class SelkiesImprovements : MasterScript
 			temp = 2;
 		}
 
-		temp = temp + systemListConstructor.systemList[improvements.system].systemSize;
+		temp = temp + MasterScript.systemListConstructor.systemList[improvements.system].systemSize;
 
 		improvements.amberPointBonus += temp;
 
@@ -132,11 +133,11 @@ public class SelkiesImprovements : MasterScript
 	{
 		int adjacentSystems = 0;
 		
-		for(int i = 0; i < systemListConstructor.systemList[improvements.system].permanentConnections.Count; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[improvements.system].permanentConnections.Count; ++i)
 		{
-			int j = RefreshCurrentSystem(systemListConstructor.systemList[improvements.system].permanentConnections[i]);
+			int j = MasterScript.RefreshCurrentSystem(MasterScript.systemListConstructor.systemList[improvements.system].permanentConnections[i]);
 			
-			if(systemListConstructor.systemList[j].systemOwnedBy == player.playerRace)
+			if(MasterScript.systemListConstructor.systemList[j].systemOwnedBy == player.playerRace)
 			{
 				++adjacentSystems;
 			}
@@ -221,7 +222,7 @@ public class SelkiesImprovements : MasterScript
 
 	private void TS3I2(int planet)
 	{
-		int temp = systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetImprovementLevel;
+		int temp = MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetImprovementLevel;
 
 		improvements.growthModifier += temp * 0.01f;
 		improvements.maxPopulationBonus += temp * 10f;
@@ -325,11 +326,11 @@ public class SelkiesImprovements : MasterScript
 
 	private void TS4I4(int planet)
 	{
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetType == "Prairie")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetType == "Prairie")
 		{
 			improvements.improvementSlotsBonus += 1;
 		}
-		if(systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetType == "Molten")
+		if(MasterScript.systemListConstructor.systemList[improvements.system].planetsInSystem[planet].planetType == "Molten")
 		{
 			improvements.improvementSlotsBonus += 2;
 		}

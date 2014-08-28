@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TokenManagement : MasterScript 
+public class TokenManagement : MonoBehaviour 
 {
 	private TokenBehaviour behaviour;
 	public GameObject token;
@@ -10,7 +10,7 @@ public class TokenManagement : MasterScript
 
 	void Start()
 	{
-		behaviour = invasionGUI.tokenContainer.GetComponent<TokenBehaviour> ();
+		behaviour = MasterScript.invasionGUI.tokenContainer.GetComponent<TokenBehaviour> ();
 	}
 
 	public void CacheInvasionInfo() //Used to cache the invasion info
@@ -18,20 +18,20 @@ public class TokenManagement : MasterScript
 		SystemInvasionInfo cachedInvasion = new SystemInvasionInfo (); //Create a new invasion object
 		
 		int invasionLoc = -1; //Set a counter
-		int system = RefreshCurrentSystem(heroGUI.currentHero.GetComponent<HeroScriptParent> ().heroLocation);
+		int system = MasterScript.RefreshCurrentSystem(MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ().heroLocation);
 		
-		for(int i = 0; i < systemInvasion.currentInvasions.Count; ++i) //For all current cached invasions
+		for(int i = 0; i < MasterScript.systemInvasion.currentInvasions.Count; ++i) //For all current cached invasions
 		{
-			if(systemInvasion.currentInvasions[i].system == systemListConstructor.systemList[system].systemObject) //If this system already has an invasion underway
+			if(MasterScript.systemInvasion.currentInvasions[i].system == MasterScript.systemListConstructor.systemList[system].systemObject) //If this system already has an invasion underway
 			{
 				invasionLoc = i; //Set the counter
 			}
 		}
 		
-		cachedInvasion.system = systemListConstructor.systemList[system].systemObject; //Set the system to equal this system
-		cachedInvasion.player = heroGUI.currentHero.GetComponent<HeroScriptParent> ().heroOwnedBy;
+		cachedInvasion.system = MasterScript.systemListConstructor.systemList[system].systemObject; //Set the system to equal this system
+		cachedInvasion.player = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ().heroOwnedBy;
 		
-		for(int i = 0; i < systemListConstructor.systemList[system].systemSize; ++i) //For all planets in the system
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[system].systemSize; ++i) //For all planets in the system
 		{
 			PlanetInvasionInfo cachedPlanet = new PlanetInvasionInfo(); //Create object for planet
 
@@ -45,6 +45,8 @@ public class TokenManagement : MasterScript
 				temp.currentPosition = allTokens[j].transform.position;
 				temp.heroOwner = tokenScript.hero;
 				temp.originalParent = tokenScript.originalParent;
+				temp.originalHero = tokenScript.originalHero;
+				temp.tokenPositions = tokenScript.tokenPositions;
 				temp.currentParent = allTokens[j].transform.parent.gameObject;
 				temp.name = tokenScript.name;
 
@@ -69,36 +71,34 @@ public class TokenManagement : MasterScript
 		
 		if(invasionLoc == -1) //If this invasion is not already cached
 		{
-			systemInvasion.currentInvasions.Add (cachedInvasion); //Cache it
-			systemDefence = systemListConstructor.systemList[system].systemObject.GetComponent<SystemDefence>();
+			MasterScript.systemInvasion.currentInvasions.Add (cachedInvasion); //Cache it
+			SystemDefence systemDefence = MasterScript.systemListConstructor.systemList[system].systemObject.GetComponent<SystemDefence>();
 			systemDefence.underInvasion = true;
-			allTokens.Clear ();
 		}
 		else //If it is
 		{
-			systemInvasion.currentInvasions[invasionLoc] = cachedInvasion; //Replace it with the updated one
-			allTokens.Clear ();
+			MasterScript.systemInvasion.currentInvasions[invasionLoc] = cachedInvasion; //Replace it with the updated one
 		}
 	}
 
 	public void CreateTokens(string tokenType, HeroScriptParent hero, int pos) //Used to create, position and assign the tokens for the heroes
 	{
 		int tokenCount = 0;
-		string container = null;
+		List<GameObject> container = new List<GameObject>();
 		
 		switch (tokenType) //Used to assign both the parent for the token, and the number of tokens available to that hero
 		{
 		case "Assault":
 			tokenCount = hero.assaultTokens;
-			container = "Assault Tokens";
+			container = MasterScript.invasionGUI.heroInvasionLabels[pos].assaultTokenPositions;
 			break;
 		case "Auxiliary":
 			tokenCount = hero.auxiliaryTokens;
-			container = "Auxiliary Tokens";
+			container = MasterScript.invasionGUI.heroInvasionLabels[pos].auxiliaryTokenPositions;
 			break;
 		case "Defence":
 			tokenCount = hero.defenceTokens;
-			container = "Defence Tokens";
+			container = MasterScript.invasionGUI.heroInvasionLabels[pos].defenceTokenPositions;
 			break;
 		default:
 			break;
@@ -106,21 +106,20 @@ public class TokenManagement : MasterScript
 		
 		for(int i = 0; i < 6; ++i) //For all possible token positions
 		{
-			GameObject parent = invasionGUI.heroInterfaces[pos].transform.Find (container).gameObject; //Get the relevant parent for the token
-			GameObject tokenPositionObject = parent.transform.GetChild(i).gameObject; //Get the correct position
-			
 			if(i < tokenCount) //If the hero has this token
 			{
-				NGUITools.SetActive(tokenPositionObject, true); //Set the position image to true (the faded greyscale image)
-				GameObject tempToken = NGUITools.AddChild(parent, token); //Instantiate the token
+				NGUITools.SetActive(container[i], true); //Set the position image to true (the faded greyscale image)
+				GameObject tempToken = NGUITools.AddChild(container[i].transform.parent.gameObject, token); //Instantiate the token
 				EventDelegate.Add (tempToken.GetComponent<UIButton>().onClick, behaviour.ButtonClicked); //Add button clicked event
 
-				tempToken.transform.position = parent.transform.GetChild(i).transform.position; //Set the position of the token
+				tempToken.transform.position = container[i].transform.position; //Set the position of the token
 				
 				TokenUI tokenUI = tempToken.GetComponent<TokenUI>(); //Get a reference to the token's script
-				tokenUI.originalPosition = tempToken.transform.position; //Assign the original position of the token
-				tokenUI.originalParent = parent; //Assign the original parent
-				tokenUI.hero = heroGUI.currentHero; //And assign which hero owns it
+				tokenUI.originalPosition = i; //Assign the original position of the token
+				tokenUI.originalParent = container[i].transform.parent.gameObject; //Assign the original parent
+				tokenUI.originalHero = pos;
+				tokenUI.tokenPositions = container;
+				tokenUI.hero = MasterScript.heroGUI.currentHero; //And assign which hero owns it
 				
 				UIButton tokenButton = tempToken.GetComponent<UIButton>(); //Get the button attached to the token
 				
@@ -130,15 +129,15 @@ public class TokenManagement : MasterScript
 				{
 				case "Assault":
 					tokenUI.name = "Assault Token";
-					invasionGUI.heroInvasionLabels[pos].assaultTokensList.Add (tempToken);
+					MasterScript.invasionGUI.heroInvasionLabels[pos].assaultTokensList.Add (tempToken);
 					break;
 				case "Auxiliary":
 					tokenUI.name = "Auxiliary Token";
-					invasionGUI.heroInvasionLabels[pos].auxiliaryTokensList.Add (tempToken);
+					MasterScript.invasionGUI.heroInvasionLabels[pos].auxiliaryTokensList.Add (tempToken);
 					break;
 				case "Defence":
 					tokenUI.name = "Defence Token";
-					invasionGUI.heroInvasionLabels[pos].defenceTokensList.Add (tempToken);
+					MasterScript.invasionGUI.heroInvasionLabels[pos].defenceTokensList.Add (tempToken);
 					break;
 				default:
 					break;
@@ -149,7 +148,7 @@ public class TokenManagement : MasterScript
 			
 			else
 			{
-				NGUITools.SetActive(tokenPositionObject, false); //If the hero does not have this token, disable the image and don't do anything
+				NGUITools.SetActive(container[i], false); //If the hero does not have this token, disable the image and don't do anything
 			}
 		}
 	}
@@ -183,13 +182,13 @@ public class TokenManagement : MasterScript
 
 	public void ResetTokens() //Method activated when reset buttons are pressed
 	{
-		for(int i = 0; i < invasionGUI.heroInvasionLabels.Count; ++i) //For all active heroes
+		for(int i = 0; i < MasterScript.invasionGUI.heroInvasionLabels.Count; ++i) //For all active heroes
 		{
-			if(invasionGUI.heroInvasionLabels[i].reset == UIButton.current.gameObject || UIButton.current.gameObject.name == "Reset All") //If button pressed corresponds to this hero, or the button was reset all
+			if(MasterScript.invasionGUI.heroInvasionLabels[i].reset == UIButton.current.gameObject || UIButton.current.gameObject.name == "Reset All") //If button pressed corresponds to this hero, or the button was reset all
 			{
-				ResetTokenPositions(invasionGUI.heroInvasionLabels[i].assaultTokensList, false); //Call the reset function with the gameobject lists containing the tokens but do not destroy tokens
-				ResetTokenPositions(invasionGUI.heroInvasionLabels[i].auxiliaryTokensList, false);
-				ResetTokenPositions(invasionGUI.heroInvasionLabels[i].defenceTokensList, false);
+				ResetTokenPositions(MasterScript.invasionGUI.heroInvasionLabels[i].assaultTokensList, false); //Call the reset function with the gameobject lists containing the tokens but do not destroy tokens
+				ResetTokenPositions(MasterScript.invasionGUI.heroInvasionLabels[i].auxiliaryTokensList, false);
+				ResetTokenPositions(MasterScript.invasionGUI.heroInvasionLabels[i].defenceTokensList, false);
 			}
 		}
 	}
@@ -202,8 +201,6 @@ public class TokenManagement : MasterScript
 			{
 				TokenUI token = tokenList[i].GetComponent<TokenUI>(); //Get a reference to the attached script
 
-				Debug.Log(tokenList[i].transform.parent);
-
 				if(tokenList[i].transform.parent.name == "Defence Token" || tokenList[i].transform.parent.name == "Auxiliary Token" || tokenList[i].transform.parent.name == "Assault Token") //If it already has a parent (is already in a container)
 				{
 					UILabel label = tokenList[i].transform.parent.Find ("Label").gameObject.GetComponent<UILabel>(); //Decrease the container's value
@@ -211,7 +208,8 @@ public class TokenManagement : MasterScript
 					label.text = (j - 1).ToString();
 				}
 
-				tokenList[i].transform.position = token.originalPosition; //Set the position to the original position
+				tokenList[i].transform.position = token.tokenPositions[token.originalPosition].transform.position;
+
 				tokenList[i].transform.parent = token.originalParent.transform; //Set the parent to the original parent
 			}
 			if(remove == true) //Used if tokens are to be destroyed
@@ -228,29 +226,29 @@ public class TokenManagement : MasterScript
 
 	public void IncludeHero()
 	{
-		for(int i = 0; i < playerTurnScript.playerOwnedHeroes.Count; ++i)
+		for(int i = 0; i < MasterScript.playerTurnScript.playerOwnedHeroes.Count; ++i)
 		{
-			if(playerTurnScript.playerOwnedHeroes[i] == heroGUI.currentHero)
+			if(MasterScript.playerTurnScript.playerOwnedHeroes[i] == MasterScript.heroGUI.currentHero)
 			{
 				continue;
 			}
 			
-			heroScript = playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
+			HeroScriptParent heroScript = MasterScript.playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
 			
-			if(heroScript.heroLocation == heroGUI.currentHero.GetComponent<HeroScriptParent>().heroLocation)
+			if(heroScript.heroLocation == MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent>().heroLocation)
 			{
 				int tempNum = 0;
 				
-				if(UIButton.current.gameObject == invasionGUI.includeHero2)
+				if(UIButton.current.gameObject == MasterScript.invasionGUI.includeHero2)
 				{
-					NGUITools.SetActive(invasionGUI.includeHero2, false);
-					invasionGUI.includeHero2.transform.Find ("Label").GetComponent<UILabel>().text = "";
+					NGUITools.SetActive(MasterScript.invasionGUI.includeHero2, false);
+					MasterScript.invasionGUI.includeHero2.transform.Find ("Label").GetComponent<UILabel>().text = "";
 					tempNum = 1;
 				}
-				if(UIButton.current.gameObject == invasionGUI.includeHero3)
+				if(UIButton.current.gameObject == MasterScript.invasionGUI.includeHero3)
 				{
-					NGUITools.SetActive(invasionGUI.includeHero3, false);
-					invasionGUI.includeHero3.transform.Find ("Label").GetComponent<UILabel>().text = "";
+					NGUITools.SetActive(MasterScript.invasionGUI.includeHero3, false);
+					MasterScript.invasionGUI.includeHero3.transform.Find ("Label").GetComponent<UILabel>().text = "";
 					tempNum = 2;
 				}
 				

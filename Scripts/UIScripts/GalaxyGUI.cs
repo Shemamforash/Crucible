@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GalaxyGUI : MasterScript 
+public class GalaxyGUI : MonoBehaviour 
 {
 	public GameObject coloniseButton, snapColoniseButton, planetSelectionWindow, purgeButton;
 	private List<GameObject> planetSelectionList = new List<GameObject>();
@@ -26,27 +26,27 @@ public class GalaxyGUI : MasterScript
 
 	private void UpdateVariables()
 	{
-		if(playerTurnScript.playerRace != null && cameraFunctionsScript.selectedSystem != null)
+		if(MasterScript.playerTurnScript.playerRace != null && MasterScript.cameraFunctionsScript.selectedSystem != null)
 		{
-			knowledgeString = ((int)playerTurnScript.knowledge).ToString();
-			powerString = ((int)playerTurnScript.power).ToString ();
-			wealthString = ((int)playerTurnScript.wealth).ToString ();
-			turnNumber = "Year: " + (2200 + (int)(turnInfoScript.turn / 2f)).ToString();
-			selectedSystem = RefreshCurrentSystem(cameraFunctionsScript.selectedSystem);
+			knowledgeString = ((int)MasterScript.playerTurnScript.knowledge).ToString();
+			powerString = ((int)MasterScript.playerTurnScript.power).ToString ();
+			wealthString = ((int)MasterScript.playerTurnScript.wealth).ToString ();
+			turnNumber = "Year: " + (2200 + (int)(MasterScript.turnInfoScript.turn / 2f)).ToString();
+			selectedSystem = MasterScript.RefreshCurrentSystem(MasterScript.cameraFunctionsScript.selectedSystem);
 
-			if(systemListConstructor.systemList[selectedSystem].systemOwnedBy == null)
+			if(MasterScript.systemListConstructor.systemList[selectedSystem].systemOwnedBy == null)
 			{
 				NGUITools.SetActive(coloniseButton, true);
 
-				if(playerTurnScript.playerRace == "Nereides")
+				if(MasterScript.playerTurnScript.playerRace == "Nereides")
 				{
 					float totalPower = 20;
 					float totalWealth = 10;
 					
-					for(int i = 0; i < systemListConstructor.systemList[selectedSystem].systemSize; ++i)
+					for(int i = 0; i < MasterScript.systemListConstructor.systemList[selectedSystem].systemSize; ++i)
 					{
-						totalWealth += systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue;
-						totalPower += ((float)systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue / 3f) * 20f;
+						totalWealth += MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue;
+						totalPower += ((float)MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue / 3f) * 20f;
 					}
 
 					string cost = "Power: " + totalPower + "\nWealth: " + totalWealth;
@@ -61,23 +61,23 @@ public class GalaxyGUI : MasterScript
 
 	public void SelectRace(string thisRace)
 	{
-		playerTurnScript.playerRace = thisRace;
-		playerTurnScript.StartTurn();
-		turnInfoScript.CreateEnemyAI ();
+		MasterScript.playerTurnScript.playerRace = thisRace;
+		MasterScript.playerTurnScript.StartTurn();
+		MasterScript.turnInfoScript.CreateEnemyAI ();
 
-		for(int i = 0; i < turnInfoScript.allPlayers.Count; ++i)
+		for(int i = 0; i < MasterScript.turnInfoScript.allPlayers.Count; ++i)
 		{
-			turnInfoScript.allPlayers[i].RaceStart(turnInfoScript.allPlayers[i].playerRace);
+			MasterScript.turnInfoScript.allPlayers[i].RaceStart(MasterScript.turnInfoScript.allPlayers[i].playerRace);
 		}
 
-		raceLabel.text = playerTurnScript.playerRace;
+		raceLabel.text = MasterScript.playerTurnScript.playerRace;
 
-		if(playerTurnScript.playerRace == "Nereides")
+		if(MasterScript.playerTurnScript.playerRace == "Nereides")
 		{
 			NGUITools.SetActive(purgeButton, true);
 		}
 
-		turnInfoScript.StartGame ();
+		MasterScript.turnInfoScript.StartGame ();
 	}
 
 	private void UpdateLabels()
@@ -89,34 +89,35 @@ public class GalaxyGUI : MasterScript
 
 		string resources = null;
 
-		if(playerTurnScript.antimatter > 0)
+		if(MasterScript.playerTurnScript.antimatter > 0)
 		{
-			resources = "ANTIMATTER: " + playerTurnScript.antimatter + "  ";
+			resources = "ANTIMATTER: " + MasterScript.playerTurnScript.antimatter + "  ";
 		}
-		if(playerTurnScript.blueCarbon > 0)
+		if(MasterScript.playerTurnScript.blueCarbon > 0)
 		{
-			resources = resources + "BLUE CARBON: " + playerTurnScript.blueCarbon + "  ";
+			resources = resources + "BLUE CARBON: " + MasterScript.playerTurnScript.blueCarbon + "  ";
 		}
-		if(playerTurnScript.radioisotopes > 0)
+		if(MasterScript.playerTurnScript.radioisotopes > 0)
 		{
-			resources = resources + "RADIOISOTOPES: " + playerTurnScript.radioisotopes + "  ";
+			resources = resources + "RADIOISOTOPES: " + MasterScript.playerTurnScript.radioisotopes + "  ";
 		}
-		if(playerTurnScript.liquidH2 > 0)
+		if(MasterScript.playerTurnScript.liquidH2 > 0)
 		{
-			resources = resources + "LIQUID HYDROGEN: " + playerTurnScript.liquidH2 + "  ";
+			resources = resources + "LIQUID HYDROGEN: " + MasterScript.playerTurnScript.liquidH2 + "  ";
 		}
 
 		rareResources.text = resources;
 
 		string tempString = null;
 
-		for(int i = 0; i < diplomacyScript.relationsList.Count; ++i)
+		for(int i = 0; i < MasterScript.diplomacyScript.relationsList.Count; ++i)
 		{
-			if(diplomacyScript.relationsList[i].playerOne.playerRace == playerTurnScript.playerRace || diplomacyScript.relationsList[i].playerTwo.playerRace == playerTurnScript.playerRace)
+			if(MasterScript.diplomacyScript.relationsList[i].playerOne.playerRace == MasterScript.playerTurnScript.playerRace 
+			   || MasterScript.diplomacyScript.relationsList[i].playerTwo.playerRace == MasterScript.playerTurnScript.playerRace)
 			{
-				tempString = tempString + diplomacyScript.relationsList[i].diplomaticState + " | " + diplomacyScript.relationsList[i].stateCounter;
+				tempString = tempString + MasterScript.diplomacyScript.relationsList[i].diplomaticState + " | " + MasterScript.diplomacyScript.relationsList[i].stateCounter;
 
-				if(i != diplomacyScript.relationsList.Count - 1)
+				if(i != MasterScript.diplomacyScript.relationsList.Count - 1)
 				{
 					tempString = tempString + "\n";
 				}
@@ -128,9 +129,9 @@ public class GalaxyGUI : MasterScript
 
 	public void CheckToColoniseSystem()
 	{
-		if(playerTurnScript.wealth >= 10)
+		if(MasterScript.playerTurnScript.wealth >= 10)
 		{
-			playerTurnScript.FindSystem (selectedSystem);
+			MasterScript.playerTurnScript.FindSystem (selectedSystem);
 			SelectFirstPlanet();
 			NGUITools.SetActive(coloniseButton, false);
 			NGUITools.SetActive(snapColoniseButton, false);
@@ -142,22 +143,22 @@ public class GalaxyGUI : MasterScript
 		float totalPower = 20;
 		float totalWealth = 10;
 
-		for(int i = 0; i < systemListConstructor.systemList[selectedSystem].systemSize; ++i)
+		for(int i = 0; i < MasterScript.systemListConstructor.systemList[selectedSystem].systemSize; ++i)
 		{
-			totalWealth += systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue;
-			totalPower += ((float)systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue / 3f) * 20f;
+			totalWealth += MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue;
+			totalPower += ((float)MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].wealthValue / 3f) * 20f;
 		}
 
-		if(playerTurnScript.wealth >= totalWealth && playerTurnScript.power > totalPower)
+		if(MasterScript.playerTurnScript.wealth >= totalWealth && MasterScript.playerTurnScript.power > totalPower)
 		{
-			playerTurnScript.FindSystem (selectedSystem);
-			playerTurnScript.wealth -= totalWealth;
-			playerTurnScript.power -= totalPower;
+			MasterScript.playerTurnScript.FindSystem (selectedSystem);
+			MasterScript.playerTurnScript.wealth -= totalWealth;
+			MasterScript.playerTurnScript.power -= totalPower;
 
-			for(int i = 0; i < systemListConstructor.systemList[selectedSystem].systemSize; ++i)
+			for(int i = 0; i < MasterScript.systemListConstructor.systemList[selectedSystem].systemSize; ++i)
 			{
-				systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised = true;
-				systemListConstructor.systemList [selectedSystem].planetsInSystem [i].expansionPenaltyTimer = Time.time;
+				MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised = true;
+				MasterScript.systemListConstructor.systemList [selectedSystem].planetsInSystem [i].expansionPenaltyTimer = Time.time;
 			}
 
 			NGUITools.SetActive(coloniseButton, false);
@@ -169,15 +170,15 @@ public class GalaxyGUI : MasterScript
 	{
 		int planet = planetSelectionList.IndexOf (UIButton.current.gameObject);
 
-		systemListConstructor.systemList[selectedSystem].planetsInSystem[planet].planetColonised = true;
+		MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[planet].planetColonised = true;
 
-		systemListConstructor.systemList [selectedSystem].planetsInSystem [planet].expansionPenaltyTimer = Time.time;
+		MasterScript.systemListConstructor.systemList [selectedSystem].planetsInSystem [planet].expansionPenaltyTimer = Time.time;
 		
-		++playerTurnScript.planetsColonisedThisTurn;
+		++MasterScript.playerTurnScript.planetsColonisedThisTurn;
 		
-		++playerTurnScript.systemsColonisedThisTurn;
+		++MasterScript.playerTurnScript.systemsColonisedThisTurn;
 		
-		playerTurnScript.systemHasBeenColonised = false;
+		MasterScript.playerTurnScript.systemHasBeenColonised = false;
 
 		NGUITools.SetActive (planetSelectionWindow, false);
 	}
@@ -188,18 +189,18 @@ public class GalaxyGUI : MasterScript
 
 		for(int i = 0; i < planetSelectionList.Count; ++i)
 		{
-			if(i < systemListConstructor.systemList[selectedSystem].systemSize)
+			if(i < MasterScript.systemListConstructor.systemList[selectedSystem].systemSize)
 			{
-				float planetSIM = systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetKnowledge + systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetPower;
+				float planetSIM = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetKnowledge + MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetPower;
 				
-				string planetInfo = systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetType + " " + planetSIM.ToString() + " SIM";
+				string planetInfo = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetType + " " + planetSIM.ToString() + " SIM";
 
 				planetSelectionList[i].transform.Find ("Label").gameObject.GetComponent<UILabel>().text = planetInfo.ToUpper();
 
 				NGUITools.SetActive(planetSelectionList[i], true);
 			}
 
-			if(i >= systemListConstructor.systemList[selectedSystem].systemSize)
+			if(i >= MasterScript.systemListConstructor.systemList[selectedSystem].systemSize)
 			{
 				NGUITools.SetActive(planetSelectionList[i], false);
 			}

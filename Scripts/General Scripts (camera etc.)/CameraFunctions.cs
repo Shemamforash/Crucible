@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraFunctions : MasterScript
+public class CameraFunctions : MonoBehaviour
 {
 	//This class contains all functions related to camera behaviour. This includes panning and zooming of the main camera, as well as using raycasts to update the current selected object.
 	//It also includes mouse functions (double click).
@@ -25,7 +25,7 @@ public class CameraFunctions : MasterScript
 	void Start()
 	{
 		techTreeGUI = GameObject.Find ("GUIContainer").GetComponent<TechTreeGUI> ();
-		minZoom = (0.1333333f * systemListConstructor.mapSize) - 29f;
+		minZoom = (0.1333333f * MasterScript.systemListConstructor.mapSize) - 29f;
 		zoomSpeed = (maxZoom - minZoom) / -5f;
 		zPosition = minZoom;
 		clickTimer = 0f;
@@ -48,14 +48,14 @@ public class CameraFunctions : MasterScript
 		}
 	}
 
-	private void CloseAllWindows()
+	public void CloseAllWindows()
 	{
 		coloniseMenu = false;
 		openMenu = false;
 		doubleClick = false;
 		clickTimer = -1f;
-		heroGUI.openHeroLevellingScreen = false;
-		invasionGUI.openInvasionMenu = false;
+		MasterScript.heroGUI.openHeroLevellingScreen = false;
+		MasterScript.invasionGUI.openInvasionMenu = false;
 
 		if(techTreeGUI.techTree.activeInHierarchy == true)
 		{
@@ -99,7 +99,7 @@ public class CameraFunctions : MasterScript
 				if(hit.collider.gameObject.tag == "StarSystem") //If it collides with a star system
 				{
 					selectedSystem = hit.collider.gameObject; //Set the selected system
-					selectedSystemNumber = RefreshCurrentSystem(selectedSystem); //And get it's number
+					selectedSystemNumber = MasterScript.RefreshCurrentSystem(selectedSystem); //And get it's number
 				}
 			
 				SingleClickFunctions();
@@ -110,11 +110,11 @@ public class CameraFunctions : MasterScript
 
 	private void SingleClickFunctions()
 	{
-		if(systemListConstructor.systemList[selectedSystemNumber].systemOwnedBy == null) //If it is owned by nobody
+		if(MasterScript.systemListConstructor.systemList[selectedSystemNumber].systemOwnedBy == null) //If it is owned by nobody
 		{
-			systemSIMData = systemListConstructor.systemList[selectedSystemNumber].systemObject.GetComponent<SystemSIMData>();
+			MasterScript.systemSIMData = MasterScript.systemListConstructor.systemList[selectedSystemNumber].systemObject.GetComponent<SystemSIMData>();
 			
-			if(systemSIMData.guardedBy == playerTurnScript.playerRace || systemSIMData.guardedBy == null) //If the system is guarded by you or nobody
+			if(MasterScript.systemSIMData.guardedBy == MasterScript.playerTurnScript.playerRace || MasterScript.systemSIMData.guardedBy == null) //If the system is guarded by you or nobody
 			{
 				coloniseMenu = true; //Show the colonise button
 			}
@@ -123,44 +123,15 @@ public class CameraFunctions : MasterScript
 
 	private void DoubleClickFunctions()
 	{
-		if(doubleClick == true && heroResource.improvementScreen.activeInHierarchy == false) //If a double cick has occured and the improvement screen is not visible
+		if(doubleClick == true && MasterScript.heroResource.improvementScreen.activeInHierarchy == false) //If a double cick has occured and the improvement screen is not visible
 		{
 			doubleClick = false; //Reset double click
 			
-			if(systemListConstructor.systemList[selectedSystemNumber].systemOwnedBy == playerTurnScript.playerRace) //If the system is owned by you
+			if(MasterScript.systemListConstructor.systemList[selectedSystemNumber].systemOwnedBy == MasterScript.playerTurnScript.playerRace) //If the system is owned by you
 			{
-				if(galaxyGUI.planetSelectionWindow.activeInHierarchy == false) //And the first planet colonise window is not open
+				if(MasterScript.galaxyGUI.planetSelectionWindow.activeInHierarchy == false) //And the first planet colonise window is not open
 				{
 					openMenu = true; //View the system
-				}
-			}
-			
-			if(systemListConstructor.systemList[selectedSystemNumber].systemOwnedBy != playerTurnScript.playerRace && systemListConstructor.systemList[selectedSystemNumber].systemOwnedBy != null) //If it's owned by another player
-			{
-				systemDefence = selectedSystem.GetComponent<SystemDefence>(); //Get it's defence script
-				
-				bool openInvMenu = false;
-				
-				heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent>();
-				
-				if(heroScript.heroLocation == systemListConstructor.systemList[selectedSystemNumber].systemObject) //If the current heroes location is equal to this sytem
-				{
-					if(heroScript.heroType == "Infiltrator") //If it's an infiltrator
-					{
-						openInvMenu = true; //Open the invasion menu
-					}
-					
-					if(systemDefence.canEnter == true) //If it has destroyed the system defences
-					{
-						openInvMenu = true; //Open the invasion menu
-					}
-					
-					if(openInvMenu == true) //If open invasion menu is true
-					{
-						CloseAllWindows(); //Close all the open windows
-						invasionGUI.openInvasionMenu = true; //Open the invasion window through script
-						invasionGUI.OpenPlanetInvasionScreen();
-					}
 				}
 			}
 		}

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class InvasionGUI : MasterScript
+public class InvasionGUI : MonoBehaviour
 {
 	public GameObject invasionScreen, background, summary, tokenContainer, includeHero2, includeHero3, hero2Object, hero3Object;
 	public GameObject[] planetList = new GameObject[6];
@@ -16,6 +16,8 @@ public class InvasionGUI : MasterScript
 	private TokenManagement management;
 	private LoadInvasionScreen loadInvasion;
 	private bool createdTokens;
+	private HeroScriptParent heroScript;
+	private SystemDefence systemDefence;
 	
 	void Start () 
 	{
@@ -38,6 +40,14 @@ public class InvasionGUI : MasterScript
 			temp.assaultTokenContainer = heroInterfaces[i].transform.Find("Assault Tokens").gameObject;
 			temp.auxiliaryTokenContainer = heroInterfaces[i].transform.Find("Auxiliary Tokens").gameObject;
 			temp.defenceTokenContainer = heroInterfaces[i].transform.Find("Defence Tokens").gameObject;
+
+			for(int j = 0; j < 6; ++j)
+			{
+				string newStr = "Token " + (j + 1);
+				temp.assaultTokenPositions.Add (temp.assaultTokenContainer.transform.FindChild(newStr).gameObject);
+				temp.auxiliaryTokenPositions.Add (temp.auxiliaryTokenContainer.transform.FindChild(newStr).gameObject);
+				temp.defenceTokenPositions.Add (temp.defenceTokenContainer.transform.FindChild(newStr).gameObject);
+			}
 
 			Transform summary = heroInterfaces[i].transform.Find("Summary");
 
@@ -68,13 +78,15 @@ public class InvasionGUI : MasterScript
 			temp.offence = info.Find("Offence").GetComponent<UILabel>();
 			temp.defence = info.Find("Defence").GetComponent<UILabel>();
 			temp.population = info.Find("Population").GetComponent<UILabel>();
+			temp.tokenContainer = planetList[i].transform.Find ("Token Container").gameObject;
 
 			planetInvasionLabels.Add (temp);
 		}
 	}
 
-	private void LayoutPlanets(int size) //Used to position the list of planets to be invaded
+	private void LayoutPlanets(int system) //Used to position the list of planets to be invaded
 	{
+		int size = MasterScript.systemListConstructor.systemList[system].systemSize;
 		float maxHeight = ((size - 1) * 10f) + (65f * size); //Height of all planet sprites
 		maxHeight = maxHeight / 2f; //Over 2 to get difference from y = 0
 
@@ -83,10 +95,23 @@ public class InvasionGUI : MasterScript
 			if(i < size) //If it is less than the system size
 			{
 				NGUITools.SetActive(planetList[i], true); //Activate it
-				float y = (i * 75f) + 32.5f; //Its y height is it's iterator value multiplied by 75, +32.5
+				float y = (i * 80f) + 32.5f; //Its y height is it's iterator value multiplied by 75, +32.5
 				y = maxHeight - y; //Get the actual y value by subtracting it from maxheight
-				Vector3 temp = new Vector3(-85f, y, 0f); //Create a new vector with a -85 x offset to centre the sprite
+
+				float xDifference = -50f;
+
+				if(i % 2 == 0)
+				{
+					xDifference = 50f;
+				}
+
+				Vector3 temp = new Vector3(-85f + xDifference, y, 0f); //Create a new vector with a -85 x offset to centre the sprite
 				planetList[i].transform.localPosition = temp; //Set the local position
+
+				if(MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].planetColonised == false)
+				{
+					NGUITools.SetActive (planetInvasionLabels[i].tokenContainer, false);
+				}
 			}
 			else //If it's greater than the system size
 			{
@@ -97,7 +122,7 @@ public class InvasionGUI : MasterScript
 
 	private void UpdateOpenMenuItems()
 	{
-		NGUITools.SetActive(heroGUI.heroDetailsContainer, false); //Close the hero details window
+		NGUITools.SetActive(MasterScript.heroGUI.heroDetailsContainer, false); //Close the hero details window
 		NGUITools.SetActive(summary, true);
 	
 		CheckForOtherHeroes();
@@ -112,9 +137,9 @@ public class InvasionGUI : MasterScript
 			
 		if(createdTokens == false)
 		{
-			management.CreateTokens("Assault", heroGUI.currentHero.GetComponent<HeroScriptParent>(), 0);
-			management.CreateTokens("Auxiliary", heroGUI.currentHero.GetComponent<HeroScriptParent>(), 0);
-			management.CreateTokens("Defence", heroGUI.currentHero.GetComponent<HeroScriptParent>(), 0);
+			management.CreateTokens("Assault", MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent>(), 0);
+			management.CreateTokens("Auxiliary", MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent>(), 0);
+			management.CreateTokens("Defence", MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent>(), 0);
 				
 			createdTokens = true;
 		}
@@ -124,7 +149,7 @@ public class InvasionGUI : MasterScript
 	{
 		hero2Object = null;
 		hero3Object = null;
-		NGUITools.SetActive(heroGUI.heroDetailsContainer, true);
+		NGUITools.SetActive(MasterScript.heroGUI.heroDetailsContainer, true);
 		NGUITools.SetActive(includeHero2, false);
 		NGUITools.SetActive(includeHero3, false);
 		NGUITools.SetActive(summary, false);
@@ -151,12 +176,9 @@ public class InvasionGUI : MasterScript
 
 	void Update()
 	{
-		if(heroGUI.currentHero != null) //If a hero is selected
+		if(MasterScript.heroGUI.currentHero != null) //If a hero is selected
 		{
-			heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent> (); //Get references to hero scripts
-			
-			heroShip = heroGUI.currentHero.GetComponent<HeroShip>();
-			
+			heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> (); //Get references to hero scripts
 			systemDefence = heroScript.heroLocation.GetComponent<SystemDefence> (); //And the defence script of that system
 			
 			if(systemDefence.underInvasion == true && openInvasionMenu == true) //If system is under invasion and the invasion menu is open
@@ -168,34 +190,35 @@ public class InvasionGUI : MasterScript
 		if(openInvasionMenu == false)
 		{
 			UpdateClosedMenuItems();
+			management.allTokens.Clear ();
 		}
 	}
 
 	private void CheckForOtherHeroes()
 	{
-		for(int i = 0; i < playerTurnScript.playerOwnedHeroes.Count; ++i)
+		for(int i = 0; i < MasterScript.playerTurnScript.playerOwnedHeroes.Count; ++i)
 		{
-			if(playerTurnScript.playerOwnedHeroes[i] == heroGUI.currentHero)
+			if(MasterScript.playerTurnScript.playerOwnedHeroes[i] == MasterScript.heroGUI.currentHero)
 			{
 				continue;
 			}
 			
-			heroScript = playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
+			heroScript = MasterScript.playerTurnScript.playerOwnedHeroes[i].GetComponent<HeroScriptParent>();
 			
-			if(heroScript.heroLocation == systemListConstructor.systemList[system].systemObject)
+			if(heroScript.heroLocation == MasterScript.systemListConstructor.systemList[system].systemObject)
 			{
 				if(includeHero2.activeInHierarchy == false && hero2Object == null)
 				{
-					hero2Object = playerTurnScript.playerOwnedHeroes[i];
+					hero2Object = MasterScript.playerTurnScript.playerOwnedHeroes[i];
 					NGUITools.SetActive(includeHero2, true);
 					includeHero2.transform.Find ("Label").GetComponent<UILabel>().text = "INCLUDE " + heroScript.heroType;
 					continue;
 				}
 				if(includeHero2.activeInHierarchy == true && hero3Object == null && includeHero3.activeInHierarchy == false)
 				{
-					if(playerTurnScript.playerOwnedHeroes[i] != hero2Object)
+					if(MasterScript.playerTurnScript.playerOwnedHeroes[i] != hero2Object)
 					{
-						hero3Object = playerTurnScript.playerOwnedHeroes[i];
+						hero3Object = MasterScript.playerTurnScript.playerOwnedHeroes[i];
 						NGUITools.SetActive(includeHero3, true);
 						includeHero3.transform.Find ("Label").GetComponent<UILabel>().text = "INCLUDE" + heroScript.heroType;
 					}
@@ -215,7 +238,7 @@ public class InvasionGUI : MasterScript
 				switch(i)
 				{
 				case 0:
-					heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent>();
+					heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent>();
 					break;
 				case 1:
 					heroScript = hero2Object.GetComponent<HeroScriptParent>();
@@ -245,14 +268,14 @@ public class InvasionGUI : MasterScript
 	{
 		for(int i = 0; i < 6; i++) //For all labels
 		{	
-			if(i < systemListConstructor.systemList[thisSystem].systemSize) //If this planet is active in the system
+			if(i < MasterScript.systemListConstructor.systemList[thisSystem].systemSize) //If this planet is active in the system
 			{
 				NGUITools.SetActive(planetList[i], true); //Set the label container to be active
 
-				planetInvasionLabels[i].name.text = systemListConstructor.systemList[thisSystem].systemName.ToUpper() + " " + i; //Set it's name
-				planetInvasionLabels[i].type.text = systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetType.ToUpper(); //And it's type
+				planetInvasionLabels[i].name.text = MasterScript.systemListConstructor.systemList[thisSystem].systemName.ToUpper() + " " + i; //Set it's name
+				planetInvasionLabels[i].type.text = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetType.ToUpper(); //And it's type
 
-				if(systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetColonised == false) //If it's not colonised
+				if(MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetColonised == false) //If it's not colonised
 				{
 					planetInvasionLabels[i].defence.text = "NA"; //Set appropriate values for defence, offence, and population
 					planetInvasionLabels[i].offence.text = "NA";
@@ -260,14 +283,14 @@ public class InvasionGUI : MasterScript
 					continue;
 				}
 
-				planetInvasionLabels[i].defence.text = systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetCurrentDefence.ToString() + "/"
-					+ systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetMaxDefence.ToString () + " DEFENCE"; //Else display the current values of defence, offence, and population
-				planetInvasionLabels[i].offence.text = systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetOffence.ToString ();
-				planetInvasionLabels[i].population.text = systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetPopulation + "%/" 
-					+ systemListConstructor.systemList[thisSystem].planetsInSystem[i].maxPopulation + "% POPULATION";
+				planetInvasionLabels[i].defence.text = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetCurrentDefence.ToString() + "/"
+					+ MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetMaxDefence.ToString () + " DEFENCE"; //Else display the current values of defence, offence, and population
+				planetInvasionLabels[i].offence.text = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetOffence.ToString ();
+				planetInvasionLabels[i].population.text = MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].planetPopulation + "%/" 
+					+ MasterScript.systemListConstructor.systemList[thisSystem].planetsInSystem[i].maxPopulation + "% POPULATION";
 			}
 			
-			if(i >= systemListConstructor.systemList[thisSystem].systemSize) //If the planet is not active i.e the label number is greater than the system size
+			if(i >= MasterScript.systemListConstructor.systemList[thisSystem].systemSize) //If the planet is not active i.e the label number is greater than the system size
 			{
 				NGUITools.SetActive(planetList[i], false); //Set the label container to inactive
 			}
@@ -278,9 +301,9 @@ public class InvasionGUI : MasterScript
 	{
 		NGUITools.SetActive (invasionScreen, true);
 		
-		heroScript = heroGUI.currentHero.GetComponent<HeroScriptParent> ();
+		heroScript = MasterScript.heroGUI.currentHero.GetComponent<HeroScriptParent> ();
 		
-		system = RefreshCurrentSystem(heroScript.heroLocation);
+		system = MasterScript.RefreshCurrentSystem(heroScript.heroLocation);
 
 		int loadSystem = loadInvasion.CheckForExistingInvasion (system);
 
@@ -290,16 +313,17 @@ public class InvasionGUI : MasterScript
 			createdTokens = true;
 		}
 		
-		systemDefence = systemListConstructor.systemList [system].systemObject.GetComponent<SystemDefence> ();
+		systemDefence = MasterScript.systemListConstructor.systemList [system].systemObject.GetComponent<SystemDefence> ();
 
 		systemDefence.underInvasion = true;
 		
-		LayoutPlanets(systemListConstructor.systemList[system].systemSize);
+		LayoutPlanets(system);
 	}
 
 	public class PlanetInvasionLabels
 	{
-		public UILabel offence, defence, name, population, type; 
+		public UILabel offence, defence, name, population, type;
+		public GameObject tokenContainer; 
 	}
 
 	public class HeroInvasionLabel
@@ -308,6 +332,9 @@ public class InvasionGUI : MasterScript
 		public List<GameObject> defenceTokensList = new List<GameObject>();
 		public List<GameObject> assaultTokensList = new List<GameObject>();
 		public List<GameObject> auxiliaryTokensList = new List<GameObject>();
+		public List<GameObject> assaultTokenPositions = new List<GameObject>();
+		public List<GameObject> auxiliaryTokenPositions = new List<GameObject>();
+		public List<GameObject> defenceTokenPositions = new List<GameObject>();
 		public UILabel defence, defencePerToken, assaultDamage, assaultDamagePerToken, auxiliaryDamage, auxiliaryDamagePerToken, health, type, name;
 	}
 }

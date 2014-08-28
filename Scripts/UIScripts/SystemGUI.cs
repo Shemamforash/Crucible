@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class SystemGUI : MasterScript 
+public class SystemGUI : MonoBehaviour 
 { 
 	private SystemScrollviews systemScrollviews;
 	public UILabel systemPower, systemKnowledge, systemWealth, systemName, systemSize, planetHeaderName, planetHeaderClass, planetHeaderOwner, improveButtonPower, improveButtonWealth, rareResourceLabel, population, 
@@ -13,6 +13,7 @@ public class SystemGUI : MasterScript
 	private List<PlanetElementDetails> planetElementList = new List<PlanetElementDetails>();
 	public GameObject playerSystemInfoScreen, heroChooseScreen, planetInfoWindow, improveButton;
 	public GameObject[] planetObjects = new GameObject[6];
+	private SystemSIMData systemSIMData;
 
 	void Start()
 	{
@@ -35,7 +36,7 @@ public class SystemGUI : MasterScript
 
 		else if(selectedPlanet != -1)
 		{
-			if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised == true)
+			if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised == true)
 			{
 				NGUITools.SetActive(planetInfoWindow, true);
 			}
@@ -50,11 +51,11 @@ public class SystemGUI : MasterScript
 	{
 		for(int i = 0; i < 6; i++) //For all possible planets
 		{	
-			if(i < systemListConstructor.systemList[selectedSystem].systemSize) //If the planet is in the system
+			if(i < MasterScript.systemListConstructor.systemList[selectedSystem].systemSize) //If the planet is in the system
 			{
 				NGUITools.SetActive(planetObjects[i], true); //Enable it's relevant UI part on the far left hand side
 				
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true) //If it is also colonised
+				if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true) //If it is also colonised
 				{
 					UpdateColonisedPlanetDetails(i, selectedSystem); //Update the relevant details
 				}
@@ -64,7 +65,7 @@ public class SystemGUI : MasterScript
 				}
 			}
 			
-			if(i >= systemListConstructor.systemList[selectedSystem].systemSize) //If the possible planet is not within the number of planets in the system
+			if(i >= MasterScript.systemListConstructor.systemList[selectedSystem].systemSize) //If the possible planet is not within the number of planets in the system
 			{
 				NGUITools.SetActive(planetObjects[i], false); //Disable the corresponding ui object
 			}
@@ -73,15 +74,14 @@ public class SystemGUI : MasterScript
 
 	private void Update()
 	{
-		if(cameraFunctionsScript.openMenu == true) //If the menu should be open
+		if(MasterScript.cameraFunctionsScript.openMenu == true) //If the menu should be open
 		{
-			NGUITools.SetActive(systemPopup.overlayContainer, false); //Disable all the overlays
+			NGUITools.SetActive(MasterScript.systemPopup.overlayContainer, false); //Disable all the overlays
 
-			if(playerTurnScript.tempObject != null) //If there is a selected system
+			if(MasterScript.playerTurnScript.tempObject != null) //If there is a selected system
 			{
-				selectedSystem = RefreshCurrentSystem(cameraFunctionsScript.selectedSystem); //Get references to the required scripts
-				systemSIMData = playerTurnScript.tempObject.GetComponent<SystemSIMData>();
-				improvementsBasic = playerTurnScript.tempObject.GetComponent<ImprovementsBasic>();
+				selectedSystem = MasterScript.RefreshCurrentSystem(MasterScript.cameraFunctionsScript.selectedSystem); //Get references to the required scripts
+				systemSIMData = MasterScript.playerTurnScript.tempObject.GetComponent<SystemSIMData>();
 			}
 
 			CheckActiveElements();
@@ -89,9 +89,9 @@ public class SystemGUI : MasterScript
 			CheckSystemSize();
 		}
 
-		if(cameraFunctionsScript.openMenu == false) //If the menu should be closed
+		if(MasterScript.cameraFunctionsScript.openMenu == false) //If the menu should be closed
 		{
-			NGUITools.SetActive(systemPopup.overlayContainer, true); //Enable the overlays
+			NGUITools.SetActive(MasterScript.systemPopup.overlayContainer, true); //Enable the overlays
 
 			if(playerSystemInfoScreen.activeInHierarchy == true) //If there are any menu components active
 			{
@@ -134,7 +134,7 @@ public class SystemGUI : MasterScript
 		
 		for(int i = 0; i < size; ++i)
 		{
-			if(systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true)
+			if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true)
 			{
 				++tempInt;
 			}
@@ -147,44 +147,34 @@ public class SystemGUI : MasterScript
 
 	private void UpdateOverview()
 	{
-		if(cameraFunctionsScript.selectedSystem != null)
+		if(MasterScript.cameraFunctionsScript.selectedSystem != null)
 		{
-			selectedSystem = cameraFunctionsScript.selectedSystemNumber;
+			selectedSystem = MasterScript.cameraFunctionsScript.selectedSystemNumber;
 
-			systemName.text = systemListConstructor.systemList[selectedSystem].systemName.ToUpper();
+			systemName.text = MasterScript.systemListConstructor.systemList[selectedSystem].systemName.ToUpper();
 
-			systemSize.text = ReturnSystemSize(systemListConstructor.systemList[selectedSystem].systemSize).ToUpper();
+			systemSize.text = ReturnSystemSize(MasterScript.systemListConstructor.systemList[selectedSystem].systemSize).ToUpper();
 
-			systemSIMData = systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<SystemSIMData>();
+			systemSIMData = MasterScript.systemListConstructor.systemList[selectedSystem].systemObject.GetComponent<SystemSIMData>();
 			
 			if(selectedPlanet != -1)
 			{
 				systemSIMData.CheckPlanetValues(selectedPlanet, "None");
 
-				string headerTemp = systemListConstructor.systemList[selectedSystem].systemName + " " + (selectedPlanet + 1);
+				string headerTemp = MasterScript.systemListConstructor.systemList[selectedSystem].systemName + " " + (selectedPlanet + 1);
 
 				planetHeaderName.text = headerTemp.ToUpper();
-				planetHeaderClass.text = systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetCategory.ToUpper();
-				planetHeaderOwner.text = systemListConstructor.systemList[selectedSystem].systemOwnedBy;
+				planetHeaderClass.text = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetCategory.ToUpper();
+				planetHeaderOwner.text = MasterScript.systemListConstructor.systemList[selectedSystem].systemOwnedBy;
 			}
 			
-			if(cameraFunctionsScript.openMenu == true)
+			if(MasterScript.cameraFunctionsScript.openMenu == true)
 			{
 				systemPower.text = Math.Round (systemSIMData.totalSystemPower, 1).ToString();
 				systemKnowledge.text = Math.Round (systemSIMData.totalSystemKnowledge, 1).ToString();  
 				systemWealth.text = Math.Round (systemSIMData.totalSystemWealth, 1).ToString();
 			}
 		}
-	}
-
-	public void PositionGrid(GameObject grid, int size)
-	{
-		float gridWidth = (size * grid.GetComponent<UIGrid>().cellWidth) / 2 - (grid.GetComponent<UIGrid>().cellWidth/2);
-		
-		grid.transform.localPosition = new Vector3(playerSystemInfoScreen.transform.localPosition.x - gridWidth, 
-		                                                     grid.transform.localPosition.y, grid.transform.localPosition.z);
-		
-		grid.GetComponent<UIGrid>().repositionNow = true;
 	}
 
 	public void HireHero()
@@ -195,7 +185,7 @@ public class SystemGUI : MasterScript
 	public void ChooseHeroSpecialisation()
 	{
 		string heroToHire = UIButton.current.transform.parent.gameObject.name;
-		turnInfoScript.CheckIfCanHire(playerTurnScript, heroToHire);
+		MasterScript.turnInfoScript.CheckIfCanHire(MasterScript.playerTurnScript, heroToHire);
 		NGUITools.SetActive (heroChooseScreen, false);
 	}
 
@@ -205,7 +195,7 @@ public class SystemGUI : MasterScript
 		{
 			if(planetObjects[i] == UIButton.current.gameObject)
 			{
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true)
+				if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetColonised == true)
 				{
 					NGUITools.SetActive(systemScrollviews.improvementsWindow, false);
 					planetObjects[i].GetComponent<UIButton>().enabled = false;
@@ -222,23 +212,23 @@ public class SystemGUI : MasterScript
 			}
 		}
 
-		if(systemListConstructor.systemList[selectedSystem].systemOwnedBy == playerTurnScript.playerRace)
+		if(MasterScript.systemListConstructor.systemList[selectedSystem].systemOwnedBy == MasterScript.playerTurnScript.playerRace)
 		{
-			if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised == true)
+			if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised == true)
 			{
 				systemScrollviews.selectedPlanet = selectedPlanet;
 				systemScrollviews.selectedSlot = -1;
 			}
 
-			if(playerTurnScript.wealth >= systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].wealthValue)
+			if(MasterScript.playerTurnScript.wealth >= MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].wealthValue)
 			{
-				if(systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised == false)
+				if(MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised == false)
 				{
-					systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised = true;
-					systemListConstructor.systemList [selectedSystem].planetsInSystem [selectedPlanet].expansionPenaltyTimer = Time.time;
-					++playerTurnScript.planetsColonisedThisTurn;
+					MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetColonised = true;
+					MasterScript.systemListConstructor.systemList [selectedSystem].planetsInSystem [selectedPlanet].expansionPenaltyTimer = Time.time;
+					++MasterScript.playerTurnScript.planetsColonisedThisTurn;
 					systemSIMData.CheckPlanetValues(selectedPlanet, "None");
-					playerTurnScript.wealth -= systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].wealthValue;
+					MasterScript.playerTurnScript.wealth -= MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].wealthValue;
 				}
 			}
 		}
@@ -246,26 +236,29 @@ public class SystemGUI : MasterScript
 	
 	public void ImprovePlanet()
 	{
-		systemSIMData.improvementNumber = systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetImprovementLevel;
-
-		if(systemSIMData.improvementNumber < 3)
+		if(MasterScript.systemListConstructor.systemList[selectedSystem].systemOwnedBy == MasterScript.playerTurnScript.playerRace)
 		{
-			systemFunctions.CheckImprovement(selectedSystem, selectedPlanet);
+			systemSIMData.improvementNumber = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetImprovementLevel;
 
-			float powerImprovementCost = systemFunctions.PowerCost(systemSIMData.improvementNumber, selectedSystem, selectedPlanet);
-
-			if(playerTurnScript.power >= powerImprovementCost && playerTurnScript.wealth >= systemSIMData.improvementCost)
+			if(systemSIMData.improvementNumber < 3)
 			{
-				playerTurnScript.power -= powerImprovementCost;
-				playerTurnScript.wealth -= systemSIMData.improvementCost;
-				++systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetImprovementLevel;
+				MasterScript.systemFunctions.CheckImprovement(selectedSystem, selectedPlanet);
+
+				float powerImprovementCost = MasterScript.systemFunctions.PowerCost(systemSIMData.improvementNumber, selectedSystem, selectedPlanet);
+
+				if(MasterScript.playerTurnScript.power >= powerImprovementCost && MasterScript.playerTurnScript.wealth >= systemSIMData.improvementCost)
+				{
+					MasterScript.playerTurnScript.power -= powerImprovementCost;
+					MasterScript.playerTurnScript.wealth -= systemSIMData.improvementCost;
+					++MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[selectedPlanet].planetImprovementLevel;
+				}
 			}
 		}
 	}
 
 	private void UpdateColonisedPlanetDetails(int i, int system)
 	{
-		planetElementList [i].name.text = systemListConstructor.systemList [selectedSystem].planetsInSystem [i].planetType.ToUpper();
+		planetElementList [i].name.text = MasterScript.systemListConstructor.systemList [selectedSystem].planetsInSystem [i].planetType.ToUpper();
 		
 		planetElementList [i].quality.text = systemSIMData.allPlanetsInfo [i].generalInfo.ToUpper();
 		planetElementList [i].powerOP.text = systemSIMData.allPlanetsInfo [i].powerOutput;
@@ -281,18 +274,18 @@ public class SystemGUI : MasterScript
 			NGUITools.SetActive (planetElementList [i].name.gameObject, true);
 			NGUITools.SetActive (planetElementList [i].uncolonised.gameObject, false);
 
-			float maxPopPlanet = systemListConstructor.systemList[system].sysMaxPopulationModifier + systemListConstructor.systemList[system].planetsInSystem[i].maxPopulationModifier
-				+ systemListConstructor.systemList[system].planetsInSystem[i].maxPopulation;
+			float maxPopPlanet = MasterScript.systemListConstructor.systemList[system].sysMaxPopulationModifier + MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].maxPopulationModifier
+				+ MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].maxPopulation;
 
-			population.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetPopulation, 1).ToString () + "%/" + 
+			population.text = Math.Round (MasterScript.systemListConstructor.systemList [system].planetsInSystem [i].planetPopulation, 1).ToString () + "%/" + 
 				Math.Round (maxPopPlanet, 1).ToString () + "% COLONISED";
 			growth.text = Math.Round (systemSIMData.populationToAdd, 1).ToString() + "% GROWTH";
 
-			defence.text = Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetCurrentDefence, 0).ToString () + "/" +
-							Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].planetMaxDefence, 0).ToString () + " DEFENCE (+" + 
-							Math.Round (systemListConstructor.systemList [system].planetsInSystem [i].defenceRegeneration, 1).ToString () + "/S)";
+			defence.text = Math.Round (MasterScript.systemListConstructor.systemList [system].planetsInSystem [i].planetCurrentDefence, 0).ToString () + "/" +
+							Math.Round (MasterScript.systemListConstructor.systemList [system].planetsInSystem [i].planetMaxDefence, 0).ToString () + " DEFENCE (+" + 
+							Math.Round (MasterScript.systemListConstructor.systemList [system].planetsInSystem [i].defenceRegeneration, 1).ToString () + "/S)";
 
-			string tempRes = systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType;
+			string tempRes = MasterScript.systemListConstructor.systemList[system].planetsInSystem[i].rareResourceType;
 
 			if(tempRes == null)
 			{
@@ -308,7 +301,7 @@ public class SystemGUI : MasterScript
 					improveButton.GetComponent<UIButton>().isEnabled = true;
 				}
 
-				float temp = systemFunctions.PowerCost(systemSIMData.improvementNumber, selectedSystem, i);
+				float temp = MasterScript.systemFunctions.PowerCost(systemSIMData.improvementNumber, selectedSystem, i);
 				improveButtonPower.text = Math.Round (temp, 1).ToString();
 				improveButtonWealth.text = systemSIMData.improvementCost.ToString();
 			}
@@ -332,7 +325,7 @@ public class SystemGUI : MasterScript
 
 		NGUITools.SetActive (planetElementList [i].uncolonised.gameObject, true);
 
-		planetElementList[i].uncolonised.text = systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetType.ToUpper() + " (UNCOLONISED)";
+		planetElementList[i].uncolonised.text = MasterScript.systemListConstructor.systemList[selectedSystem].planetsInSystem[i].planetType.ToUpper() + " (UNCOLONISED)";
 		planetElementList [i].knowledgeOP.text = "";
 		planetElementList [i].powerOP.text = "";
 		planetElementList [i].population.text = "";
